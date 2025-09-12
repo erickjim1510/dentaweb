@@ -13,29 +13,25 @@ const Topbar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext);
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
   const [message, setMessage] = useState([""]);
   const navigate = useNavigate();
 
-  /** Valor inicial de variables generales */
   useEffect(() => {}, []);
 
   const handleLogout = async () => {
-    sessionStorage.removeItem("token");
-    navigate("/");
+    logout();
+    navigate("/", { replace: true });
   };
 
   return (
     <Box display="flex" justifyContent="flex-end" p={2}>
       <Box display="flex" alignItems="center" gap={1}>
-        <IconButton onClick={colorMode.toggleColorMode}>
-          {theme.palette.mode === "dark" ? (
-            <DarkModeOutlinedIcon />
-          ) : (
-            <LightModeOutlinedIcon />
-          )}
-        </IconButton>
-        <IconButton onClick={handleLogout} size="small">
+        <IconButton
+          onClick={handleLogout}
+          size="small"
+          sx={{ color: "#3EB489" }}
+        >
           <LogoutOutlinedIcon />
         </IconButton>
       </Box>

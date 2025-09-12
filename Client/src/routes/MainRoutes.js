@@ -1,13 +1,11 @@
 import { lazy } from 'react';
 
-// project import
 import Loadable from '../components/Loadable';
 import MainLayout from '../layout/MainLayout';
- 
-// render - dashboard
+import ProtectedRoute from '../components/ProtectRoute';
+
 const DashboardDefault = Loadable(lazy(() => import('../scenes/dashboard')));
 
-//render  
 const Usuarios = Loadable(lazy(() => import('../scenes/usuarios')));
 const Invoices = Loadable(lazy(() => import('../scenes/invoices')));
 const Contacts = Loadable(lazy(() => import('../scenes/contacts')));
@@ -19,13 +17,15 @@ const FAQ = Loadable(lazy(() => import('../scenes/faq')));
 const Geography = Loadable(lazy(() => import('../scenes/geography')));
 const Calendar = Loadable(lazy(() => import('../scenes/calendar/calendar')));
 
-
-
 // ==============================|| MAIN ROUTING ||============================== //
 
 const MainRoutes = {
   path: '/',
-  element: <MainLayout />,
+  element: (
+    <ProtectedRoute>
+      <MainLayout />
+    </ProtectedRoute>
+  ),
   children: [
     {
       path: 'dashboard',
@@ -71,11 +71,7 @@ const MainRoutes = {
       path: 'calendar',
       element: <Calendar />
     }
-    
   ]
 };
 
 export default MainRoutes;
-
-
-

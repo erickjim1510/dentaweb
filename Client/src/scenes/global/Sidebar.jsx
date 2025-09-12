@@ -43,6 +43,10 @@ const Sidebar = () => {
   const [selected, setSelected] = useState("Dashboard");
   const { user } = useContext(AuthContext);
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <Box
       sx={{
@@ -84,14 +88,17 @@ const Sidebar = () => {
                 <Typography variant="h3" color={colors.grey[100]}>
                   Menu
                 </Typography>
-                <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+                <IconButton
+                  onClick={() => setIsCollapsed(!isCollapsed)}
+                  sx={{ color: "#3EB489" }}
+                >
                   <MenuOutlinedIcon />
                 </IconButton>
               </Box>
             )}
           </MenuItem>
 
-          {!isCollapsed && (
+          {!isCollapsed && user && (
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
                 <img
@@ -109,10 +116,10 @@ const Sidebar = () => {
                   fontWeight="bold"
                   sx={{ m: "10px 0 0 0" }}
                 >
-                  {user.email}
+                  {user.primer_nombre || "Usuario"}
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
-                  Admin
+                  {user.email || "Usuario"}
                 </Typography>
               </Box>
             </Box>
@@ -130,10 +137,14 @@ const Sidebar = () => {
             <Typography
               variant="h6"
               color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
+              sx={{
+                m: "15px 0 5px 20px",
+                fontSize: isCollapsed ? "0px" : "16px",
+              }}
             >
-              Administracion
+              {!isCollapsed && "Administración"}
             </Typography>
+
             <Item
               title="Usuarios"
               to="/usuarios"
@@ -141,7 +152,7 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-            <Item
+            {/* <Item
               title="Contacts Information"
               to="/contacts"
               icon={<ContactsOutlinedIcon />}
@@ -219,7 +230,7 @@ const Sidebar = () => {
               icon={<MapOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
+            />*/}
           </Box>
         </Menu>
       </ProSidebar>

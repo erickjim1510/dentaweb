@@ -1,26 +1,37 @@
-import { Box, Typography, useTheme } from "@mui/material";
+import { Button, Box, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
-import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import Header from "../../components/Header";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
-const Usuarios = () => {
+const ListaUsuarios = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const navigate = useNavigate();
+
+  const [usuarios, setUsuarios] = useState([]);
+
+  useEffect(() => {}, []);
+
   const columns = [
-    { field: "idusuario", headerName: "ID" },
+    { field: "idusuario", headerName: "ID Usuario", width: 100 },
     {
-      field: "nombre",
-      headerName: "Nombre",
+      field: "primer_nombre",
+      headerName: "Primer Nombre",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "apellido",
-      headerName: "Apellidos",
+      field: "apellido_paterno",
+      headerName: "Ap. Paterno",
+      flex: 1,
+    },
+    {
+      field: "nombre_usuario",
+      headerName: "Usuario",
+      flex: 1,
+      cellClassName: "name-column--cell",
     },
     {
       field: "email",
@@ -28,79 +39,95 @@ const Usuarios = () => {
       flex: 1,
     },
     {
-      field: "password",
-      headerName: "Password",
+      field: "telefono",
+      headerName: "Teléfono",
       flex: 1,
     },
     {
-      field: "acciones",
+      field: "actions",
+      type: "actions",
       headerName: "Acciones",
-      flex: 1,
-      renderCell: ({ row: { access } }) => {
-        return (
-          <Box
-            width="60%"
-            m="0 auto"
-            p="5px"
-            display="flex"
-            justifyContent="center"
-            backgroundColor={
-              access === "admin"
-                ? colors.greenAccent[600]
-                : access === "manager"
-                ? colors.greenAccent[700]
-                : colors.greenAccent[700]
-            }
-            borderRadius="4px"
-          >
-            {access === "admin" && <AdminPanelSettingsOutlinedIcon />}
-            {access === "manager" && <SecurityOutlinedIcon />}
-            {access === "user" && <LockOpenOutlinedIcon />}
-            <Typography color={colors.grey[100]} sx={{ ml: "5px" }}>
-              {access}
-            </Typography>
-          </Box>
-        );
-      },
+      width: 150,
     },
   ];
 
   return (
     <Box m="20px">
-      <Header title="Usuarios" subtitle="Gestion de Usuarios" />
+      <Header title="Usuarios" subtitle="Lista de usuarios del sistema" />
+
+      <Box display="flex" justifyContent="end" mt="20px">
+        <Button
+          type="submit"
+          color="secondary"
+          variant="contained"
+          onClick={() => navigate("/usuario-nuevo")}
+        >
+          Nuevo Usuario
+        </Button>
+      </Box>
+
       <Box
         m="40px 0 0 0"
         height="75vh"
         sx={{
           "& .MuiDataGrid-root": {
-            border: "none",
+            border: "1px solid #e0e0e0",
+            borderRadius: "8px",
           },
           "& .MuiDataGrid-cell": {
-            borderBottom: "none",
-          },
-          "& .name-column--cell": {
-            color: colors.greenAccent[300],
+            borderBottom: "1px solid #f5f5f5",
+            color: "#333333",
+            fontSize: "14px",
+            padding: "12px 16px",
           },
           "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: colors.blueAccent[700],
-            borderBottom: "none",
+            backgroundColor: "#f8f9fa",
+            color: "#333333",
+            borderBottom: "2px solid #e0e0e0",
+            fontSize: "14px",
+            fontWeight: "600",
+            minHeight: "56px !important",
+          },
+          "& .MuiDataGrid-columnHeaderTitle": {
+            color: "#333333",
+            fontWeight: "600",
           },
           "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: colors.primary[400],
+            backgroundColor: "#ffffff",
           },
           "& .MuiDataGrid-footerContainer": {
-            borderTop: "none",
-            backgroundColor: colors.blueAccent[700],
+            borderTop: "2px solid #e0e0e0",
+            backgroundColor: "#f8f9fa",
+            color: "#333333",
           },
-          "& .MuiCheckbox-root": {
-            color: `${colors.greenAccent[200]} !important`,
+          "& .MuiDataGrid-row": {
+            minHeight: "60px !important",
+            "&:hover": {
+              backgroundColor: "#f0f8ff",
+            },
+            "&:nth-of-type(even)": {
+              backgroundColor: "#fafafa",
+            },
+          },
+          "& .MuiDataGrid-actionsCell .MuiIconButton-root": {
+            color: "#666666",
+            "&:hover": {
+              backgroundColor: "#e3f2fd",
+              color: "#1976d2",
+            },
           },
         }}
       >
-        <DataGrid checkboxSelection rows={mockDataTeam} columns={columns} />
+        {console.log("Datos de Usuarios: ", usuarios)}
+
+        <DataGrid
+          rows={usuarios}
+          columns={columns}
+          getRowId={(row) => row.id_usuario}
+        />
       </Box>
     </Box>
   );
 };
 
-export default Usuarios;
+export default ListaUsuarios;
