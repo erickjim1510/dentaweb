@@ -2,16 +2,17 @@ from flask import Flask
 from flask_cors import CORS
 from config import Config
 from db import db
-from routes.estado_routes import estado_bp
-from routes.rol_routes import rol_bp
-from routes.usuario_routes import usuario_bp
-from routes.sexo_routes import sexo_bp
-from routes.paciente_routes import paciente_bp
 from models.estado import Estado
 from models.rol import Rol
 from models.usuario import Usuario
 from models.sexo import Sexo
 from models.paciente import Paciente
+from routes.estado_routes import estado_bp
+from routes.rol_routes import rol_bp
+from routes.usuario_routes import usuario_bp
+from routes.sexo_routes import sexo_bp
+from routes.paciente_routes import paciente_bp
+
 
 def create_app():
     app = Flask(__name__)
