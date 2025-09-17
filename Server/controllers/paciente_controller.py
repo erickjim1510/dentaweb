@@ -1,8 +1,7 @@
 from models.paciente import Paciente, db
-from flask import jsonify
 
 class PacienteController:
-    
+
     @staticmethod
     def obtener_todos():
         try:
@@ -10,65 +9,141 @@ class PacienteController:
             return {
                 "success": True,
                 "data": [paciente.to_dict() for paciente in pacientes],
-                "mensaje": "Pacientes obtenidos con exito"
+                "mensaje": "Pacientes obtenidos con éxito"
             }
         except Exception as e:
             return {
                 "success": False,
-                "mensaje": f"Error al obtener todos: {str(e)}"
+                "mensaje": f"Error al obtener pacientes: {str(e)}"
             }
-        
+
+    @staticmethod
+    def obtener_por_id(id_paciente):
+        try:
+            paciente = Paciente.query.get(id_paciente)
+            if not paciente:
+                return {
+                    "success": False,
+                    "mensaje": "Paciente no encontrado"
+                }
+            return {
+                "success": True,
+                "data": paciente.to_dict(),
+                "mensaje": "Paciente obtenido con éxito"
+            }
+        except Exception as e:
+            return {
+                "success": False,
+                "mensaje": f"Error al obtener paciente: {str(e)}"
+            }
+
     @staticmethod
     def crear_paciente(data):
         try:
             campos_requeridos = [
-                "id_sexo",
-                "primer_nombre",
-                "segundo_nombre",
-                "apellido_paterno",
-                "apellido_materno",
-                "fecha_nacimiento",
-                "lugar_nacimiento",
-                "direccion",
-                "ocupacion",
-                "telefono",
-                "email",
-                "fecha_registro"]
+                "id_sexo", "primer_nombre", "apellido_paterno",
+                "fecha_nacimiento", "direccion", "telefono"
+            ]
             for campo in campos_requeridos:
                 if not data.get(campo):
                     return {
                         "success": False,
                         "mensaje": f"Se requiere el campo: {campo}"
                     }
-            paciente_existente = Paciente.query.filter_by(email=data["email"]).first()
-            if paciente_existente:
-                return {
-                    "success": False,
-                    "mensaje": "El email ya esta registrado"
-                }
-            paciente_nuevo = Paciente(
+
+            nuevo_paciente = Paciente(
                 id_sexo=data["id_sexo"],
-                primer_nombre=data["primer_nombre"],
-                segundo_nombre=data["segundo_nombre"],
-                apellido_paterno=data["apellido_paterno"],
-                apellido_materno=data["apellido_materno"],
-                fecha_nacimiento=data["fecha_nacimiento"],
-                lugar_nacimiento=data["lugar_nacimiento"],
-                direccion=data["direccion"],
-                ocupacion=data["ocupacion"],
-                telefono=data["telefono"],
-                email=data["email"],
-                fecha_registro=data["fecha_registro"]
+                primer_nombre=data.get("primer_nombre"),
+                segundo_nombre=data.get("segundo_nombre"),
+                apellido_paterno=data.get("apellido_paterno"),
+                apellido_materno=data.get("apellido_materno"),
+                fecha_nacimiento=data.get("fecha_nacimiento"),
+                lugar_nacimiento=data.get("lugar_nacimiento"),
+                direccion=data.get("direccion"),
+                ocupacion=data.get("ocupacion"),
+                telefono=data.get("telefono"),
+                email=data.get("email")
             )
-            db.session.add(paciente_nuevo)
+
+            db.session.add(nuevo_paciente)
             db.session.commit()
             return {
                 "success": True,
-                "data": paciente_nuevo.to_dict(),
-                "mensaje": "Paciente creado con exito"
+                "data": nuevo_paciente.to_dict(),
+                "mensaje": "Paciente creado con éxito"
             }
         except Exception as e:
+            db.session.rollback()
             return {
                 "success": False,
                 "mensaje": f"Error al crear paciente: {str(e)}"
+            }
+
+    @staticmethod
+    def actualizar_paciente(data):
+        try:
+            if not data or not data.get("id_paciente"):
+                return {
+                    "success": False,
+                    "mensaje": "ID de paciente no enviado"
+                }
+
+            paciente = Paciente.query.get(data["id_paciente"])
+            if not paciente:
+                return {
+                    "success": False,
+                    "mensaje": "Paciente no encontrado"
+                }
+
+            # Actualizar solo los campos enviados
+            for campo in [
+                "id_sexo", "primer_nombre", "segundo_nombre",
+                "apellido_paterno", "apellido_materno",
+                "fecha_nacimiento", "lugar_nacimiento",
+                "direccion", "ocupacion", "telefono",
+                "email"
+            ]:
+                if campo in data:
+                    setattr(paciente, campo, data[campo])
+
+            db.session.commit()
+            return {
+                "success": True,
+                "data": paciente.to_dict(),
+                "mensaje": "Paciente actualizado con éxito"
+            }
+        except Exception as e:
+            db.session.rollback()
+            return {
+                "success": False,
+                "mensaje": f"Error al actualizar paciente: {str(e)}"
+            }
+
+    @staticmethod
+    def eliminar_paciente(data):
+        try:
+            if not data or not data.get("id_paciente"):
+                return {
+                    "success": False,
+                    "mensaje": "ID de paciente no enviado"
+                }
+
+            paciente = Paciente.query.get(data["id_paciente"])
+            if not paciente:
+                return {
+                    "success": False,
+                    "mensaje": "Paciente no encontrado"
+                }
+
+            db.session.delete(paciente)
+            db.session.commit()
+            return {
+                "success": True,
+                "mensaje": "Paciente eliminado con éxito"
+            }
+        except Exception as e:
+            db.session.rollback()
+            return {
+                "success": False,
+                "mensaje": f"Error al eliminar paciente: {str(e)}"
             }

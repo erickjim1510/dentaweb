@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+from datetime import date
 from db import db
 
 class Usuario(db.Model):
@@ -17,11 +18,11 @@ class Usuario(db.Model):
     contrasena_hash = db.Column(db.String(255))
     telefono = db.Column(db.String(15))
     email = db.Column(db.String(30))
-    fecha_registro = db.Column(db.Date)
+    fecha_registro = db.Column(db.Date, default=date.today)
     
 
-    def to_dict(self):
-        return {
+    def to_dict(self, exclude_password=False):
+        data = {
             "id_usuario": self.id_usuario,
             "id_rol": self.id_rol,
             "id_estado": self.id_estado,
@@ -31,11 +32,14 @@ class Usuario(db.Model):
             "apellido_materno": self.apellido_materno,
             "fecha_nacimiento": self.fecha_nacimiento.isoformat() if self.fecha_nacimiento else None,
             "nombre_usuario": self.nombre_usuario,
-            "contrasena_hash": self.contrasena_hash,
             "telefono": self.telefono,
             "email": self.email,
             "fecha_registro": self.fecha_registro.isoformat() if self.fecha_registro else None
         }
+        if not exclude_password:
+            data["contrasena_hash"] = self.contrasena_hash
+        return data
+
     
     def verificar_password(self, contrasena_hash):
         return self.contrasena_hash == contrasena_hash

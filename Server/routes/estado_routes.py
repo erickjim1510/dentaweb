@@ -19,10 +19,20 @@ def obtener_estado_por_id(id_estado):
 def crear_estado():
     data = request.get_json()
     if not data:
-        return jsonify({"success":False, "mensaje":"No se enviaron datos"}), 400
+        return jsonify({"success": False, "mensaje": "No se enviaron datos"}), 400
 
     resultado = EstadoController.crear_estado(data)
     status_code = 201 if resultado["success"] else 400
+    return jsonify(resultado), status_code
+
+@estado_bp.route("/estados", methods=["PUT"])
+def actualizar_estado():
+    data = request.get_json()
+    if not data:
+        return jsonify({"success": False, "mensaje": "No se enviaron datos"}), 400
+
+    resultado = EstadoController.actualizar_estado(data)
+    status_code = 200 if resultado["success"] else 400
     return jsonify(resultado), status_code
 
 @estado_bp.route("/estados", methods=["DELETE"])
@@ -33,14 +43,7 @@ def eliminar_estado():
         status_code = 200 if resultado["success"] else 400
         return jsonify(resultado), status_code
     except Exception as e:
-        return {
-            "success":False,
-            "mensaje":f"Error al procesar peticion: {str(e)}"
-        }
-        
-        
-    except Exception as e:
-        return {
-            "success":False,
-            "mensaje":f"Error al eliminar estado: {str(e)}"
-        }
+        return jsonify({
+            "success": False,
+            "mensaje": f"Error al procesar petición: {str(e)}"
+        }), 500

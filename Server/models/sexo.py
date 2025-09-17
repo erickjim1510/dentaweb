@@ -7,7 +7,7 @@ class Sexo(db.Model):
     id_sexo = db.Column(db.Integer, primary_key=True)
     nombre_sexo = db.Column(db.String(30))
 
-    pacientes = db.relationship("Paciente", backref="paciente")
+    pacientes = db.relationship("Paciente", backref="sexo", lazy=True)
 
     def to_dict(self):
         return {

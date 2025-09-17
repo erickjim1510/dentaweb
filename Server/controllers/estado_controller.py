@@ -1,5 +1,4 @@
 from models.estado import Estado, db
-from flask import jsonify
 
 class EstadoController:
 
@@ -10,12 +9,12 @@ class EstadoController:
             return {
                 'success': True,
                 'data': [estado.to_dict() for estado in estados],
-                'mensaje': 'Usuarios obtenidos exitosamente'
+                'mensaje': 'Estados obtenidos exitosamente'
             }
         except Exception as e:
             return {
                 'success': False,
-                'mensaje': f'Error al obtener usuarios: {str(e)}'
+                'mensaje': f'Error al obtener estados: {str(e)}'
             }
     
     @staticmethod
@@ -24,21 +23,19 @@ class EstadoController:
             estado = Estado.query.get(id_estado)
             if not estado:
                 return {
-                    "success":False,
-                    "mensaje":"Estado no encotrado"
+                    "success": False,
+                    "mensaje": "Estado no encontrado"
                 }
             return {
-                "success":True,
-                "data":estado.to_dict(),
-                "mensaje":"Estado obtenido con exito"
+                "success": True,
+                "data": estado.to_dict(),
+                "mensaje": "Estado obtenido con éxito"
             }
         except Exception as e:
-            return{
-                "success":False,
-                "mensaje":f"Error al obtener usuario: {str(e)}"
+            return {
+                "success": False,
+                "mensaje": f"Error al obtener estado: {str(e)}"
             }
-
-        
 
     @staticmethod
     def crear_estado(data):
@@ -75,42 +72,70 @@ class EstadoController:
             db.session.rollback()
             return {
                 'success': False,
-                'mensaje': f'Error al crear usuario: {str(e)}'
+                'mensaje': f'Error al crear estado: {str(e)}'
             }
-    
+
+    @staticmethod
+    def actualizar_estado(data):
+        try:
+            if not data or not data.get("id_estado"):
+                return {
+                    "success": False,
+                    "mensaje": "ID de estado no enviado"
+                }
+
+            estado = Estado.query.get(data["id_estado"])
+            if not estado:
+                return {
+                    "success": False,
+                    "mensaje": "Estado no encontrado"
+                }
+
+            if "nombre_estado" in data:
+                estado_existente = Estado.query.filter_by(nombre_estado=data["nombre_estado"]).first()
+                if estado_existente and estado_existente.id_estado != estado.id_estado:
+                    return {
+                        "success": False,
+                        "mensaje": "El nombre de estado ya está registrado"
+                    }
+                estado.nombre_estado = data["nombre_estado"]
+
+            db.session.commit()
+            return {
+                "success": True,
+                "data": estado.to_dict(),
+                "mensaje": "Estado actualizado exitosamente"
+            }
+        except Exception as e:
+            db.session.rollback()
+            return {
+                "success": False,
+                "mensaje": f"Error al actualizar estado: {str(e)}"
+            }
+
     @staticmethod
     def eliminar_estado(data):
         try:
             if not data:
                 return {
-                    "success":False,
-                    "mensaje":"Datos no enviados"
+                    "success": False,
+                    "mensaje": "Datos no enviados"
                 }
             estado = Estado.query.get(data["id_estado"])
             if not estado:
                 return {
-                    "success":False,
-                    "mensaje":"Estado no encotrado"
+                    "success": False,
+                    "mensaje": "Estado no encontrado"
                 }
             db.session.delete(estado)
             db.session.commit()
             return {
-                "success":True,
-                "mensaje":"Eliminacion exitosa"
+                "success": True,
+                "mensaje": "Eliminación exitosa"
             }
         except Exception as e:
             db.session.rollback()
             return {
-                "success":False,
-                "mensaje":f"Error al eliminar estado: {str(e)}"
+                "success": False,
+                "mensaje": f"Error al eliminar estado: {str(e)}"
             }
-        
-
-        
-        
-
-
-
-
-
-
