@@ -18,6 +18,7 @@ const NuevoUsuario = () => {
   // Estados para opciones de select
   const [roles, setRoles] = useState([]);
   const [estados, setEstados] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   // Cargar roles y estados al montar el componente
   useEffect(() => {
@@ -26,21 +27,25 @@ const NuevoUsuario = () => {
 
   const cargarOpcionesSelect = async () => {
     try {
-      // Si tienes endpoints para roles y estados, úsalos aquí
-      // Por ahora uso datos estáticos
-      setRoles([
-        { id: 1, nombre: "Administrador" },
-        { id: 2, nombre: "Usuario" },
-        { id: 3, nombre: "Moderador" },
-      ]);
+      setLoading(true);
 
-      setEstados([
-        { id: 1, nombre: "Activo" },
-        { id: 2, nombre: "Inactivo" },
-        { id: 3, nombre: "Suspendido" },
-      ]);
+      // Cargar roles desde la API
+      const rolesResponse = await api.get("/roles");
+      if (rolesResponse.data.success) {
+        setRoles(rolesResponse.data.data);
+      }
+
+      // Cargar estados desde la API
+      const estadosResponse = await api.get("/estados");
+      if (estadosResponse.data.success) {
+        setEstados(estadosResponse.data.data);
+      }
     } catch (error) {
       console.error("Error al cargar opciones:", error);
+      // En caso de error, puedes mostrar un mensaje o usar datos por defecto
+      alert("Error al cargar las opciones. Por favor, recarga la página.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -76,6 +81,18 @@ const NuevoUsuario = () => {
       setSubmitting(false);
     }
   };
+
+  // Mostrar loading mientras se cargan los datos
+  if (loading) {
+    return (
+      <Box m="20px">
+        <Header title="CREAR USUARIO" subtitle="Cargando formulario..." />
+        <Box display="flex" justifyContent="center" mt="50px">
+          <p>Cargando opciones...</p>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box m="20px">
@@ -258,8 +275,8 @@ const NuevoUsuario = () => {
                 sx={{ gridColumn: "span 2" }}
               >
                 {roles.map((rol) => (
-                  <MenuItem key={rol.id} value={rol.id}>
-                    {rol.nombre}
+                  <MenuItem key={rol.id_rol} value={rol.id_rol}>
+                    {rol.nombre_rol}
                   </MenuItem>
                 ))}
               </TextField>
@@ -279,8 +296,8 @@ const NuevoUsuario = () => {
                 sx={{ gridColumn: "span 2" }}
               >
                 {estados.map((estado) => (
-                  <MenuItem key={estado.id} value={estado.id}>
-                    {estado.nombre}
+                  <MenuItem key={estado.id_estado} value={estado.id_estado}>
+                    {estado.nombre_estado}
                   </MenuItem>
                 ))}
               </TextField>
@@ -335,7 +352,6 @@ const checkoutSchema = yup.object().shape({
   id_estado: yup.string().required("Debe seleccionar un estado"),
 });
 
-// Valores iniciales del formulario
 const initialValues = {
   primer_nombre: "",
   segundo_nombre: "",

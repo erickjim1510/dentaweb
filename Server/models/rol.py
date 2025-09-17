@@ -7,10 +7,10 @@ class Rol(db.Model):
     id_rol = db.Column(db.Integer, primary_key=True)
     nombre_rol = db.Column(db.String(30))
 
-    usuarios = db.relationship("Usuario", backref="rol", lazy=True)
+    usuarios = db.relationship("Usuario", back_populates="rol")
 
     def to_dict(self):
-        return{
+        return {
             "id_rol": self.id_rol,
             "nombre_rol": self.nombre_rol
         }

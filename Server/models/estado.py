@@ -7,14 +7,13 @@ class Estado(db.Model):
     id_estado = db.Column(db.Integer, primary_key=True)
     nombre_estado = db.Column(db.String(30))
 
-    usuarios = db.relationship("Usuario", backref="estado", lazy=True)
+    usuarios = db.relationship("Usuario", back_populates="estado")
 
     def to_dict(self):
         return {
             "id_estado": self.id_estado,
             "nombre_estado": self.nombre_estado
         }
-    
 
 
 

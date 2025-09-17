@@ -1,10 +1,9 @@
-from flask_sqlalchemy import SQLAlchemy
-from datetime import date
 from db import db
+from datetime import date
 
 class Paciente(db.Model):
     __tablename__ = "pacientes"
-
+    
     id_paciente = db.Column(db.Integer, primary_key=True)
     id_sexo = db.Column(db.Integer, db.ForeignKey("sexos.id_sexo"), nullable=False)
     primer_nombre = db.Column(db.String(30))
@@ -18,8 +17,10 @@ class Paciente(db.Model):
     telefono = db.Column(db.String(15))
     email = db.Column(db.String(30))
     fecha_registro = db.Column(db.Date, default=date.today)
-
-    #Ver si hay que castear las fechas
+    
+    # Relación con Sexo
+    sexo = db.relationship('Sexo', back_populates='pacientes')
+    
     def to_dict(self):
         return {
             "id_paciente": self.id_paciente,
@@ -28,13 +29,12 @@ class Paciente(db.Model):
             "segundo_nombre": self.segundo_nombre,
             "apellido_paterno": self.apellido_paterno,
             "apellido_materno": self.apellido_materno,
-            "fecha_nacimiento": self.fecha_nacimiento,
+            "fecha_nacimiento": self.fecha_nacimiento.isoformat() if self.fecha_nacimiento else None,
             "lugar_nacimiento": self.lugar_nacimiento,
             "direccion": self.direccion,
             "ocupacion": self.ocupacion,
             "telefono": self.telefono,
             "email": self.email,
-            "fecha_registro": self.fecha_registro
+            "fecha_registro": self.fecha_registro.isoformat() if self.fecha_registro else None,
+            "nombre_sexo": self.sexo.nombre_sexo if self.sexo else None
         }
-    
-    

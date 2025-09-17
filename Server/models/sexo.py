@@ -1,4 +1,3 @@
-from flask_sqlalchemy import SQLAlchemy
 from db import db
 
 class Sexo(db.Model):
@@ -7,7 +6,8 @@ class Sexo(db.Model):
     id_sexo = db.Column(db.Integer, primary_key=True)
     nombre_sexo = db.Column(db.String(30))
 
-    pacientes = db.relationship("Paciente", backref="sexo", lazy=True)
+    # Relación con Paciente
+    pacientes = db.relationship("Paciente", back_populates="sexo")
 
     def to_dict(self):
         return {

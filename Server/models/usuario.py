@@ -5,7 +5,7 @@ from db import db
 
 class Usuario(db.Model):
     __tablename__ = "usuarios"
-
+    
     id_usuario = db.Column(db.Integer, primary_key=True)
     id_rol = db.Column(db.Integer, db.ForeignKey("roles.id_rol"), nullable=False)
     id_estado = db.Column(db.Integer, db.ForeignKey("estados.id_estado"), nullable=False)
@@ -20,7 +20,10 @@ class Usuario(db.Model):
     email = db.Column(db.String(30))
     fecha_registro = db.Column(db.Date, default=date.today)
     
-
+    # Relaciones
+    rol = db.relationship('Rol', back_populates='usuarios')
+    estado = db.relationship('Estado', back_populates='usuarios')
+    
     def to_dict(self, exclude_password=False):
         data = {
             "id_usuario": self.id_usuario,
@@ -34,13 +37,13 @@ class Usuario(db.Model):
             "nombre_usuario": self.nombre_usuario,
             "telefono": self.telefono,
             "email": self.email,
-            "fecha_registro": self.fecha_registro.isoformat() if self.fecha_registro else None
+            "fecha_registro": self.fecha_registro.isoformat() if self.fecha_registro else None,
+            "nombre_rol": self.rol.nombre_rol if self.rol else None,
+            "nombre_estado": self.estado.nombre_estado if self.estado else None
         }
         if not exclude_password:
             data["contrasena_hash"] = self.contrasena_hash
         return data
-
-    
+        
     def verificar_password(self, contrasena_hash):
         return self.contrasena_hash == contrasena_hash
-    

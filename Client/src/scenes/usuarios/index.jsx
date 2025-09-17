@@ -23,11 +23,15 @@ const ListaUsuarios = () => {
     const fetchUsuarios = async () => {
       try {
         const response = await api.get("/usuarios");
-        setUsuarios(response.data.data);
+        if (response.data.success) {
+          setUsuarios(response.data.data);
+        } else {
+          console.error("Error en la respuesta:", response.data.mensaje);
+        }
       } catch (error) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
+        console.log(error.response?.data);
+        console.log(error.response?.status);
+        console.log(error.response?.headers);
       }
     };
     fetchUsuarios();
@@ -36,12 +40,21 @@ const ListaUsuarios = () => {
   const handleEliminarUsuario = async (idUsuario) => {
     if (window.confirm("¿Está seguro de eliminar este usuario?")) {
       try {
-        await api.delete(`/usuarios/${idUsuario}`);
-        setUsuarios(
-          usuarios.filter((usuario) => usuario.idusuario !== idUsuario)
-        );
+        const response = await api.delete(`/usuarios`, {
+          data: { id_usuario: idUsuario },
+        });
+
+        if (response.data.success) {
+          setUsuarios(
+            usuarios.filter((usuario) => usuario.id_usuario !== idUsuario)
+          );
+          alert("Usuario eliminado exitosamente");
+        } else {
+          alert("Error al eliminar usuario: " + response.data.mensaje);
+        }
       } catch (error) {
         console.error("Error al eliminar usuario:", error);
+        alert("Error al eliminar usuario");
       }
     }
   };
@@ -74,6 +87,74 @@ const ListaUsuarios = () => {
       field: "telefono",
       headerName: "Teléfono",
       flex: 1,
+    },
+    {
+      field: "nombre_rol",
+      headerName: "Rol",
+      flex: 1,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            backgroundColor:
+              params.value === "Administrador"
+                ? "#e3f2fd"
+                : params.value === "Doctor"
+                ? "#f3e5f5"
+                : params.value === "Recepcionista"
+                ? "#e8f5e8"
+                : "#fff3e0",
+            color:
+              params.value === "Administrador"
+                ? "#1976d2"
+                : params.value === "Doctor"
+                ? "#7b1fa2"
+                : params.value === "Recepcionista"
+                ? "#388e3c"
+                : "#f57c00",
+            padding: "4px 8px",
+            borderRadius: "12px",
+            fontSize: "12px",
+            fontWeight: "600",
+            textAlign: "center",
+          }}
+        >
+          {params.value || "Sin rol"}
+        </Box>
+      ),
+    },
+    {
+      field: "nombre_estado",
+      headerName: "Estado",
+      flex: 1,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            backgroundColor:
+              params.value === "Activo"
+                ? "#e8f5e8"
+                : params.value === "Inactivo"
+                ? "#ffebee"
+                : params.value === "Suspendido"
+                ? "#fff3e0"
+                : "#f5f5f5",
+            color:
+              params.value === "Activo"
+                ? "#2e7d32"
+                : params.value === "Inactivo"
+                ? "#d32f2f"
+                : params.value === "Suspendido"
+                ? "#f57c00"
+                : "#666666",
+            padding: "4px 8px",
+            borderRadius: "12px",
+            fontSize: "12px",
+            fontWeight: "600",
+            textAlign: "center",
+          }}
+        >
+          {params.value || "Sin estado"}
+        </Box>
+      ),
     },
     {
       field: "actions",
@@ -188,6 +269,12 @@ const ListaUsuarios = () => {
           rows={usuarios}
           columns={columns}
           getRowId={(row) => row.id_usuario}
+          pageSizeOptions={[5, 10, 25]}
+          initialState={{
+            pagination: {
+              paginationModel: { page: 0, pageSize: 10 },
+            },
+          }}
         />
       </Box>
     </Box>

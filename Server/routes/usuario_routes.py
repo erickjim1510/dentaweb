@@ -29,13 +29,15 @@ def crear_usuario():
     return jsonify(resultado), status_code
 
 # Actualizar usuario
-@usuario_bp.route('/usuarios', methods=['PUT'])
-def actualizar_usuario():
+@usuario_bp.route('/usuarios/<int:id_usuario>', methods=['PUT'])
+def actualizar_usuario(id_usuario):
     data = request.get_json()
     if not data:
         return jsonify({'success': False, 'mensaje': 'No se enviaron datos'}), 400
     
-    resultado = UsuarioController.actualizar_usuario(id_usuario, data)
+    # Agregar el id_usuario al data para el controlador
+    data['id_usuario'] = id_usuario
+    resultado = UsuarioController.actualizar_usuario(data)
     status_code = 200 if resultado['success'] else 400
     return jsonify(resultado), status_code
 
