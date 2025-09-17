@@ -7,7 +7,7 @@ import ProtectedRoute from '../components/ProtectRoute';
 const DashboardDefault = Loadable(lazy(() => import('../scenes/dashboard')));
 
 const Usuarios = Loadable(lazy(() => import('../scenes/usuarios')));
-const NuevoUsuario = Loadable(lazy(() => import("../scenes/usuarios/NuevoUsuario")));
+const NuevoUsuario = Loadable(lazy(() => import("../scenes/usuarios/Nuevo")));
 
 const Pacientes = Loadable(lazy(() => import('../scenes/pacientes')));
 /*

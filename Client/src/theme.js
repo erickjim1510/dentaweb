@@ -127,7 +127,7 @@ export const themeSettings = (mode) => {
       mode: mode,
       ...(mode === "light"
         ? {
-            // palette values for dark mode
+            // palette values for light mode
             primary: {
               main: colors.primary[500],
             },
@@ -140,11 +140,14 @@ export const themeSettings = (mode) => {
               light: colors.grey[100],
             },
             background: {
-              default: colors.primary[500],
+              default: "#fdfdf7",
+            },
+            text: {
+              primary: colors.grey[900], // TEXTO NEGRO para modo light
             },
           }
         : {
-            // palette values for light mode
+            // palette values for dark mode
             primary: {
               main: colors.primary[100],
             },
@@ -159,7 +162,109 @@ export const themeSettings = (mode) => {
             background: {
               default: "#fcfcfc",
             },
+            text: {
+              primary: colors.grey[100], // TEXTO BLANCO para modo dark
+            },
           }),
+    },
+    components: {
+      // Estilos globales para TextFields
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            "& .MuiOutlinedInput-root": {
+              // Fondo blanco hueso para ambos modos
+              backgroundColor: mode === "light" ? "#fefefe" : "#fefefe",
+              color: "#000000 !important", // Texto negro forzado
+              borderRadius: "8px",
+              transition: "all 0.2s ease-in-out",
+              "& fieldset": {
+                borderColor: mode === "light" ? colors.grey[300] : colors.grey[400],
+                borderWidth: "1px",
+              },
+              "&:hover fieldset": {
+                borderColor: mode === "light" ? colors.grey[400] : colors.grey[500],
+              },
+              "&.Mui-focused fieldset": {
+                borderColor: colors.greenAccent[500],
+                borderWidth: "2px",
+              },
+              "&.Mui-focused": {
+                backgroundColor: "#ffffff", // Blanco puro al enfocar
+                boxShadow: mode === "light" 
+                  ? `0 0 0 3px ${colors.greenAccent[200]}40`  // Sombra verde suave
+                  : `0 0 0 3px ${colors.greenAccent[300]}50`, // Sombra verde suave
+              },
+            },
+            "& .MuiInputBase-input": {
+              color: "#000000 !important", // Texto negro forzado
+              "&::placeholder": {
+                color: colors.grey[500],
+                opacity: 0.7,
+              },
+            },
+            // Asegurar texto negro en todos los elementos de input
+            "& input": {
+              color: "#000000 !important",
+            },
+            "& textarea": {
+              color: "#000000 !important",
+            },
+            "& .MuiInputLabel-root": {
+              color: mode === "light" ? colors.grey[600] : colors.grey[700],
+              "&.Mui-focused": {
+                color: colors.greenAccent[600],
+                fontWeight: 500,
+              },
+            },
+            // Estilos para campos select
+            "& .MuiSelect-select": {
+              color: "#000000 !important", // Texto negro en selects
+            },
+            "& .MuiSelect-icon": {
+              color: colors.grey[600], // Icono de dropdown
+            },
+            // Estilos para helper text y errores
+            "& .MuiFormHelperText-root": {
+              marginLeft: "4px",
+              "&.Mui-error": {
+                color: colors.redAccent[500],
+              },
+            },
+          },
+        },
+      },
+      // Estilos para los MenuItems de los selects
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            backgroundColor: "#ffffff",
+            color: colors.grey[900],
+            "&:hover": {
+              backgroundColor: colors.greenAccent[100],
+            },
+            "&.Mui-selected": {
+              backgroundColor: colors.greenAccent[200],
+              color: colors.greenAccent[800],
+              "&:hover": {
+                backgroundColor: colors.greenAccent[300],
+              },
+            },
+          },
+        },
+      },
+      // Estilos para el Paper del dropdown
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            "&.MuiMenu-paper": {
+              backgroundColor: "#ffffff",
+              border: `1px solid ${colors.grey[300]}`,
+              boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+            },
+          },
+        },
+      },
     },
     typography: {
       fontFamily: ["Source Sans Pro", "sans-serif"].join(","),

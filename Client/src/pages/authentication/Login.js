@@ -27,8 +27,8 @@ const Login = () => {
 
         try {
             const response = await api.post("/usuarios/login", { 
-                Usuario: email, 
-                Password: contrasena_hash 
+                email: email, 
+                contrasena_hash: contrasena_hash 
             });
 
             if (response && response.data) {
