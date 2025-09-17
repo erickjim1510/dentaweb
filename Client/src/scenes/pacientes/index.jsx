@@ -12,45 +12,57 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import PersonIcon from "@mui/icons-material/Person";
 import Tooltip from "@mui/material/Tooltip";
 
-const ListaUsuarios = () => {
+const ListaPacientes = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
-  const [usuarios, setUsuarios] = useState([]);
+  const [pacientes, setPacientes] = useState([]);
 
   useEffect(() => {
-    const fetchUsuarios = async () => {
+    const fetchPacientes = async () => {
       try {
-        const response = await api.get("/usuarios");
-        setUsuarios(response.data.data);
+        const response = await api.get("/pacientes");
+        setPacientes(response.data.data);
       } catch (error) {
         console.log(error.response.data);
         console.log(error.response.status);
         console.log(error.response.headers);
       }
     };
-    fetchUsuarios();
+    fetchPacientes();
   }, []);
 
-  const handleEliminarUsuario = async (idUsuario) => {
-    if (window.confirm("¿Está seguro de eliminar este usuario?")) {
+  const handleEliminarPaciente = async (idPaciente) => {
+    if (window.confirm("¿Está seguro de eliminar este paciente?")) {
       try {
-        await api.delete(`/usuarios/${idUsuario}`);
-        setUsuarios(
-          usuarios.filter((usuario) => usuario.idusuario !== idUsuario)
+        await api.delete(`/pacientes/${idPaciente}`);
+        setPacientes(
+          pacientes.filter((paciente) => paciente.id_paciente !== idPaciente)
         );
       } catch (error) {
-        console.error("Error al eliminar usuario:", error);
+        console.error("Error al eliminar paciente:", error);
       }
     }
   };
 
+  const formatearFecha = (fecha) => {
+    if (!fecha) return "";
+    const fechaObj = new Date(fecha);
+    return fechaObj.toLocaleDateString("es-ES");
+  };
+
   const columns = [
-    { field: "id_usuario", headerName: "ID Usuario", width: 100 },
+    { field: "id_paciente", headerName: "ID Paciente", width: 100 },
     {
       field: "primer_nombre",
       headerName: "Primer Nombre",
+      flex: 1,
+      cellClassName: "name-column--cell",
+    },
+    {
+      field: "segundo_nombre",
+      headerName: "Segundo Nombre",
       flex: 1,
       cellClassName: "name-column--cell",
     },
@@ -60,20 +72,30 @@ const ListaUsuarios = () => {
       flex: 1,
     },
     {
-      field: "nombre_usuario",
-      headerName: "Usuario",
+      field: "apellido_materno",
+      headerName: "Ap. Materno",
       flex: 1,
-      cellClassName: "name-column--cell",
     },
     {
       field: "email",
       headerName: "Email",
-      flex: 1,
+      flex: 1.2,
     },
     {
       field: "telefono",
       headerName: "Teléfono",
-      flex: 1,
+      width: 120,
+    },
+    {
+      field: "fecha_nacimiento",
+      headerName: "Fecha Nacimiento",
+      width: 140,
+      renderCell: (params) => formatearFecha(params.value),
+    },
+    {
+      field: "ocupacion",
+      headerName: "Ocupación",
+      width: 120,
     },
     {
       field: "actions",
@@ -89,7 +111,7 @@ const ListaUsuarios = () => {
             </Tooltip>
           }
           label="Ver detalles"
-          onClick={() => navigate(`/usuario-detalle/${params.id}`)}
+          onClick={() => navigate(`/paciente-detalle/${params.id}`)}
         />,
         <GridActionsCellItem
           key="edit"
@@ -99,7 +121,7 @@ const ListaUsuarios = () => {
             </Tooltip>
           }
           label="Editar"
-          onClick={() => navigate(`/usuario-editar/${params.id}`)}
+          onClick={() => navigate(`/paciente-editar/${params.id}`)}
         />,
         <GridActionsCellItem
           key="delete"
@@ -109,7 +131,7 @@ const ListaUsuarios = () => {
             </Tooltip>
           }
           label="Eliminar"
-          onClick={() => handleEliminarUsuario(params.id)}
+          onClick={() => handleEliminarPaciente(params.id)}
         />,
       ],
     },
@@ -117,16 +139,16 @@ const ListaUsuarios = () => {
 
   return (
     <Box m="20px">
-      <Header title="Usuarios" subtitle="Lista de usuarios del sistema" />
+      <Header title="Pacientes" subtitle="Lista de pacientes del sistema" />
 
       <Box display="flex" justifyContent="end" mt="20px">
         <Button
           type="submit"
           color="secondary"
           variant="contained"
-          onClick={() => navigate("/usuario-nuevo")}
+          onClick={() => navigate("/paciente-nuevo")}
         >
-          Nuevo Usuario
+          Nuevo Paciente
         </Button>
       </Box>
 
@@ -182,16 +204,23 @@ const ListaUsuarios = () => {
           },
         }}
       >
-        {console.log("Datos de Usuarios: ", usuarios)}
+        {console.log("Datos de Pacientes: ", pacientes)}
 
         <DataGrid
-          rows={usuarios}
+          rows={pacientes}
           columns={columns}
-          getRowId={(row) => row.id_usuario}
+          getRowId={(row) => row.id_paciente}
+          initialState={{
+            pagination: {
+              paginationModel: { pageSize: 10 },
+            },
+          }}
+          pageSizeOptions={[5, 10, 25, 50]}
+          checkboxSelection={false}
         />
       </Box>
     </Box>
   );
 };
 
-export default ListaUsuarios;
+export default ListaPacientes;

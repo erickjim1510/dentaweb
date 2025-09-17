@@ -7,15 +7,18 @@ import ProtectedRoute from '../components/ProtectRoute';
 const DashboardDefault = Loadable(lazy(() => import('../scenes/dashboard')));
 
 const Usuarios = Loadable(lazy(() => import('../scenes/usuarios')));
+const NuevoUsuario = Loadable(lazy(() => import("../scenes/usuarios/NuevoUsuario")));
+
+const Pacientes = Loadable(lazy(() => import('../scenes/pacientes')));
+/*
 const Invoices = Loadable(lazy(() => import('../scenes/invoices')));
 const Contacts = Loadable(lazy(() => import('../scenes/contacts')));
 const Bar = Loadable(lazy(() => import('../scenes/bar')));
-const Form = Loadable(lazy(() => import('../scenes/form')));
 const Line = Loadable(lazy(() => import('../scenes/line')));
 const Pie = Loadable(lazy(() => import('../scenes/pie')));
 const FAQ = Loadable(lazy(() => import('../scenes/faq')));
 const Geography = Loadable(lazy(() => import('../scenes/geography')));
-const Calendar = Loadable(lazy(() => import('../scenes/calendar/calendar')));
+const Calendar = Loadable(lazy(() => import('../scenes/calendar/calendar')));*/
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -36,6 +39,14 @@ const MainRoutes = {
       element: <Usuarios />
     },
     {
+      path: 'usuario-nuevo',
+      element: <NuevoUsuario/>
+    },
+    {
+      path: 'pacientes',
+      element: <Pacientes />
+    },
+    /*{
       path: 'invoices',
       element: <Invoices />
     },
@@ -46,10 +57,6 @@ const MainRoutes = {
     {
       path: 'bar',
       element: <Bar />
-    },
-    {
-      path: 'form',
-      element: <Form />
     },
     {
       path: 'line',
@@ -70,7 +77,7 @@ const MainRoutes = {
     {
       path: 'calendar',
       element: <Calendar />
-    }
+    }*/
   ]
 };
 
