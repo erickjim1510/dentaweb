@@ -25,6 +25,8 @@ export const AuthProvider = ({ children }) => {
       primer_nombre: userData.primer_nombre,
       apellido_paterno: userData.apellido_paterno,
       email: userData.email,
+      id_rol: userData.id_rol,
+      nombre_rol: userData.nombre_rol,
     });
   };
 

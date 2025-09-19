@@ -134,24 +134,28 @@ const Sidebar = () => {
               setSelected={setSelected}
             />
 
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{
-                m: "15px 0 5px 20px",
-                fontSize: isCollapsed ? "0px" : "16px",
-              }}
-            >
-              {!isCollapsed && "Administración"}
-            </Typography>
+            {user?.nombre_rol === "Administrador" && (
+              <>
+                <Typography
+                  variant="h6"
+                  color={colors.grey[300]}
+                  sx={{
+                    m: "15px 0 5px 20px",
+                    fontSize: isCollapsed ? "0px" : "16px",
+                  }}
+                >
+                  {!isCollapsed && "Administración"}
+                </Typography>
 
-            <Item
-              title="Usuarios"
-              to="/usuarios"
-              icon={<PeopleOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
-            />
+                <Item
+                  title="Usuarios"
+                  to="/usuarios"
+                  icon={<PeopleOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+              </>
+            )}
 
             <Typography
               variant="h6"

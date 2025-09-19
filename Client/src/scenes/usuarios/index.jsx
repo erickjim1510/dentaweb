@@ -1,4 +1,11 @@
-import { Button, Box, Typography, useTheme } from "@mui/material";
+import {
+  Button,
+  Box,
+  Typography,
+  useTheme,
+  TextField,
+  InputAdornment,
+} from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridRowId } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
@@ -6,10 +13,10 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import { useEffect, useState } from "react";
 
-import InfoIcon from "@mui/icons-material/Info";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PersonIcon from "@mui/icons-material/Person";
+import SearchIcon from "@mui/icons-material/Search";
 import Tooltip from "@mui/material/Tooltip";
 
 const ListaUsuarios = () => {
@@ -18,6 +25,8 @@ const ListaUsuarios = () => {
   const navigate = useNavigate();
 
   const [usuarios, setUsuarios] = useState([]);
+  const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
 
   useEffect(() => {
     const fetchUsuarios = async () => {
@@ -25,6 +34,7 @@ const ListaUsuarios = () => {
         const response = await api.get("/usuarios");
         if (response.data.success) {
           setUsuarios(response.data.data);
+          setUsuariosFiltrados(response.data.data);
         } else {
           console.error("Error en la respuesta:", response.data.mensaje);
         }
@@ -36,6 +46,29 @@ const ListaUsuarios = () => {
     };
     fetchUsuarios();
   }, []);
+
+  useEffect(() => {
+    const filtrar = () => {
+      if (!busqueda.trim()) {
+        setUsuariosFiltrados(usuarios);
+        return;
+      }
+
+      const usuariosFiltrados = usuarios.filter(
+        (usuario) =>
+          usuario.primer_nombre
+            ?.toLowerCase()
+            .includes(busqueda.toLowerCase()) ||
+          usuario.nombre_usuario
+            ?.toLowerCase()
+            .includes(busqueda.toLowerCase()) ||
+          usuario.email?.toLowerCase().includes(busqueda.toLowerCase())
+      );
+      setUsuariosFiltrados(usuariosFiltrados);
+    };
+
+    filtrar();
+  }, [busqueda, usuarios]);
 
   const handleEliminarUsuario = async (idUsuario) => {
     if (window.confirm("¿Está seguro de eliminar este usuario?")) {
@@ -57,6 +90,10 @@ const ListaUsuarios = () => {
         alert("Error al eliminar usuario");
       }
     }
+  };
+
+  const handleEditarUsuario = (idUsuario) => {
+    navigate(`/usuario-editar/${idUsuario}`);
   };
 
   const columns = [
@@ -97,17 +134,17 @@ const ListaUsuarios = () => {
           sx={{
             backgroundColor:
               params.value === "Administrador"
-                ? "#e3f2fd"
-                : params.value === "Doctor"
                 ? "#f3e5f5"
+                : params.value === "Doctor"
+                ? "#e3f2fd"
                 : params.value === "Recepcionista"
                 ? "#e8f5e8"
                 : "#fff3e0",
             color:
               params.value === "Administrador"
-                ? "#1976d2"
-                : params.value === "Doctor"
                 ? "#7b1fa2"
+                : params.value === "Doctor"
+                ? "#1976d2"
                 : params.value === "Recepcionista"
                 ? "#388e3c"
                 : "#f57c00",
@@ -134,16 +171,12 @@ const ListaUsuarios = () => {
                 ? "#e8f5e8"
                 : params.value === "Inactivo"
                 ? "#ffebee"
-                : params.value === "Suspendido"
-                ? "#fff3e0"
                 : "#f5f5f5",
             color:
               params.value === "Activo"
                 ? "#2e7d32"
                 : params.value === "Inactivo"
                 ? "#d32f2f"
-                : params.value === "Suspendido"
-                ? "#f57c00"
                 : "#666666",
             padding: "4px 8px",
             borderRadius: "12px",
@@ -163,24 +196,14 @@ const ListaUsuarios = () => {
       width: 150,
       getActions: (params) => [
         <GridActionsCellItem
-          key="info"
+          key="view-edit"
           icon={
-            <Tooltip title="Ver detalles">
-              <InfoIcon />
-            </Tooltip>
-          }
-          label="Ver detalles"
-          onClick={() => navigate(`/usuario-detalle/${params.id}`)}
-        />,
-        <GridActionsCellItem
-          key="edit"
-          icon={
-            <Tooltip title="Editar">
+            <Tooltip title="Ver y Editar">
               <EditIcon />
             </Tooltip>
           }
-          label="Editar"
-          onClick={() => navigate(`/usuario-editar/${params.id}`)}
+          label="Ver y Editar"
+          onClick={() => handleEditarUsuario(params.id)}
         />,
         <GridActionsCellItem
           key="delete"
@@ -200,7 +223,32 @@ const ListaUsuarios = () => {
     <Box m="20px">
       <Header title="Usuarios" subtitle="Lista de usuarios del sistema" />
 
-      <Box display="flex" justifyContent="end" mt="20px">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mt="20px"
+        gap={2}
+      >
+        <TextField
+          placeholder="Buscar por Nombre, Usuario, o Email"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          sx={{
+            minWidth: "400px",
+            "& .MuiOutlinedInput-root": {
+              backgroundColor: "white",
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+
         <Button
           type="submit"
           color="secondary"
@@ -263,10 +311,8 @@ const ListaUsuarios = () => {
           },
         }}
       >
-        {console.log("Datos de Usuarios: ", usuarios)}
-
         <DataGrid
-          rows={usuarios}
+          rows={usuariosFiltrados}
           columns={columns}
           getRowId={(row) => row.id_usuario}
           pageSizeOptions={[5, 10, 25]}

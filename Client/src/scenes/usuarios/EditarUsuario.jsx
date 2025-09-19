@@ -13,26 +13,28 @@ import { useTheme } from "@mui/material";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../../services/api.js";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const NuevoUsuario = () => {
+const EditarUsuario = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const navigate = useNavigate();
+  const { id } = useParams();
   const [showPassword, setShowPassword] = useState(false);
 
   const [roles, setRoles] = useState([]);
   const [estados, setEstados] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [usuarioData, setUsuarioData] = useState(null);
 
   useEffect(() => {
-    cargarOpcionesSelect();
-  }, []);
+    cargarDatos();
+  }, [id]);
 
-  const cargarOpcionesSelect = async () => {
+  const cargarDatos = async () => {
     try {
       setLoading(true);
 
@@ -45,37 +47,38 @@ const NuevoUsuario = () => {
       if (estadosResponse.data.success) {
         setEstados(estadosResponse.data.data);
       }
+
+      const usuarioResponse = await api.get(`/usuarios/${id}`);
+      if (usuarioResponse.data.success) {
+        setUsuarioData(usuarioResponse.data.data);
+      } else {
+        alert("Usuario no encontrado");
+        navigate("/usuarios");
+      }
     } catch (error) {
-      console.error("Error al cargar opciones:", error);
-      alert("Error al cargar las opciones. Por favor, recarga la página.");
+      console.error("Error al cargar datos:", error);
+      alert("Error al cargar los datos. Por favor, recarga la página.");
     } finally {
       setLoading(false);
     }
   };
 
-  const handleFormSubmit = async (
-    values,
-    { setSubmitting, setFieldError, resetForm }
-  ) => {
+  const handleFormSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await api.post("/usuarios", values);
+      const response = await api.put(`/usuarios/${id}`, values);
 
       if (response.data && response.data.success) {
-        alert("Usuario creado exitosamente");
-        resetForm();
-
-        setTimeout(() => {
-          navigate("/usuarios");
-        }, 1000);
+        alert("Usuario actualizado exitosamente");
+        navigate("/usuarios");
       }
     } catch (error) {
-      console.error("Error al crear usuario:", error);
+      console.error("Error al actualizar usuario:", error);
 
       if (error.response && error.response.data) {
         if (error.response.data.mensaje) {
           alert(error.response.data.mensaje);
         } else {
-          alert("Error al crear el usuario");
+          alert("Error al actualizar el usuario");
         }
       } else {
         alert("Error de conexión con el servidor");
@@ -104,10 +107,18 @@ const NuevoUsuario = () => {
   if (loading) {
     return (
       <Box m="20px">
-        <Header title="CREAR USUARIO" subtitle="Cargando formulario..." />
+        <Header title="EDITAR USUARIO" subtitle="Cargando datos..." />
         <Box display="flex" justifyContent="center" mt="50px">
-          <p>Cargando opciones...</p>
+          <p>Cargando...</p>
         </Box>
+      </Box>
+    );
+  }
+
+  if (!usuarioData) {
+    return (
+      <Box m="20px">
+        <Header title="ERROR" subtitle="Usuario no encontrado" />
       </Box>
     );
   }
@@ -115,14 +126,27 @@ const NuevoUsuario = () => {
   return (
     <Box m="20px">
       <Header
-        title="CREAR USUARIO"
-        subtitle="Crear un Nuevo Perfil de Usuario"
+        title="EDITAR USUARIO"
+        subtitle="Visualizar y Editar Perfil de Usuario"
       />
 
       <Formik
         onSubmit={handleFormSubmit}
-        initialValues={initialValues}
-        validationSchema={checkoutSchema}
+        initialValues={{
+          primer_nombre: usuarioData.primer_nombre || "",
+          segundo_nombre: usuarioData.segundo_nombre || "",
+          apellido_paterno: usuarioData.apellido_paterno || "",
+          apellido_materno: usuarioData.apellido_materno || "",
+          email: usuarioData.email || "",
+          telefono: usuarioData.telefono || "",
+          nombre_usuario: usuarioData.nombre_usuario || "",
+          fecha_nacimiento: usuarioData.fecha_nacimiento || "",
+          contrasena_hash: "",
+          id_rol: usuarioData.id_rol || "",
+          id_estado: usuarioData.id_estado || "",
+        }}
+        validationSchema={editSchema}
+        enableReinitialize
       >
         {({
           values,
@@ -259,7 +283,7 @@ const NuevoUsuario = () => {
                 fullWidth
                 variant="outlined"
                 type={showPassword ? "text" : "password"}
-                label="Contraseña"
+                label="Contraseña (dejar vacío para mantener actual)"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.contrasena_hash}
@@ -331,7 +355,7 @@ const NuevoUsuario = () => {
               <Button
                 color="secondary"
                 variant="outlined"
-                onClick={() => navigate(-1)}
+                onClick={() => navigate("/usuarios")}
               >
                 Cancelar
               </Button>
@@ -341,7 +365,7 @@ const NuevoUsuario = () => {
                 variant="contained"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Creando..." : "Crear Usuario"}
+                {isSubmitting ? "Actualizando..." : "Actualizar Usuario"}
               </Button>
             </Box>
           </form>
@@ -356,7 +380,7 @@ const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const mayoredad = new Date();
 mayoredad.setFullYear(mayoredad.getFullYear() - 18);
 
-const checkoutSchema = yup.object().shape({
+const editSchema = yup.object().shape({
   primer_nombre: yup
     .string()
     .matches(/^[A-Z\s]+$/, "Solo se permiten letras mayúsculas")
@@ -391,24 +415,9 @@ const checkoutSchema = yup.object().shape({
     .required("La fecha de nacimiento es requerida"),
   contrasena_hash: yup
     .string()
-    .min(6, "La contraseña debe tener al menos 6 caracteres")
-    .required("La contraseña es requerida"),
+    .min(6, "La contraseña debe tener al menos 6 caracteres"),
   id_rol: yup.string().required("Debe seleccionar un rol"),
   id_estado: yup.string().required("Debe seleccionar un estado"),
 });
 
-const initialValues = {
-  primer_nombre: "",
-  segundo_nombre: "",
-  apellido_paterno: "",
-  apellido_materno: "",
-  email: "",
-  telefono: "",
-  nombre_usuario: "",
-  fecha_nacimiento: "",
-  contrasena_hash: "",
-  id_rol: "",
-  id_estado: "",
-};
-
-export default NuevoUsuario;
+export default EditarUsuario;

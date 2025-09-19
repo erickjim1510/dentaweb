@@ -3,6 +3,7 @@ import { lazy } from 'react';
 import Loadable from '../components/Loadable';
 import MainLayout from '../layout/MainLayout';
 import ProtectedRoute from '../components/ProtectRoute';
+import EditarUsuario from '../scenes/usuarios/EditarUsuario';
 
 const DashboardDefault = Loadable(lazy(() => import('../scenes/dashboard')));
 
@@ -41,6 +42,10 @@ const MainRoutes = {
     {
       path: 'usuario-nuevo',
       element: <NuevoUsuario/>
+    },
+    {
+      path: 'usuario-editar/:id',
+      element: <EditarUsuario/>
     },
     {
       path: 'pacientes',
