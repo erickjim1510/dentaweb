@@ -1,4 +1,11 @@
-import { Button, Box, Typography, useTheme } from "@mui/material";
+import {
+  Button,
+  Box,
+  Typography,
+  useTheme,
+  TextField,
+  InputAdornment,
+} from "@mui/material";
 import { DataGrid, GridActionsCellItem, GridRowId } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
@@ -6,10 +13,10 @@ import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import { useEffect, useState } from "react";
 
-import InfoIcon from "@mui/icons-material/Info";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PersonIcon from "@mui/icons-material/Person";
+import SearchIcon from "@mui/icons-material/Search";
 import Tooltip from "@mui/material/Tooltip";
 
 const ListaPacientes = () => {
@@ -18,51 +25,83 @@ const ListaPacientes = () => {
   const navigate = useNavigate();
 
   const [pacientes, setPacientes] = useState([]);
+  const [pacientesFiltrados, setPacientesFiltrados] = useState([]);
+  const [busqueda, setBusqueda] = useState("");
 
   useEffect(() => {
     const fetchPacientes = async () => {
       try {
         const response = await api.get("/pacientes");
-        setPacientes(response.data.data);
+        if (response.data.success) {
+          setPacientes(response.data.data);
+          setPacientesFiltrados(response.data.data);
+        } else {
+          console.error("Error en la respuesta:", response.data.mensaje);
+        }
       } catch (error) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
+        console.log(error.response?.data);
+        console.log(error.response?.status);
+        console.log(error.response?.headers);
       }
     };
     fetchPacientes();
   }, []);
 
+  useEffect(() => {
+    const filtrar = () => {
+      if (!busqueda.trim()) {
+        setPacientesFiltrados(pacientes);
+        return;
+      }
+
+      const pacientesFiltrados = pacientes.filter(
+        (paciente) =>
+          paciente.primer_nombre
+            ?.toLowerCase()
+            .includes(busqueda.toLowerCase()) ||
+          paciente.apellido_paterno
+            ?.toLowerCase()
+            .includes(busqueda.toLowerCase()) ||
+          paciente.telefono?.toLowerCase().includes(busqueda.toLowerCase()) ||
+          paciente.email?.toLowerCase().includes(busqueda.toLowerCase())
+      );
+      setPacientesFiltrados(pacientesFiltrados);
+    };
+
+    filtrar();
+  }, [busqueda, pacientes]);
+
   const handleEliminarPaciente = async (idPaciente) => {
     if (window.confirm("¿Está seguro de eliminar este paciente?")) {
       try {
-        await api.delete(`/pacientes/${idPaciente}`);
-        setPacientes(
-          pacientes.filter((paciente) => paciente.id_paciente !== idPaciente)
-        );
+        const response = await api.delete(`/pacientes`, {
+          data: { id_paciente: idPaciente },
+        });
+
+        if (response.data.success) {
+          setPacientes(
+            pacientes.filter((paciente) => paciente.id_paciente !== idPaciente)
+          );
+          alert("Paciente eliminado exitosamente");
+        } else {
+          alert("Error al eliminar paciente: " + response.data.mensaje);
+        }
       } catch (error) {
         console.error("Error al eliminar paciente:", error);
+        alert("Error al eliminar paciente");
       }
     }
   };
 
-  const formatearFecha = (fecha) => {
-    if (!fecha) return "";
-    const fechaObj = new Date(fecha);
-    return fechaObj.toLocaleDateString("es-ES");
+  const handleEditarPaciente = (idPaciente) => {
+    navigate(`/paciente-editar/${idPaciente}`);
   };
 
   const columns = [
-    { field: "id_paciente", headerName: "ID Paciente", width: 100 },
+    { field: "id_paciente", headerName: "ID", width: 80 },
     {
       field: "primer_nombre",
       headerName: "Primer Nombre",
-      flex: 1,
-      cellClassName: "name-column--cell",
-    },
-    {
-      field: "segundo_nombre",
-      headerName: "Segundo Nombre",
       flex: 1,
       cellClassName: "name-column--cell",
     },
@@ -77,25 +116,68 @@ const ListaPacientes = () => {
       flex: 1,
     },
     {
-      field: "email",
-      headerName: "Email",
-      flex: 1.2,
+      field: "fecha_nacimiento",
+      headerName: "Fecha Nac.",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.value) {
+          const fecha = new Date(params.value);
+          return fecha.toLocaleDateString("es-MX");
+        }
+        return "N/A";
+      },
     },
     {
       field: "telefono",
       headerName: "Teléfono",
-      width: 120,
+      flex: 1,
     },
     {
-      field: "fecha_nacimiento",
-      headerName: "Fecha Nacimiento",
-      width: 140,
-      renderCell: (params) => formatearFecha(params.value),
+      field: "email",
+      headerName: "Email",
+      flex: 1,
     },
     {
-      field: "ocupacion",
-      headerName: "Ocupación",
-      width: 120,
+      field: "nombre_sexo",
+      headerName: "Sexo",
+      flex: 1,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            backgroundColor:
+              params.value === "Masculino"
+                ? "#e3f2fd"
+                : params.value === "Femenino"
+                ? "#fce4ec"
+                : "#f5f5f5",
+            color:
+              params.value === "Masculino"
+                ? "#1976d2"
+                : params.value === "Femenino"
+                ? "#c2185b"
+                : "#666666",
+            padding: "4px 8px",
+            borderRadius: "12px",
+            fontSize: "12px",
+            fontWeight: "600",
+            textAlign: "center",
+          }}
+        >
+          {params.value || "N/A"}
+        </Box>
+      ),
+    },
+    {
+      field: "fecha_registro",
+      headerName: "Fecha Registro",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.value) {
+          const fecha = new Date(params.value);
+          return fecha.toLocaleDateString("es-MX");
+        }
+        return "N/A";
+      },
     },
     {
       field: "actions",
@@ -104,24 +186,14 @@ const ListaPacientes = () => {
       width: 150,
       getActions: (params) => [
         <GridActionsCellItem
-          key="info"
+          key="view-edit"
           icon={
-            <Tooltip title="Ver detalles">
-              <InfoIcon />
-            </Tooltip>
-          }
-          label="Ver detalles"
-          onClick={() => navigate(`/paciente-detalle/${params.id}`)}
-        />,
-        <GridActionsCellItem
-          key="edit"
-          icon={
-            <Tooltip title="Editar">
+            <Tooltip title="Ver y Editar">
               <EditIcon />
             </Tooltip>
           }
-          label="Editar"
-          onClick={() => navigate(`/paciente-editar/${params.id}`)}
+          label="Ver y Editar"
+          onClick={() => handleEditarPaciente(params.id)}
         />,
         <GridActionsCellItem
           key="delete"
@@ -139,9 +211,34 @@ const ListaPacientes = () => {
 
   return (
     <Box m="20px">
-      <Header title="Pacientes" subtitle="Lista de pacientes del sistema" />
+      <Header title="Pacientes" subtitle="Lista de pacientes registrados" />
 
-      <Box display="flex" justifyContent="end" mt="20px">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mt="20px"
+        gap={2}
+      >
+        <TextField
+          placeholder="Buscar por Nombre, Apellido, Teléfono o Email"
+          value={busqueda}
+          onChange={(e) => setBusqueda(e.target.value)}
+          sx={{
+            minWidth: "400px",
+            "& .MuiOutlinedInput-root": {
+              backgroundColor: "white",
+            },
+          }}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+
         <Button
           type="submit"
           color="secondary"
@@ -204,19 +301,16 @@ const ListaPacientes = () => {
           },
         }}
       >
-        {console.log("Datos de Pacientes: ", pacientes)}
-
         <DataGrid
-          rows={pacientes}
+          rows={pacientesFiltrados}
           columns={columns}
           getRowId={(row) => row.id_paciente}
+          pageSizeOptions={[5, 10, 25]}
           initialState={{
             pagination: {
-              paginationModel: { pageSize: 10 },
+              paginationModel: { page: 0, pageSize: 10 },
             },
           }}
-          pageSizeOptions={[5, 10, 25, 50]}
-          checkboxSelection={false}
         />
       </Box>
     </Box>

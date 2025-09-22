@@ -4,6 +4,7 @@ import Loadable from '../components/Loadable';
 import MainLayout from '../layout/MainLayout';
 import ProtectedRoute from '../components/ProtectRoute';
 import EditarUsuario from '../scenes/usuarios/EditarUsuario';
+import EditarPaciente from '../scenes/pacientes/EditarPaciente';
 
 const DashboardDefault = Loadable(lazy(() => import('../scenes/dashboard')));
 
@@ -11,6 +12,7 @@ const Usuarios = Loadable(lazy(() => import('../scenes/usuarios')));
 const NuevoUsuario = Loadable(lazy(() => import("../scenes/usuarios/Nuevo")));
 
 const Pacientes = Loadable(lazy(() => import('../scenes/pacientes')));
+const NuevoPaciente = Loadable(lazy(() => import('../scenes/pacientes/NuevoPaciente')));
 /*
 const Invoices = Loadable(lazy(() => import('../scenes/invoices')));
 const Contacts = Loadable(lazy(() => import('../scenes/contacts')));
@@ -50,6 +52,14 @@ const MainRoutes = {
     {
       path: 'pacientes',
       element: <Pacientes />
+    },
+    {
+      path: 'paciente-nuevo',
+      element: <NuevoPaciente/>
+    },
+    {
+      path: 'paciente-editar/:id',
+      element: <EditarPaciente/>
     },
     /*{
       path: 'invoices',
