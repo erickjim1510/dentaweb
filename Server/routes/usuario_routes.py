@@ -70,3 +70,5 @@ def login():
         return jsonify(resultado['data']), 200
     else:
         return jsonify({'mensaje': resultado['mensaje']}), 401
+    
+    #usuario_routes
