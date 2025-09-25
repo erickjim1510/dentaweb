@@ -141,7 +141,7 @@ const EditarUsuario = () => {
           telefono: usuarioData.telefono || "",
           nombre_usuario: usuarioData.nombre_usuario || "",
           fecha_nacimiento: usuarioData.fecha_nacimiento || "",
-          contrasena_hash: "",
+          contrasena_hash: usuarioData.contrasena_hash,
           id_rol: usuarioData.id_rol || "",
           id_estado: usuarioData.id_estado || "",
         }}

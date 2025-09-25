@@ -27,7 +27,8 @@ const Login = () => {
     const loginAction = async (e) => {
         e.preventDefault();
 
-        //
+        //Funcion para hacer login , tambien manda los datos al contexto para 
+        //Manejarlos despues y te navega al dashboard sino te manda error 
         try {
             const response = await api.post("/usuarios/login", { 
                 email: email, 

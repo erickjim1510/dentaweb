@@ -18,6 +18,7 @@ const Dashboard = () => {
   const colors = tokens(theme.palette.mode);
   const [currentSlide, setCurrentSlide] = useState(0);
 
+  //Carrusle de Imagenes
   const carouselImages = [
     {
       src: img1,

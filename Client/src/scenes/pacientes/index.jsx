@@ -24,10 +24,12 @@ const ListaPacientes = () => {
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
+  //Inicializacion de estados
   const [pacientesFiltrados, setPacientesFiltrados] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [loading, setLoading] = useState(false);
 
+  //Funcion para buscar pacientes y pasarlos a PacientesFiltrados
   const buscarPacientes = async (termino) => {
     if (!termino.trim()) {
       setPacientesFiltrados([]);
@@ -62,6 +64,8 @@ const ListaPacientes = () => {
     return () => clearTimeout(timer);
   }, [busqueda]);
 
+  //Handle para eliminar pacinete, solo aparece una alerta para confirmar la
+  //eliminacion sino da error
   const handleEliminarPaciente = async (idPaciente) => {
     if (window.confirm("¿Está seguro de eliminar este paciente?")) {
       try {
@@ -86,6 +90,7 @@ const ListaPacientes = () => {
     }
   };
 
+  //Handle para editar paciente, te dirige al siguiente componente
   const handleEditarPaciente = (idPaciente) => {
     navigate(`/paciente-editar/${idPaciente}`);
   };
