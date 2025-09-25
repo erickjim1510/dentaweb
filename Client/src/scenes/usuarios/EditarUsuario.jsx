@@ -277,7 +277,7 @@ const EditarUsuario = () => {
                 error={!!touched.fecha_nacimiento && !!errors.fecha_nacimiento}
                 helperText={touched.fecha_nacimiento && errors.fecha_nacimiento}
                 sx={{ gridColumn: "span 2" }}
-                InputProps={{ readOnly: true }}
+                // InputProps={{ readOnly: true }}
               />
 
               <TextField

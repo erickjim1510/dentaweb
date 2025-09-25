@@ -233,13 +233,15 @@ const EditarPaciente = () => {
                 variant="outlined"
                 type="date"
                 label="Fecha de Nacimiento"
+                onBlur={handleBlur}
+                onChange={handleChange}
                 InputLabelProps={{ shrink: true }}
                 value={values.fecha_nacimiento}
                 name="fecha_nacimiento"
                 error={!!touched.fecha_nacimiento && !!errors.fecha_nacimiento}
                 helperText={touched.fecha_nacimiento && errors.fecha_nacimiento}
                 sx={{ gridColumn: "span 2" }}
-                InputProps={{ readOnly: true }}
+                //InputProps={{ readOnly: true }}
               />
 
               <TextField
@@ -339,6 +341,8 @@ const EditarPaciente = () => {
 
 const phoneRegExp = /^[0-9]{10,15}$/;
 const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const mayoredad = new Date();
+mayoredad.setFullYear(mayoredad.getFullYear() - 18);
 
 const editSchema = yup.object().shape({
   id_sexo: yup.string().required("Debe seleccionar un sexo"),
@@ -358,7 +362,7 @@ const editSchema = yup.object().shape({
     .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
   fecha_nacimiento: yup
     .date()
-    .max(new Date(), "La fecha no puede ser futura")
+    .max(mayoredad, "El usuario debe ser mayor de 18 años")
     .required("La fecha de nacimiento es requerida"),
   lugar_nacimiento: yup
     .string()
