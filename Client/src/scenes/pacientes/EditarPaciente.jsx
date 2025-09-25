@@ -341,8 +341,10 @@ const EditarPaciente = () => {
 
 const phoneRegExp = /^[0-9]{10,15}$/;
 const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const mayoredad = new Date();
-mayoredad.setFullYear(mayoredad.getFullYear() - 18);
+const fechaMinima = new Date();
+fechaMinima.setFullYear(fechaMinima.getFullYear() - 100);
+const fechaMaxima = new Date();
+fechaMaxima.setFullYear(fechaMaxima.getFullYear() - 1);
 
 const editSchema = yup.object().shape({
   id_sexo: yup.string().required("Debe seleccionar un sexo"),
@@ -362,7 +364,8 @@ const editSchema = yup.object().shape({
     .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
   fecha_nacimiento: yup
     .date()
-    .max(mayoredad, "El usuario debe ser mayor de 18 años")
+    .min(fechaMinima, "La edad no puede ser mayor a 100 años")
+    .max(fechaMaxima, "El paciente debe tener al menos 1 año")
     .required("La fecha de nacimiento es requerida"),
   lugar_nacimiento: yup
     .string()
