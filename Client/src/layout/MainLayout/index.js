@@ -6,6 +6,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { Navigate } from "react-router-dom";
 
 // ==============================|| Main LAYOUT ||============================== //
+// Pagina home o main, es decir que es la base para todas las siguientes paginas que este contenga
 const MainLayout = () => {   
   const [isSidebar, setIsSidebar] = useState(true);
   const { isAuthenticated, user } = useContext(AuthContext);

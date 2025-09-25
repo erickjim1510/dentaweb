@@ -55,7 +55,7 @@ const EditarPaciente = () => {
         ...values,
       };
 
-      const response = await api.put("/pacientes", dataToSend);
+      const response = await api.put(`/pacientes/${id}`, values);
 
       if (response.data && response.data.success) {
         alert("Paciente actualizado exitosamente");

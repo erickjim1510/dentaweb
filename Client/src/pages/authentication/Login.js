@@ -7,6 +7,8 @@ import { AuthContext } from '../../context/AuthContext.jsx';
 import api from '../../services/api.js';
 
 const Login = () => {
+    // Variables iniciales para navegar, darle estado al email y contraseña
+    // validacion de errores, y pasar los datos al contexto para despues 
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [contrasena_hash, setContrasena_hash] = useState('');
@@ -25,6 +27,7 @@ const Login = () => {
     const loginAction = async (e) => {
         e.preventDefault();
 
+        //
         try {
             const response = await api.post("/usuarios/login", { 
                 email: email, 

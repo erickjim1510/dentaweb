@@ -1,5 +1,8 @@
 import { createContext, useState, useEffect } from "react";
 
+// CONTEXTO - Este componente nos ayuda a pasar los datos
+// del usuario loggeado
+
 export const AuthContext = createContext();
 
 const getInitialState = () => {
