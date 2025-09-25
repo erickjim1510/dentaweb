@@ -214,7 +214,7 @@ const ListaPacientes = () => {
         gap={2}
       >
         <TextField
-          placeholder="Buscar por Nombre, Apellido, Teléfono o Email"
+          placeholder="Buscar por Nombre, Apellido o Email"
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
           sx={{

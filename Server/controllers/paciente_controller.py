@@ -31,6 +31,7 @@ class PacienteController:
                     'mensaje': 'Sin resultados'
                 }
             
+            # Convertir a mayúsculas para la búsqueda (asumiendo que se guardan en mayúsculas)
             termino_upper = f"%{termino.upper()}%"
             
             pacientes = Paciente.query.join(Sexo).filter(
@@ -87,6 +88,7 @@ class PacienteController:
                 if not data.get(campo):
                     return {'success': False, 'mensaje': f'El campo {campo} es requerido'}
 
+            # Verificar duplicados
             paciente_existente = Paciente.query.filter_by(telefono=data['telefono']).first()
             if paciente_existente:
                 return {'success': False, 'mensaje': 'El teléfono ya está registrado'}
@@ -138,16 +140,14 @@ class PacienteController:
             if not paciente:
                 return {'success': False, 'mensaje': 'Paciente no encontrado'}
             
+            # Verificar duplicados (excluyendo el paciente actual)
             if 'telefono' in data:
                 paciente_existente = Paciente.query.filter(
                     Paciente.telefono == data['telefono'],
                     Paciente.id_paciente != id_paciente
                 ).first()
                 if paciente_existente:
-
-
-                    return {'success': False, 'mensaje': 'Ya existe un paciente con este teléfono'}
-
+                    return {'success': False, 'mensaje': 'El teléfono ya está en uso'}
             
             if 'email' in data:
                 paciente_existente = Paciente.query.filter(
@@ -157,6 +157,7 @@ class PacienteController:
                 if paciente_existente:
                     return {'success': False, 'mensaje': 'El email ya está en uso'}
 
+            # Campos editables
             campos_editables = [
                 "id_sexo", "primer_nombre", "segundo_nombre", "apellido_paterno", 
                 "apellido_materno", "fecha_nacimiento", "lugar_nacimiento", 
