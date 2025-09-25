@@ -53,11 +53,11 @@ class PacienteController:
 
             paciente_existente = Paciente.query.filter_by(telefono=data['telefono']).first()
             if paciente_existente:
-                return {'success': False, 'mensaje': 'Ya existe un paciente con este telefono'}
+                return {'success': False, 'mensaje': 'El teléfono ya está en uso'}
             
             paciente_existente = Paciente.query.filter_by(email=data['email']).first()
             if paciente_existente:
-                return {'success': False, 'mensaje': 'Ya existe un paciente con este email'}
+                return {'success': False, 'mensaje': 'El email ya está en uso'}
 
             nuevo_paciente = Paciente(
                 id_sexo=data["id_sexo"],

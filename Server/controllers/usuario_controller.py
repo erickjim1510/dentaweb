@@ -56,15 +56,15 @@ class UsuarioController:
 
             usuario_existente = Usuario.query.filter_by(nombre_usuario=data['nombre_usuario']).first()
             if usuario_existente:
-                return {'success': False, 'mensaje': 'Ya existe un usuario con este nombre de usuario'}
+                return {'success': False, 'mensaje': 'El nombre de usuario ya está registrado'}
 
             usuario_existente = Usuario.query.filter_by(telefono=data['telefono']).first()
             if usuario_existente:
-                return {'success': False, 'mensaje': 'Ya existe un usuario con este telefono'}
+                return {'success': False, 'mensaje': ''}
             
             usuario_existente = Usuario.query.filter_by(email=data['email']).first()
             if usuario_existente:
-                return {'success': False, 'mensaje': 'Ya existe un usuario con este email'}
+                return {'success': False, 'mensaje': 'El email ya está en uso'}
 
             # Verificar que el rol existe
             rol = Rol.query.get(data['id_rol'])
