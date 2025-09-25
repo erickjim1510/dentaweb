@@ -70,9 +70,9 @@ const NuevoPaciente = () => {
     }
   };
 
-  const handleUpperCaseChange = (e, handleChange) => {
+  const handleUpperCaseChange = (e, handleChange, maxLength = 30) => {
     const { name, value } = e.target;
-    const upperValue = value.toUpperCase();
+    const upperValue = value.toUpperCase().slice(0, maxLength);
     handleChange({ target: { name, value: upperValue } });
   };
 
@@ -146,12 +146,13 @@ const NuevoPaciente = () => {
                 type="text"
                 label="Primer Nombre"
                 onBlur={handleBlur}
-                onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.primer_nombre}
                 name="primer_nombre"
                 error={!!touched.primer_nombre && !!errors.primer_nombre}
                 helperText={touched.primer_nombre && errors.primer_nombre}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 50 }}
               />
 
               <TextField
@@ -160,12 +161,13 @@ const NuevoPaciente = () => {
                 type="text"
                 label="Segundo Nombre (Opcional)"
                 onBlur={handleBlur}
-                onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.segundo_nombre}
                 name="segundo_nombre"
                 error={!!touched.segundo_nombre && !!errors.segundo_nombre}
                 helperText={touched.segundo_nombre && errors.segundo_nombre}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -174,12 +176,13 @@ const NuevoPaciente = () => {
                 type="text"
                 label="Apellido Paterno"
                 onBlur={handleBlur}
-                onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.apellido_paterno}
                 name="apellido_paterno"
                 error={!!touched.apellido_paterno && !!errors.apellido_paterno}
                 helperText={touched.apellido_paterno && errors.apellido_paterno}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -188,12 +191,13 @@ const NuevoPaciente = () => {
                 type="text"
                 label="Apellido Materno"
                 onBlur={handleBlur}
-                onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.apellido_materno}
                 name="apellido_materno"
                 error={!!touched.apellido_materno && !!errors.apellido_materno}
                 helperText={touched.apellido_materno && errors.apellido_materno}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -209,6 +213,10 @@ const NuevoPaciente = () => {
                 error={!!touched.fecha_nacimiento && !!errors.fecha_nacimiento}
                 helperText={touched.fecha_nacimiento && errors.fecha_nacimiento}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{
+                  min: "1925-01-01",
+                  max: new Date().toISOString().split("T")[0],
+                }}
               />
 
               <TextField
@@ -217,12 +225,13 @@ const NuevoPaciente = () => {
                 type="text"
                 label="Lugar de Nacimiento"
                 onBlur={handleBlur}
-                onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onChange={(e) => handleUpperCaseChange(e, handleChange, 50)}
                 value={values.lugar_nacimiento}
                 name="lugar_nacimiento"
                 error={!!touched.lugar_nacimiento && !!errors.lugar_nacimiento}
                 helperText={touched.lugar_nacimiento && errors.lugar_nacimiento}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 50 }}
               />
 
               <TextField
@@ -231,12 +240,13 @@ const NuevoPaciente = () => {
                 type="text"
                 label="Dirección"
                 onBlur={handleBlur}
-                onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onChange={(e) => handleUpperCaseChange(e, handleChange, 50)}
                 value={values.direccion}
                 name="direccion"
                 error={!!touched.direccion && !!errors.direccion}
                 helperText={touched.direccion && errors.direccion}
                 sx={{ gridColumn: "span 4" }}
+                inputProps={{ maxLength: 50 }}
               />
 
               <TextField
@@ -245,12 +255,13 @@ const NuevoPaciente = () => {
                 type="text"
                 label="Ocupación"
                 onBlur={handleBlur}
-                onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.ocupacion}
                 name="ocupacion"
                 error={!!touched.ocupacion && !!errors.ocupacion}
                 helperText={touched.ocupacion && errors.ocupacion}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -265,6 +276,7 @@ const NuevoPaciente = () => {
                 error={!!touched.telefono && !!errors.telefono}
                 helperText={touched.telefono && errors.telefono}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 15 }}
               />
 
               <TextField
@@ -279,6 +291,7 @@ const NuevoPaciente = () => {
                 error={!!touched.email && !!errors.email}
                 helperText={touched.email && errors.email}
                 sx={{ gridColumn: "span 4" }}
+                inputProps={{ maxLength: 50 }}
               />
             </Box>
 
@@ -309,44 +322,65 @@ const NuevoPaciente = () => {
 const phoneRegExp = /^[0-9]{10,15}$/;
 const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+const fechaMinima = new Date();
+fechaMinima.setFullYear(fechaMinima.getFullYear() - 100);
+const fechaMaxima = new Date();
+fechaMaxima.setFullYear(fechaMaxima.getFullYear() - 1);
+
 const checkoutSchema = yup.object().shape({
   id_sexo: yup.string().required("Debe seleccionar un sexo"),
   primer_nombre: yup
     .string()
-    .matches(/^[A-Z\s]+$/, "Solo se permiten letras mayúsculas")
+    .max(30, "Máximo 30 caracteres")
+    .matches(/^[A-ZÑ\s]+$/, "Solo se permiten letras mayúsculas")
     .required("El primer nombre es requerido"),
   segundo_nombre: yup
     .string()
-    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
+    .max(30, "Máximo 30 caracteres")
+    .matches(/^[A-ZÑ\s]*$/, "Solo se permiten letras mayúsculas"),
   apellido_paterno: yup
     .string()
-    .matches(/^[A-Z\s]+$/, "Solo se permiten letras mayúsculas")
+    .max(30, "Máximo 30 caracteres")
+    .matches(/^[A-ZÑ\s]+$/, "Solo se permiten letras mayúsculas")
     .required("El apellido paterno es requerido"),
   apellido_materno: yup
     .string()
-    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
+    .max(30, "Máximo 30 caracteres")
+    .matches(/^[A-ZÑ\s]+$/, "Solo se permiten letras mayúsculas")
+    .required("El apellido materno es requerido"),
   fecha_nacimiento: yup
     .date()
-    .max(new Date(), "La fecha no puede ser futura")
+    .min(fechaMinima, "La edad no puede ser mayor a 100 años")
+    .max(fechaMaxima, "El paciente debe tener al menos 1 año")
     .required("La fecha de nacimiento es requerida"),
   lugar_nacimiento: yup
     .string()
-    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
+    .max(50, "Máximo 50 caracteres")
+    .matches(
+      /^[A-ZÑ\s,.]+$/,
+      "Solo se permiten letras mayúsculas, espacios, comas y puntos"
+    )
+    .required("El lugar de nacimiento es requerido"),
   direccion: yup
     .string()
-    .matches(/^[A-Z0-9\s,.#-]*$/, "Formato de dirección inválido")
+    .max(50, "Máximo 50 caracteres")
+    .matches(/^[A-ZÑ0-9\s,.#-]+$/, "Formato de dirección inválido")
     .required("La dirección es requerida"),
   ocupacion: yup
     .string()
-    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
+    .max(30, "Máximo 30 caracteres")
+    .matches(/^[A-ZÑ\s]+$/, "Solo se permiten letras mayúsculas")
+    .required("La ocupación es requerida"),
   telefono: yup
     .string()
     .matches(phoneRegExp, "El teléfono debe tener entre 10 y 15 dígitos")
     .required("El teléfono es requerido"),
   email: yup
     .string()
+    .max(30, "Máximo 30 caracteres")
     .matches(emailRegExp, "Formato de email inválido")
-    .email("Email inválido"),
+    .email("Email inválido")
+    .required("El email es requerido"),
 });
 
 const initialValues = {

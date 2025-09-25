@@ -234,13 +234,12 @@ const EditarPaciente = () => {
                 type="date"
                 label="Fecha de Nacimiento"
                 InputLabelProps={{ shrink: true }}
-                onBlur={handleBlur}
-                onChange={handleChange}
                 value={values.fecha_nacimiento}
                 name="fecha_nacimiento"
                 error={!!touched.fecha_nacimiento && !!errors.fecha_nacimiento}
                 helperText={touched.fecha_nacimiento && errors.fecha_nacimiento}
                 sx={{ gridColumn: "span 2" }}
+                InputProps={{ readOnly: true }}
               />
 
               <TextField

@@ -24,52 +24,43 @@ const ListaPacientes = () => {
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
-  const [pacientes, setPacientes] = useState([]);
   const [pacientesFiltrados, setPacientesFiltrados] = useState([]);
   const [busqueda, setBusqueda] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchPacientes = async () => {
-      try {
-        const response = await api.get("/pacientes");
-        if (response.data.success) {
-          setPacientes(response.data.data);
-          setPacientesFiltrados(response.data.data);
-        } else {
-          console.error("Error en la respuesta:", response.data.mensaje);
-        }
-      } catch (error) {
-        console.log(error.response?.data);
-        console.log(error.response?.status);
-        console.log(error.response?.headers);
-      }
-    };
-    fetchPacientes();
-  }, []);
+  const buscarPacientes = async (termino) => {
+    if (!termino.trim()) {
+      setPacientesFiltrados([]);
+      return;
+    }
 
-  useEffect(() => {
-    const filtrar = () => {
-      if (!busqueda.trim()) {
-        setPacientesFiltrados(pacientes);
-        return;
-      }
-
-      const pacientesFiltrados = pacientes.filter(
-        (paciente) =>
-          paciente.primer_nombre
-            ?.toLowerCase()
-            .includes(busqueda.toLowerCase()) ||
-          paciente.apellido_paterno
-            ?.toLowerCase()
-            .includes(busqueda.toLowerCase()) ||
-          paciente.telefono?.toLowerCase().includes(busqueda.toLowerCase()) ||
-          paciente.email?.toLowerCase().includes(busqueda.toLowerCase())
+    try {
+      setLoading(true);
+      const response = await api.get(
+        `/pacientes/buscar?q=${encodeURIComponent(termino)}`
       );
-      setPacientesFiltrados(pacientesFiltrados);
-    };
 
-    filtrar();
-  }, [busqueda, pacientes]);
+      if (response.data.success) {
+        setPacientesFiltrados(response.data.data);
+      } else {
+        console.error("Error en la respuesta:", response.data.mensaje);
+        setPacientesFiltrados([]);
+      }
+    } catch (error) {
+      console.error("Error al buscar pacientes:", error);
+      setPacientesFiltrados([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      buscarPacientes(busqueda);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [busqueda]);
 
   const handleEliminarPaciente = async (idPaciente) => {
     if (window.confirm("¿Está seguro de eliminar este paciente?")) {
@@ -79,8 +70,10 @@ const ListaPacientes = () => {
         });
 
         if (response.data.success) {
-          setPacientes(
-            pacientes.filter((paciente) => paciente.id_paciente !== idPaciente)
+          setPacientesFiltrados(
+            pacientesFiltrados.filter(
+              (paciente) => paciente.id_paciente !== idPaciente
+            )
           );
           alert("Paciente eliminado exitosamente");
         } else {
@@ -211,7 +204,7 @@ const ListaPacientes = () => {
 
   return (
     <Box m="20px">
-      <Header title="Pacientes" subtitle="Lista de pacientes registrados" />
+      <Header title="Pacientes" subtitle="Buscar pacientes registrados" />
 
       <Box
         display="flex"
@@ -249,70 +242,133 @@ const ListaPacientes = () => {
         </Button>
       </Box>
 
-      <Box
-        m="40px 0 0 0"
-        height="75vh"
-        sx={{
-          "& .MuiDataGrid-root": {
-            border: "1px solid #e0e0e0",
-            borderRadius: "8px",
-          },
-          "& .MuiDataGrid-cell": {
-            borderBottom: "1px solid #f5f5f5",
-            color: "#333333",
-            fontSize: "14px",
-            padding: "12px 16px",
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            backgroundColor: "#f8f9fa",
-            color: "#333333",
-            borderBottom: "2px solid #e0e0e0",
-            fontSize: "14px",
-            fontWeight: "600",
-            minHeight: "56px !important",
-          },
-          "& .MuiDataGrid-columnHeaderTitle": {
-            color: "#333333",
-            fontWeight: "600",
-          },
-          "& .MuiDataGrid-virtualScroller": {
-            backgroundColor: "#ffffff",
-          },
-          "& .MuiDataGrid-footerContainer": {
-            borderTop: "2px solid #e0e0e0",
-            backgroundColor: "#f8f9fa",
-            color: "#333333",
-          },
-          "& .MuiDataGrid-row": {
-            minHeight: "60px !important",
-            "&:hover": {
-              backgroundColor: "#f0f8ff",
+      {!busqueda.trim() && (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="400px"
+          flexDirection="column"
+        >
+          <PersonIcon sx={{ fontSize: 80, color: colors.grey[400], mb: 2 }} />
+          <Typography variant="h4" color={colors.grey[400]} textAlign="center">
+            Ingrese un término de búsqueda
+          </Typography>
+          <Typography
+            variant="body1"
+            color={colors.grey[500]}
+            textAlign="center"
+            mt={1}
+          >
+            Escriba el nombre, apellido, teléfono o email del paciente que desea
+            buscar
+          </Typography>
+        </Box>
+      )}
+
+      {busqueda.trim() && pacientesFiltrados.length === 0 && !loading && (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="400px"
+          flexDirection="column"
+        >
+          <SearchIcon sx={{ fontSize: 80, color: colors.grey[400], mb: 2 }} />
+          <Typography variant="h4" color={colors.grey[400]} textAlign="center">
+            No se encontraron resultados
+          </Typography>
+          <Typography
+            variant="body1"
+            color={colors.grey[500]}
+            textAlign="center"
+            mt={1}
+          >
+            No hay pacientes que coincidan con "{busqueda}"
+          </Typography>
+        </Box>
+      )}
+
+      {loading && (
+        <Box
+          display="flex"
+          justifyContent="center"
+          alignItems="center"
+          height="400px"
+          flexDirection="column"
+        >
+          <Typography variant="h4" color={colors.grey[400]} textAlign="center">
+            Buscando...
+          </Typography>
+        </Box>
+      )}
+
+      {pacientesFiltrados.length > 0 && !loading && (
+        <Box
+          m="40px 0 0 0"
+          height="75vh"
+          sx={{
+            "& .MuiDataGrid-root": {
+              border: "1px solid #e0e0e0",
+              borderRadius: "8px",
             },
-            "&:nth-of-type(even)": {
-              backgroundColor: "#fafafa",
+            "& .MuiDataGrid-cell": {
+              borderBottom: "1px solid #f5f5f5",
+              color: "#333333",
+              fontSize: "14px",
+              padding: "12px 16px",
             },
-          },
-          "& .MuiDataGrid-actionsCell .MuiIconButton-root": {
-            color: "#666666",
-            "&:hover": {
-              backgroundColor: "#e3f2fd",
-              color: "#1976d2",
+            "& .MuiDataGrid-columnHeaders": {
+              backgroundColor: "#f8f9fa",
+              color: "#333333",
+              borderBottom: "2px solid #e0e0e0",
+              fontSize: "14px",
+              fontWeight: "600",
+              minHeight: "56px !important",
             },
-          },
-        }}
-      >
-        <DataGrid
-          rows={pacientesFiltrados}
-          columns={columns}
-          getRowId={(row) => row.id_paciente}
-          pageSizeOptions={[5, 10, 25]}
-          initialState={{
-            pagination: {
-              paginationModel: { page: 0, pageSize: 10 },
+            "& .MuiDataGrid-columnHeaderTitle": {
+              color: "#333333",
+              fontWeight: "600",
+            },
+            "& .MuiDataGrid-virtualScroller": {
+              backgroundColor: "#ffffff",
+            },
+            "& .MuiDataGrid-footerContainer": {
+              borderTop: "2px solid #e0e0e0",
+              backgroundColor: "#f8f9fa",
+              color: "#333333",
+            },
+            "& .MuiDataGrid-row": {
+              minHeight: "60px !important",
+              "&:hover": {
+                backgroundColor: "#f0f8ff",
+              },
+              "&:nth-of-type(even)": {
+                backgroundColor: "#fafafa",
+              },
+            },
+            "& .MuiDataGrid-actionsCell .MuiIconButton-root": {
+              color: "#666666",
+              "&:hover": {
+                backgroundColor: "#e3f2fd",
+                color: "#1976d2",
+              },
             },
           }}
-        />
-      </Box>
+        >
+          <DataGrid
+            rows={pacientesFiltrados}
+            columns={columns}
+            getRowId={(row) => row.id_paciente}
+            pageSizeOptions={[5, 10, 25]}
+            initialState={{
+              pagination: {
+                paginationModel: { page: 0, pageSize: 10 },
+              },
+            }}
+          />
+        </Box>
+      )}
     </Box>
   );
 };

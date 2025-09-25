@@ -233,13 +233,18 @@ const ListaUsuarios = () => {
         <TextField
           placeholder="Buscar por Nombre, Usuario, o Email"
           value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
+          onChange={(e) => {
+            if (e.target.value.length <= 30) {
+              setBusqueda(e.target.value);
+            }
+          }}
           sx={{
             minWidth: "400px",
             "& .MuiOutlinedInput-root": {
               backgroundColor: "white",
             },
           }}
+          inputProps={{ maxLength: 30 }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

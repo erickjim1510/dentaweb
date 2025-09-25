@@ -1,5 +1,5 @@
+// MainRoutes.js - REEMPLAZA TU ARCHIVO ACTUAL
 import { lazy } from 'react';
-
 import Loadable from '../components/Loadable';
 import MainLayout from '../layout/MainLayout';
 import ProtectedRoute from '../components/ProtectRoute';
@@ -7,23 +7,24 @@ import EditarUsuario from '../scenes/usuarios/EditarUsuario';
 import EditarPaciente from '../scenes/pacientes/EditarPaciente';
 
 const DashboardDefault = Loadable(lazy(() => import('../scenes/dashboard')));
-
 const Usuarios = Loadable(lazy(() => import('../scenes/usuarios')));
 const NuevoUsuario = Loadable(lazy(() => import("../scenes/usuarios/Nuevo")));
-
 const Pacientes = Loadable(lazy(() => import('../scenes/pacientes')));
 const NuevoPaciente = Loadable(lazy(() => import('../scenes/pacientes/NuevoPaciente')));
-/*
-const Invoices = Loadable(lazy(() => import('../scenes/invoices')));
-const Contacts = Loadable(lazy(() => import('../scenes/contacts')));
-const Bar = Loadable(lazy(() => import('../scenes/bar')));
-const Line = Loadable(lazy(() => import('../scenes/line')));
-const Pie = Loadable(lazy(() => import('../scenes/pie')));
-const FAQ = Loadable(lazy(() => import('../scenes/faq')));
-const Geography = Loadable(lazy(() => import('../scenes/geography')));
-const Calendar = Loadable(lazy(() => import('../scenes/calendar/calendar')));*/
 
-// ==============================|| MAIN ROUTING ||============================== //
+// Componente para proteger rutas de administrador
+const AdminOnlyRoute = ({ children }) => {
+  const user = JSON.parse(sessionStorage.getItem("user") || "{}");
+  
+  if (user.nombre_rol !== "Administrador") {
+    return <div style={{padding: "20px", textAlign: "center"}}>
+      <h2>Acceso Denegado</h2>
+      <p>No tienes permisos para acceder a esta sección.</p>
+    </div>;
+  }
+  
+  return children;
+};
 
 const MainRoutes = {
   path: '/',
@@ -37,18 +38,32 @@ const MainRoutes = {
       path: 'dashboard',
       element: <DashboardDefault />
     },
+    // RUTAS SOLO PARA ADMINISTRADOR
     {
       path: 'usuarios',
-      element: <Usuarios />
+      element: (
+        <AdminOnlyRoute>
+          <Usuarios />
+        </AdminOnlyRoute>
+      )
     },
     {
       path: 'usuario-nuevo',
-      element: <NuevoUsuario/>
+      element: (
+        <AdminOnlyRoute>
+          <NuevoUsuario/>
+        </AdminOnlyRoute>
+      )
     },
     {
       path: 'usuario-editar/:id',
-      element: <EditarUsuario/>
+      element: (
+        <AdminOnlyRoute>
+          <EditarUsuario/>
+        </AdminOnlyRoute>
+      )
     },
+    // RUTAS PARA TODOS (Administrador, Recepcionista, Doctor)
     {
       path: 'pacientes',
       element: <Pacientes />
@@ -60,39 +75,7 @@ const MainRoutes = {
     {
       path: 'paciente-editar/:id',
       element: <EditarPaciente/>
-    },
-    /*{
-      path: 'invoices',
-      element: <Invoices />
-    },
-    {
-      path: 'contacts',
-      element: <Contacts />
-    },
-    {
-      path: 'bar',
-      element: <Bar />
-    },
-    {
-      path: 'line',
-      element: <Line />
-    },
-    {
-      path: 'pie',
-      element: <Pie />
-    },
-    {
-      path: 'faq',
-      element: <FAQ />
-    },
-    {
-      path: 'geography',
-      element: <Geography />
-    },
-    {
-      path: 'calendar',
-      element: <Calendar />
-    }*/
+    }
   ]
 };
 

@@ -85,9 +85,9 @@ const NuevoUsuario = () => {
     }
   };
 
-  const handleUpperCaseChange = (e, handleChange) => {
+  const handleUpperCaseChange = (e, handleChange, maxLength = 30) => {
     const { name, value } = e.target;
-    const upperValue = value.toUpperCase();
+    const upperValue = value.toUpperCase().slice(0, maxLength);
     handleChange({ target: { name, value: upperValue } });
   };
 
@@ -148,12 +148,13 @@ const NuevoUsuario = () => {
                 type="text"
                 label="Primer Nombre"
                 onBlur={handleBlur}
-                onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.primer_nombre}
                 name="primer_nombre"
                 error={!!touched.primer_nombre && !!errors.primer_nombre}
                 helperText={touched.primer_nombre && errors.primer_nombre}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -162,12 +163,13 @@ const NuevoUsuario = () => {
                 type="text"
                 label="Segundo Nombre (Opcional)"
                 onBlur={handleBlur}
-                onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.segundo_nombre}
                 name="segundo_nombre"
                 error={!!touched.segundo_nombre && !!errors.segundo_nombre}
                 helperText={touched.segundo_nombre && errors.segundo_nombre}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -176,12 +178,13 @@ const NuevoUsuario = () => {
                 type="text"
                 label="Apellido Paterno"
                 onBlur={handleBlur}
-                onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.apellido_paterno}
                 name="apellido_paterno"
                 error={!!touched.apellido_paterno && !!errors.apellido_paterno}
                 helperText={touched.apellido_paterno && errors.apellido_paterno}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -190,12 +193,13 @@ const NuevoUsuario = () => {
                 type="text"
                 label="Apellido Materno"
                 onBlur={handleBlur}
-                onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.apellido_materno}
                 name="apellido_materno"
                 error={!!touched.apellido_materno && !!errors.apellido_materno}
                 helperText={touched.apellido_materno && errors.apellido_materno}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -210,6 +214,7 @@ const NuevoUsuario = () => {
                 error={!!touched.email && !!errors.email}
                 helperText={touched.email && errors.email}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -224,6 +229,7 @@ const NuevoUsuario = () => {
                 error={!!touched.telefono && !!errors.telefono}
                 helperText={touched.telefono && errors.telefono}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 10 }}
               />
 
               <TextField
@@ -232,12 +238,13 @@ const NuevoUsuario = () => {
                 type="text"
                 label="Nombre de Usuario"
                 onBlur={handleBlur}
-                onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.nombre_usuario}
                 name="nombre_usuario"
                 error={!!touched.nombre_usuario && !!errors.nombre_usuario}
                 helperText={touched.nombre_usuario && errors.nombre_usuario}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -253,6 +260,10 @@ const NuevoUsuario = () => {
                 error={!!touched.fecha_nacimiento && !!errors.fecha_nacimiento}
                 helperText={touched.fecha_nacimiento && errors.fecha_nacimiento}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{
+                  min: "1900-01-01",
+                  max: new Date().toISOString().split("T")[0],
+                }}
               />
 
               <TextField
@@ -267,6 +278,7 @@ const NuevoUsuario = () => {
                 error={!!touched.contrasena_hash && !!errors.contrasena_hash}
                 helperText={touched.contrasena_hash && errors.contrasena_hash}
                 sx={{ gridColumn: "span 4" }}
+                inputProps={{ maxLength: 30 }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -353,29 +365,36 @@ const NuevoUsuario = () => {
 
 const phoneRegExp = /^[0-9]{10}$/;
 const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const mayoredad = new Date();
-mayoredad.setFullYear(mayoredad.getFullYear() - 18);
+
+const fechaMinima = new Date("1925-01-01");
+const fechaMaxima = new Date();
+fechaMaxima.setFullYear(fechaMaxima.getFullYear() - 18);
 
 const checkoutSchema = yup.object().shape({
   primer_nombre: yup
     .string()
-    .matches(/^[A-Z\s]+$/, "Solo se permiten letras mayúsculas")
+    .max(30, "Máximo 30 caracteres")
+    .matches(/^[A-ZÑ\s]+$/, "Solo se permiten letras mayúsculas")
     .required("El primer nombre es requerido"),
   segundo_nombre: yup
     .string()
-    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
+    .max(30, "Máximo 30 caracteres")
+    .matches(/^[A-ZÑ\s]*$/, "Solo se permiten letras mayúsculas"),
   apellido_paterno: yup
     .string()
-    .matches(/^[A-Z\s]+$/, "Solo se permiten letras mayúsculas")
+    .max(30, "Máximo 30 caracteres")
+    .matches(/^[A-ZÑ\s]+$/, "Solo se permiten letras mayúsculas")
     .required("El apellido paterno es requerido"),
   apellido_materno: yup
     .string()
-    .matches(/^[A-Z\s]+$/, "Solo se permiten letras mayúsculas")
+    .max(30, "Máximo 30 caracteres")
+    .matches(/^[A-ZÑ\s]+$/, "Solo se permiten letras mayúsculas")
     .required("El apellido materno es requerido"),
   email: yup
     .string()
     .matches(emailRegExp, "Formato de email inválido")
     .email("Email inválido")
+    .max(30, "Máximo 30 caracteres")
     .required("El email es requerido"),
   telefono: yup
     .string()
@@ -383,15 +402,18 @@ const checkoutSchema = yup.object().shape({
     .required("El teléfono es requerido"),
   nombre_usuario: yup
     .string()
-    .matches(/^[A-Z0-9\s]+$/, "Solo se permiten letras mayúsculas y números")
+    .max(30, "Máximo 30 caracteres")
+    .matches(/^[A-ZÑ0-9\s]+$/, "Solo se permiten letras mayúsculas y números")
     .required("El nombre de usuario es requerido"),
   fecha_nacimiento: yup
     .date()
-    .max(mayoredad, "El usuario debe ser mayor de 18 años")
+    .min(fechaMinima, "La fecha no puede ser anterior a 1925")
+    .max(fechaMaxima, "El usuario debe ser mayor de 18 años")
     .required("La fecha de nacimiento es requerida"),
   contrasena_hash: yup
     .string()
     .min(6, "La contraseña debe tener al menos 6 caracteres")
+    .max(30, "Máximo 30 caracteres")
     .required("La contraseña es requerida"),
   id_rol: yup.string().required("Debe seleccionar un rol"),
   id_estado: yup.string().required("Debe seleccionar un estado"),
