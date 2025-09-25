@@ -22,7 +22,7 @@ class PacienteController:
 
     @staticmethod
     def buscar_pacientes(termino):
-        """Busca pacientes por primer_nombre, apellido_paterno, apellido_materno o email"""
+        """Busca pacientes por primer_nombre, apellido_paterno, apellido_materno o email que inicien con el término"""
         try:
             if not termino or len(termino.strip()) == 0:
                 return {
@@ -31,15 +31,17 @@ class PacienteController:
                     'mensaje': 'Sin resultados'
                 }
             
-            # Convertir a mayúsculas para la búsqueda (asumiendo que se guardan en mayúsculas)
-            termino_upper = f"%{termino.upper()}%"
+            # Usar startswith en lugar de like con % al inicio y final
+            # Solo agregar % al final para buscar cadenas que inicien con el término
+            termino_upper = f"{termino.upper()}%"
+            termino_lower = f"{termino.lower()}%"
             
             pacientes = Paciente.query.join(Sexo).filter(
                 or_(
                     Paciente.primer_nombre.like(termino_upper),
                     Paciente.apellido_paterno.like(termino_upper),
                     Paciente.apellido_materno.like(termino_upper),
-                    Paciente.email.like(f"%{termino.lower()}%")  # Email en minúsculas
+                    Paciente.email.like(termino_lower)  # Email que inicie con el término en minúsculas
                 )
             ).all()
             

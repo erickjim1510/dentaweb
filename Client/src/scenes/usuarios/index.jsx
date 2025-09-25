@@ -58,11 +58,11 @@ const ListaUsuarios = () => {
         (usuario) =>
           usuario.primer_nombre
             ?.toLowerCase()
-            .includes(busqueda.toLowerCase()) ||
+            .startsWith(busqueda.toLowerCase()) ||
           usuario.nombre_usuario
             ?.toLowerCase()
-            .includes(busqueda.toLowerCase()) ||
-          usuario.email?.toLowerCase().includes(busqueda.toLowerCase())
+            .startsWith(busqueda.toLowerCase()) ||
+          usuario.email?.toLowerCase().startsWith(busqueda.toLowerCase())
       );
       setUsuariosFiltrados(usuariosFiltrados);
     };
