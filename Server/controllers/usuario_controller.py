@@ -60,7 +60,7 @@ class UsuarioController:
 
             usuario_existente = Usuario.query.filter_by(telefono=data['telefono']).first()
             if usuario_existente:
-                return {'success': False, 'mensaje': ''}
+                return {'success': False, 'mensaje': 'El teléfono ya está registrado'}
             
             usuario_existente = Usuario.query.filter_by(email=data['email']).first()
             if usuario_existente:
@@ -134,7 +134,7 @@ class UsuarioController:
                 usuario_existente = Usuario.query.filter(Usuario.telefono==data['telefono'],
                                                             Usuario.id_usuario != id_usuario).first()
                 if usuario_existente:
-                    return {'success': False, 'mensaje': 'Ya existe un usuario con este telefono'}
+                    return {'success': False, 'mensaje': 'Ya existe un usuario con este teléfono'}
             
             if 'email' in data:
                 usuario_existente = Usuario.query.filter(Usuario.email==data['email'],
