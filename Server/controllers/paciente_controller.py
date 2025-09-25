@@ -144,7 +144,10 @@ class PacienteController:
                     Paciente.id_paciente != id_paciente
                 ).first()
                 if paciente_existente:
-                    return {'success': False, 'mensaje': 'El teléfono ya está en uso'}
+
+
+                    return {'success': False, 'mensaje': 'Ya existe un paciente con este teléfono'}
+
             
             if 'email' in data:
                 paciente_existente = Paciente.query.filter(
