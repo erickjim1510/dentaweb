@@ -51,6 +51,14 @@ class PacienteController:
                         "mensaje": f"Se requiere el campo: {campo}"
                     }
 
+            paciente_existente = Paciente.query.filter_by(telefono=data['telefono']).first()
+            if paciente_existente:
+                return {'success': False, 'mensaje': 'Ya existe un paciente con este telefono'}
+            
+            paciente_existente = Paciente.query.filter_by(email=data['email']).first()
+            if paciente_existente:
+                return {'success': False, 'mensaje': 'Ya existe un paciente con este email'}
+
             nuevo_paciente = Paciente(
                 id_sexo=data["id_sexo"],
                 primer_nombre=data.get("primer_nombre"),
@@ -94,6 +102,18 @@ class PacienteController:
                     "success": False,
                     "mensaje": "Paciente no encontrado"
                 }
+            
+            if 'telefono' in data:
+                paciente_existente = Paciente.query.filter(Paciente.telefono==data['telefono'],
+                                                           Paciente.id_paciente != data["id_paciente"]).first()
+                if paciente_existente:
+                    return {'success': False, 'mensaje': 'Ya existe un paciente con este telefono'}
+            
+            if 'email' in data:
+                paciente_existente = Paciente.query.filter(Paciente.email==data['email'],
+                                                           Paciente.id_paciente != data["id_paciente"]).first()
+                if paciente_existente:
+                    return {'success': False, 'mensaje': 'Ya existe un paciente con este email'}
 
             # Actualizar solo los campos enviados
             for campo in [

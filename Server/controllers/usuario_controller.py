@@ -54,6 +54,18 @@ class UsuarioController:
                 if not data.get(campo):
                     return {'success': False, 'mensaje': f'El campo {campo} es requerido'}
 
+            usuario_existente = Usuario.query.filter_by(nombre_usuario=data['nombre_usuario']).first()
+            if usuario_existente:
+                return {'success': False, 'mensaje': 'Ya existe un usuario con este nombre de usuario'}
+
+            usuario_existente = Usuario.query.filter_by(telefono=data['telefono']).first()
+            if usuario_existente:
+                return {'success': False, 'mensaje': 'Ya existe un usuario con este telefono'}
+            
+            usuario_existente = Usuario.query.filter_by(email=data['email']).first()
+            if usuario_existente:
+                return {'success': False, 'mensaje': 'Ya existe un usuario con este email'}
+
             # Verificar que el rol existe
             rol = Rol.query.get(data['id_rol'])
             if not rol:
@@ -111,6 +123,24 @@ class UsuarioController:
             usuario = Usuario.query.get(id_usuario)
             if not usuario:
                 return {'success': False, 'mensaje': 'Usuario no encontrado'}
+            
+            if 'nombre_usuario' in data:
+                usuario_existente = Usuario.query.filter(Usuario.nombre_usuario==data['nombre_usuario'], 
+                                                         Usuario.id_usuario != id_usuario).first()
+                if usuario_existente:
+                    return {'success': False, 'mensaje': 'Ya existe un usuario con este nombre de usuario'}
+
+            if 'telefono' in data:
+                usuario_existente = Usuario.query.filter(Usuario.telefono==data['telefono'],
+                                                            Usuario.id_usuario != id_usuario).first()
+                if usuario_existente:
+                    return {'success': False, 'mensaje': 'Ya existe un usuario con este telefono'}
+            
+            if 'email' in data:
+                usuario_existente = Usuario.query.filter(Usuario.email==data['email'],
+                                                            Usuario.id_usuario != id_usuario).first()
+                if usuario_existente:
+                    return {'success': False, 'mensaje': 'Ya existe un usuario con este email'}
 
             # Verificar que el rol existe si se está actualizando
             if 'id_rol' in data:
