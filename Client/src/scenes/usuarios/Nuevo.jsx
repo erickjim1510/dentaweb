@@ -97,6 +97,18 @@ const NuevoUsuario = () => {
     handleChange({ target: { name, value: numericValue } });
   };
 
+  const preventNumbers = (e) => {
+    if (/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const preventSpace = (e) => {
+    if (e.key === " ") {
+      e.preventDefault();
+    }
+  };
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -149,6 +161,7 @@ const NuevoUsuario = () => {
                 label="Primer Nombre"
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
+                onKeyPress={preventNumbers}
                 value={values.primer_nombre}
                 name="primer_nombre"
                 error={!!touched.primer_nombre && !!errors.primer_nombre}
@@ -164,6 +177,7 @@ const NuevoUsuario = () => {
                 label="Segundo Nombre (Opcional)"
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
+                onKeyPress={preventNumbers}
                 value={values.segundo_nombre}
                 name="segundo_nombre"
                 error={!!touched.segundo_nombre && !!errors.segundo_nombre}
@@ -179,6 +193,7 @@ const NuevoUsuario = () => {
                 label="Apellido Paterno"
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
+                onKeyPress={preventNumbers}
                 value={values.apellido_paterno}
                 name="apellido_paterno"
                 error={!!touched.apellido_paterno && !!errors.apellido_paterno}
@@ -194,6 +209,7 @@ const NuevoUsuario = () => {
                 label="Apellido Materno"
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
+                onKeyPress={preventNumbers}
                 value={values.apellido_materno}
                 name="apellido_materno"
                 error={!!touched.apellido_materno && !!errors.apellido_materno}
@@ -209,6 +225,7 @@ const NuevoUsuario = () => {
                 label="Email"
                 onBlur={handleBlur}
                 onChange={handleChange}
+                onKeyDown={preventSpace}
                 value={values.email}
                 name="email"
                 error={!!touched.email && !!errors.email}
@@ -273,6 +290,7 @@ const NuevoUsuario = () => {
                 label="Contraseña"
                 onBlur={handleBlur}
                 onChange={handleChange}
+                onKeyDown={preventSpace}
                 value={values.contrasena_hash}
                 name="contrasena_hash"
                 error={!!touched.contrasena_hash && !!errors.contrasena_hash}
@@ -403,6 +421,7 @@ const checkoutSchema = yup.object().shape({
   nombre_usuario: yup
     .string()
     .max(30, "Máximo 30 caracteres")
+    .min(6, "El Nombre de Usuario debe tener al menos 6 caracteres")
     .matches(/^[A-ZÑ0-9\s]+$/, "Solo se permiten letras mayúsculas y números")
     .required("El nombre de usuario es requerido"),
   fecha_nacimiento: yup
@@ -414,6 +433,7 @@ const checkoutSchema = yup.object().shape({
     .string()
     .min(6, "La contraseña debe tener al menos 6 caracteres")
     .max(30, "Máximo 30 caracteres")
+    .matches(/^\S*$/, "La contraseña no puede contener espacios")
     .required("La contraseña es requerida"),
   id_rol: yup.string().required("Debe seleccionar un rol"),
   id_estado: yup.string().required("Debe seleccionar un estado"),

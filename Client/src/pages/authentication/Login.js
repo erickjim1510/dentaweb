@@ -7,8 +7,6 @@ import { AuthContext } from '../../context/AuthContext.jsx';
 import api from '../../services/api.js';
 
 const Login = () => {
-    // Variables iniciales para navegar, darle estado al email y contraseña
-    // validacion de errores, y pasar los datos al contexto para despues 
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [contrasena_hash, setContrasena_hash] = useState('');
@@ -27,8 +25,6 @@ const Login = () => {
     const loginAction = async (e) => {
         e.preventDefault();
 
-        //Funcion para hacer login , tambien manda los datos al contexto para 
-        //Manejarlos despues y te navega al dashboard sino te manda error 
         try {
             const response = await api.post("/usuarios/login", { 
                 email: email, 
@@ -52,6 +48,13 @@ const Login = () => {
                 errormessage = { message: error.response.data.mensaje };
             }
             setValidationErrors(errormessage);
+        }
+    };
+
+  
+    const preventSpace = (e) => {
+        if (e.key === ' ') {
+            e.preventDefault();
         }
     };
 
@@ -79,7 +82,9 @@ const Login = () => {
                             placeholder="Ingresa Correo"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
+                            onKeyDown={preventSpace}
                             required
+                            maxLength={30}
                         />
                     </div>
 
@@ -93,7 +98,10 @@ const Login = () => {
                             placeholder="Ingresa Contraseña"
                             value={contrasena_hash}
                             onChange={(e) => setContrasena_hash(e.target.value)}
+                            onKeyDown={preventSpace}
                             required
+                            maxLength={30}
+                            minLength={6}
                         />
                     </div>
 

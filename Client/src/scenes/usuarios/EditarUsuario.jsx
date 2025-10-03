@@ -100,6 +100,18 @@ const EditarUsuario = () => {
     handleChange({ target: { name, value: numericValue } });
   };
 
+  const preventNumbers = (e) => {
+    if (/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+
+  const preventSpace = (e) => {
+    if (e.key === " ") {
+      e.preventDefault();
+    }
+  };
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -173,6 +185,7 @@ const EditarUsuario = () => {
                 label="Primer Nombre"
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onKeyPress={preventNumbers}
                 value={values.primer_nombre}
                 name="primer_nombre"
                 error={!!touched.primer_nombre && !!errors.primer_nombre}
@@ -187,6 +200,7 @@ const EditarUsuario = () => {
                 label="Segundo Nombre (Opcional)"
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onKeyPress={preventNumbers}
                 value={values.segundo_nombre}
                 name="segundo_nombre"
                 error={!!touched.segundo_nombre && !!errors.segundo_nombre}
@@ -201,6 +215,7 @@ const EditarUsuario = () => {
                 label="Apellido Paterno"
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onKeyPress={preventNumbers}
                 value={values.apellido_paterno}
                 name="apellido_paterno"
                 error={!!touched.apellido_paterno && !!errors.apellido_paterno}
@@ -215,6 +230,7 @@ const EditarUsuario = () => {
                 label="Apellido Materno"
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                onKeyPress={preventNumbers}
                 value={values.apellido_materno}
                 name="apellido_materno"
                 error={!!touched.apellido_materno && !!errors.apellido_materno}
@@ -229,11 +245,13 @@ const EditarUsuario = () => {
                 label="Email"
                 onBlur={handleBlur}
                 onChange={handleChange}
+                onKeyDown={preventSpace}
                 value={values.email}
                 name="email"
                 error={!!touched.email && !!errors.email}
                 helperText={touched.email && errors.email}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -262,6 +280,7 @@ const EditarUsuario = () => {
                 error={!!touched.nombre_usuario && !!errors.nombre_usuario}
                 helperText={touched.nombre_usuario && errors.nombre_usuario}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -277,7 +296,7 @@ const EditarUsuario = () => {
                 error={!!touched.fecha_nacimiento && !!errors.fecha_nacimiento}
                 helperText={touched.fecha_nacimiento && errors.fecha_nacimiento}
                 sx={{ gridColumn: "span 2" }}
-                // InputProps={{ readOnly: true }}
+                InputProps={{ readOnly: true }}
               />
 
               <TextField
@@ -287,11 +306,13 @@ const EditarUsuario = () => {
                 label="Contraseña (dejar vacío para mantener actual)"
                 onBlur={handleBlur}
                 onChange={handleChange}
+                onKeyDown={preventSpace}
                 value={values.contrasena_hash}
                 name="contrasena_hash"
                 error={!!touched.contrasena_hash && !!errors.contrasena_hash}
                 helperText={touched.contrasena_hash && errors.contrasena_hash}
                 sx={{ gridColumn: "span 4" }}
+                inputProps={{ maxLength: 30 }}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -401,6 +422,7 @@ const editSchema = yup.object().shape({
     .string()
     .matches(emailRegExp, "Formato de email inválido")
     .email("Email inválido")
+    .max(30, "Máximo 30 caracteres")
     .required("El email es requerido"),
   telefono: yup
     .string()
@@ -416,6 +438,7 @@ const editSchema = yup.object().shape({
     .required("La fecha de nacimiento es requerida"),
   contrasena_hash: yup
     .string()
+    .max(30, "Máximo 30 caracteres")
     .min(6, "La contraseña debe tener al menos 6 caracteres"),
   id_rol: yup.string().required("Debe seleccionar un rol"),
   id_estado: yup.string().required("Debe seleccionar un estado"),
