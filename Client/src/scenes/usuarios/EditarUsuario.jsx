@@ -16,6 +16,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../services/api.js";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import Swal from "sweetalert2";
 
 const EditarUsuario = () => {
   const theme = useTheme();
@@ -52,12 +53,22 @@ const EditarUsuario = () => {
       if (usuarioResponse.data.success) {
         setUsuarioData(usuarioResponse.data.data);
       } else {
-        alert("Usuario no encontrado");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Usuario no encontrado",
+          confirmButtonColor: "#d33",
+        });
         navigate("/usuarios");
       }
     } catch (error) {
       console.error("Error al cargar datos:", error);
-      alert("Error al cargar los datos. Por favor, recarga la página.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Error al cargar los datos. Por favor, recarga la página.",
+        confirmButtonColor: "#d33",
+      });
     } finally {
       setLoading(false);
     }
@@ -68,20 +79,41 @@ const EditarUsuario = () => {
       const response = await api.put(`/usuarios/${id}`, values);
 
       if (response.data && response.data.success) {
-        alert("Usuario actualizado exitosamente");
-        navigate("/usuarios");
+        Swal.fire({
+          icon: "success",
+          title: "Usuario Actualizado!",
+          text: "El Usuario se ha Actualizado Exitosamente",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          navigate("/usuarios");
+        });
       }
     } catch (error) {
       console.error("Error al actualizar usuario:", error);
 
       if (error.response && error.response.data) {
         if (error.response.data.mensaje) {
-          alert(error.response.data.mensaje);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: error.response.data.mensaje,
+            confirmButtonColor: "#d33",
+          });
         } else {
-          alert("Error al actualizar el usuario");
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Error al actualizar el usuario",
+            confirmButtonColor: "#d33",
+          });
         }
       } else {
-        alert("Error de conexión con el servidor");
+        Swal.fire({
+          icon: "error",
+          title: "Error de conexión",
+          text: "Error de conexión con el servidor",
+          confirmButtonColor: "#d33",
+        });
       }
     } finally {
       setSubmitting(false);

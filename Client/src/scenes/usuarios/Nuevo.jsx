@@ -16,6 +16,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import Swal from "sweetalert2";
 
 const NuevoUsuario = () => {
   const theme = useTheme();
@@ -47,7 +48,12 @@ const NuevoUsuario = () => {
       }
     } catch (error) {
       console.error("Error al cargar opciones:", error);
-      alert("Error al cargar las opciones. Por favor, recarga la página.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Error al cargar las opciones. Por favor, recarga la página.",
+        confirmButtonColor: "#d33",
+      });
     } finally {
       setLoading(false);
     }
@@ -61,24 +67,44 @@ const NuevoUsuario = () => {
       const response = await api.post("/usuarios", values);
 
       if (response.data && response.data.success) {
-        alert("Usuario creado exitosamente");
-        resetForm();
-
-        setTimeout(() => {
-          navigate("/usuarios");
-        }, 1000);
+        Swal.fire({
+          icon: "success",
+          title: "Usuario Nuevo Creado!",
+          text: "El Usuario ha sido creado exitosamente",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          resetForm();
+          setTimeout(() => {
+            navigate("/usuarios");
+          }, 1000);
+        });
       }
     } catch (error) {
       console.error("Error al crear usuario:", error);
 
       if (error.response && error.response.data) {
         if (error.response.data.mensaje) {
-          alert(error.response.data.mensaje);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: error.response.data.mensaje,
+            confirmButtonColor: "#d33",
+          });
         } else {
-          alert("Error al crear el usuario");
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Error al crear el usuario",
+            confirmButtonColor: "#d33",
+          });
         }
       } else {
-        alert("Error de conexión con el servidor");
+        Swal.fire({
+          icon: "error",
+          title: "Error de conexión",
+          text: "Error de conexión con el servidor",
+          confirmButtonColor: "#d33",
+        });
       }
     } finally {
       setSubmitting(false);

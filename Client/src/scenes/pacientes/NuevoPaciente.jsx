@@ -8,6 +8,7 @@ import Header from "../../components/Header";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api.js";
+import Swal from "sweetalert2";
 
 const NuevoPaciente = () => {
   const theme = useTheme();
@@ -32,7 +33,12 @@ const NuevoPaciente = () => {
       }
     } catch (error) {
       console.error("Error al cargar opciones:", error);
-      alert("Error al cargar las opciones. Por favor, recarga la página.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Error al cargar las opciones. Por favor, recarga la página.",
+        confirmButtonColor: "#d33",
+      });
     } finally {
       setLoading(false);
     }
@@ -46,24 +52,44 @@ const NuevoPaciente = () => {
       const response = await api.post("/pacientes", values);
 
       if (response.data && response.data.success) {
-        alert("Paciente creado exitosamente");
-        resetForm();
-
-        setTimeout(() => {
-          navigate("/pacientes");
-        }, 1000);
+        Swal.fire({
+          icon: "success",
+          title: "Paciente Creado!",
+          text: "El Paciente se ha Creado Exitosamente",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          resetForm();
+          setTimeout(() => {
+            navigate("/pacientes");
+          }, 1000);
+        });
       }
     } catch (error) {
       console.error("Error al crear paciente:", error);
 
       if (error.response && error.response.data) {
         if (error.response.data.mensaje) {
-          alert(error.response.data.mensaje);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: error.response.data.mensaje,
+            confirmButtonColor: "#d33",
+          });
         } else {
-          alert("Error al crear el paciente");
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Error al crear el paciente",
+            confirmButtonColor: "#d33",
+          });
         }
       } else {
-        alert("Error de conexión con el servidor");
+        Swal.fire({
+          icon: "error",
+          title: "Error de conexión",
+          text: "Error de conexión con el servidor",
+          confirmButtonColor: "#d33",
+        });
       }
     } finally {
       setSubmitting(false);

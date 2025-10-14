@@ -8,6 +8,7 @@ import Header from "../../components/Header";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../services/api.js";
+import Swal from "sweetalert2";
 
 const EditarPaciente = () => {
   const theme = useTheme();
@@ -37,12 +38,22 @@ const EditarPaciente = () => {
       if (pacienteResponse.data.success) {
         setPacienteData(pacienteResponse.data.data);
       } else {
-        alert("Paciente no encontrado");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Paciente no encontrado",
+          confirmButtonColor: "#d33",
+        });
         navigate("/pacientes");
       }
     } catch (error) {
       console.error("Error al cargar datos:", error);
-      alert("Error al cargar los datos. Por favor, recarga la página.");
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Error al cargar los datos. Por favor, recarga la página.",
+        confirmButtonColor: "#d33",
+      });
     } finally {
       setLoading(false);
     }
@@ -58,20 +69,41 @@ const EditarPaciente = () => {
       const response = await api.put(`/pacientes/${id}`, values);
 
       if (response.data && response.data.success) {
-        alert("Paciente actualizado exitosamente");
-        navigate("/pacientes");
+        Swal.fire({
+          icon: "success",
+          title: "Paciente Actualizado!",
+          text: "El Paciente ha sido Actualizado Exitosamente",
+          confirmButtonColor: "#3085d6",
+        }).then(() => {
+          navigate("/pacientes");
+        });
       }
     } catch (error) {
       console.error("Error al actualizar paciente:", error);
 
       if (error.response && error.response.data) {
         if (error.response.data.mensaje) {
-          alert(error.response.data.mensaje);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: error.response.data.mensaje,
+            confirmButtonColor: "#d33",
+          });
         } else {
-          alert("Error al actualizar el paciente");
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Error al actualizar el paciente",
+            confirmButtonColor: "#d33",
+          });
         }
       } else {
-        alert("Error de conexión con el servidor");
+        Swal.fire({
+          icon: "error",
+          title: "Error de conexión",
+          text: "Error de conexión con el servidor",
+          confirmButtonColor: "#d33",
+        });
       }
     } finally {
       setSubmitting(false);
@@ -241,7 +273,6 @@ const EditarPaciente = () => {
                 error={!!touched.fecha_nacimiento && !!errors.fecha_nacimiento}
                 helperText={touched.fecha_nacimiento && errors.fecha_nacimiento}
                 sx={{ gridColumn: "span 2" }}
-                //InputProps={{ readOnly: true }}
               />
 
               <TextField

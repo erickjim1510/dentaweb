@@ -15,21 +15,21 @@ import { useEffect, useState } from "react";
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import DescriptionIcon from "@mui/icons-material/Description";
 import PersonIcon from "@mui/icons-material/Person";
 import SearchIcon from "@mui/icons-material/Search";
 import Tooltip from "@mui/material/Tooltip";
+import Swal from "sweetalert2";
 
 const ListaPacientes = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const navigate = useNavigate();
 
-  //Inicializacion de estados
   const [pacientesFiltrados, setPacientesFiltrados] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [loading, setLoading] = useState(false);
 
-  //Funcion para buscar pacientes y pasarlos a PacientesFiltrados
   const buscarPacientes = async (termino) => {
     if (!termino.trim()) {
       setPacientesFiltrados([]);
@@ -64,35 +64,62 @@ const ListaPacientes = () => {
     return () => clearTimeout(timer);
   }, [busqueda]);
 
-  //Handle para eliminar pacinete, solo aparece una alerta para confirmar la
-  //eliminacion sino da error
   const handleEliminarPaciente = async (idPaciente) => {
-    if (window.confirm("¿Está seguro de eliminar este paciente?")) {
-      try {
-        const response = await api.delete(`/pacientes`, {
-          data: { id_paciente: idPaciente },
-        });
+    Swal.fire({
+      title: "Estass seguro?",
+      text: "Deseas eliminar a este paciente?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si Eliminar",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await api.delete(`/pacientes`, {
+            data: { id_paciente: idPaciente },
+          });
 
-        if (response.data.success) {
-          setPacientesFiltrados(
-            pacientesFiltrados.filter(
-              (paciente) => paciente.id_paciente !== idPaciente
-            )
-          );
-          alert("Paciente eliminado exitosamente");
-        } else {
-          alert("Error al eliminar paciente: " + response.data.mensaje);
+          if (response.data.success) {
+            setPacientesFiltrados(
+              pacientesFiltrados.filter(
+                (paciente) => paciente.id_paciente !== idPaciente
+              )
+            );
+            Swal.fire({
+              icon: "success",
+              title: "Paciente Eliminado!",
+              text: "El Paciente ha sido Eliminado Exitosamente",
+              confirmButtonColor: "#3085d6",
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Error al eliminar paciente: " + response.data.mensaje,
+              confirmButtonColor: "#d33",
+            });
+          }
+        } catch (error) {
+          console.error("Error al eliminar paciente:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Error al eliminar paciente",
+            confirmButtonColor: "#d33",
+          });
         }
-      } catch (error) {
-        console.error("Error al eliminar paciente:", error);
-        alert("Error al eliminar paciente");
       }
-    }
+    });
   };
 
-  //Handle para editar paciente, te dirige al siguiente componente
   const handleEditarPaciente = (idPaciente) => {
     navigate(`/paciente-editar/${idPaciente}`);
+  };
+
+  const handleExpediente = (idPaciente) => {
+    navigate(`/expediente/${idPaciente}`);
   };
 
   const columns = [
@@ -192,6 +219,16 @@ const ListaPacientes = () => {
           }
           label="Ver y Editar"
           onClick={() => handleEditarPaciente(params.id)}
+        />,
+        <GridActionsCellItem
+          key="expediente"
+          icon={
+            <Tooltip title="Expediente">
+              <DescriptionIcon />
+            </Tooltip>
+          }
+          label="Expediente"
+          onClick={() => handleExpediente(params.id)}
         />,
         <GridActionsCellItem
           key="delete"

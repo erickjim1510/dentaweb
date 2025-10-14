@@ -5,6 +5,7 @@ import MainLayout from '../layout/MainLayout';
 import ProtectedRoute from '../components/ProtectRoute';
 import EditarUsuario from '../scenes/usuarios/EditarUsuario';
 import EditarPaciente from '../scenes/pacientes/EditarPaciente';
+import Expediente from '../scenes/pacientes/Expediente';
 
 const DashboardDefault = Loadable(lazy(() => import('../scenes/dashboard')));
 const Usuarios = Loadable(lazy(() => import('../scenes/usuarios')));
@@ -75,6 +76,10 @@ const MainRoutes = {
     {
       path: 'paciente-editar/:id',
       element: <EditarPaciente/>
+    },
+    {
+      path: 'expediente/:id',
+      element: <Expediente/>
     }
   ]
 };

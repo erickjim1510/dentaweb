@@ -18,6 +18,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import PersonIcon from "@mui/icons-material/Person";
 import SearchIcon from "@mui/icons-material/Search";
 import Tooltip from "@mui/material/Tooltip";
+import Swal from "sweetalert2";
 
 const ListaUsuarios = () => {
   const theme = useTheme();
@@ -71,25 +72,51 @@ const ListaUsuarios = () => {
   }, [busqueda, usuarios]);
 
   const handleEliminarUsuario = async (idUsuario) => {
-    if (window.confirm("¿Está seguro de eliminar este usuario?")) {
-      try {
-        const response = await api.delete(`/usuarios`, {
-          data: { id_usuario: idUsuario },
-        });
+    Swal.fire({
+      title: "Estas Seguro?",
+      text: "Deseas eliminar a este usuario?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Si eliminar",
+      cancelButtonText: "Cancelar",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await api.delete(`/usuarios`, {
+            data: { id_usuario: idUsuario },
+          });
 
-        if (response.data.success) {
-          setUsuarios(
-            usuarios.filter((usuario) => usuario.id_usuario !== idUsuario)
-          );
-          alert("Usuario eliminado exitosamente");
-        } else {
-          alert("Error al eliminar usuario: " + response.data.mensaje);
+          if (response.data.success) {
+            setUsuarios(
+              usuarios.filter((usuario) => usuario.id_usuario !== idUsuario)
+            );
+            Swal.fire({
+              icon: "success",
+              title: "¡Eliminado!",
+              text: "El Usuario ha sido Eliminado Exitosamente",
+              confirmButtonColor: "#3085d6",
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text: "Error al eliminar usuario: " + response.data.mensaje,
+              confirmButtonColor: "#d33",
+            });
+          }
+        } catch (error) {
+          console.error("Error al eliminar usuario:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Error al eliminar usuario",
+            confirmButtonColor: "#d33",
+          });
         }
-      } catch (error) {
-        console.error("Error al eliminar usuario:", error);
-        alert("Error al eliminar usuario");
       }
-    }
+    });
   };
 
   const handleEditarUsuario = (idUsuario) => {
