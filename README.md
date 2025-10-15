@@ -12,13 +12,17 @@ Proyecto de Ingenieria de Software: Pagina web para Odontologo - Equipo 4
 - py -m pip install -r requirements.txt  **# solo la primera vez**
 - py app.py
 
-^Hay que configurar un archivo .env que tenga el siguiente atributo (ejemplo):
+
+- Hay que configurar un archivo .env que tenga el siguiente atributo (ejemplo):
 DATABASE_URL=mysql+pymysql://root:123456@localhost:3306/bd_sd
-^Nuestro esquema debe tener los siguientes insert:
+
+- Nuestro esquema debe tener los siguientes insert:
 INSERT INTO Roles (nombre_rol) VALUES ('Administrador'), ('Recepcionista'), ('Doctor'), ('Paciente');
 INSERT INTO Sexos (nombre_sexo) VALUES ('Masculino'), ('Femenino'), ('Otro');
 INSERT INTO Estados (nombre_estado) VALUES ('Activo'), ('Inactivo');
-^Correr el programa una vez antes de los insert para que SQLAlchemy cree las tablas automáticamente.
+
+**Correr el programa una vez antes de los insert para que SQLAlchemy cree las tablas automáticamente.**
+
 ##### Frontend:
 - cd Client
 - npm i  **# solo la primera vez**
