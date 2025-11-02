@@ -20,6 +20,9 @@ class Paciente(db.Model):
     
     # Relación con Sexo
     sexo = db.relationship('Sexo', back_populates='pacientes')
+
+    # Relación con Expediente
+    expediente = db.relationship("Expediente", back_populates="paciente")
     
     def to_dict(self):
         return {
@@ -38,3 +41,4 @@ class Paciente(db.Model):
             "fecha_registro": self.fecha_registro.isoformat() if self.fecha_registro else None,
             "nombre_sexo": self.sexo.nombre_sexo if self.sexo else None
         }
+    

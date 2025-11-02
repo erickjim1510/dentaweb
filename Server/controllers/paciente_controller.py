@@ -205,3 +205,4 @@ class PacienteController:
         except Exception as e:
             db.session.rollback()
             return {'success': False, 'mensaje': f'Error al eliminar paciente: {str(e)}'}
+
