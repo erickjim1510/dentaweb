@@ -1,4 +1,4 @@
-// MainRoutes.js - REEMPLAZA TU ARCHIVO ACTUAL
+// MainRoutes.js
 import { lazy } from 'react';
 import Loadable from '../components/Loadable';
 import MainLayout from '../layout/MainLayout';
@@ -9,21 +9,35 @@ import Expediente from '../scenes/pacientes/Expediente';
 
 const DashboardDefault = Loadable(lazy(() => import('../scenes/dashboard')));
 const Usuarios = Loadable(lazy(() => import('../scenes/usuarios')));
-const NuevoUsuario = Loadable(lazy(() => import("../scenes/usuarios/Nuevo")));
+const NuevoUsuario = Loadable(lazy(() => import('../scenes/usuarios/Nuevo')));
 const Pacientes = Loadable(lazy(() => import('../scenes/pacientes')));
 const NuevoPaciente = Loadable(lazy(() => import('../scenes/pacientes/NuevoPaciente')));
 
-// Componente para proteger rutas de administrador
+const getUser = () => JSON.parse(sessionStorage.getItem("user") || "{}");
+
 const AdminOnlyRoute = ({ children }) => {
-  const user = JSON.parse(sessionStorage.getItem("user") || "{}");
-  
+  const user = getUser();
   if (user.nombre_rol !== "Administrador") {
-    return <div style={{padding: "20px", textAlign: "center"}}>
-      <h2>Acceso Denegado</h2>
-      <p>No tienes permisos para acceder a esta sección.</p>
-    </div>;
+    return (
+      <div style={{ padding: "20px", textAlign: "center" }}>
+        <h2>Acceso Denegado</h2>
+        <p>No tienes permisos para acceder a esta sección.</p>
+      </div>
+    );
   }
-  
+  return children;
+};
+
+const NonAdminRoute = ({ children }) => {
+  const user = getUser();
+  if (user.nombre_rol === "Administrador") {
+    return (
+      <div style={{ padding: "20px", textAlign: "center" }}>
+        <h2>Acceso Denegado</h2>
+        <p>Esta sección no está disponible para administradores.</p>
+      </div>
+    );
+  }
   return children;
 };
 
@@ -39,7 +53,8 @@ const MainRoutes = {
       path: 'dashboard',
       element: <DashboardDefault />
     },
-    // RUTAS SOLO PARA ADMINISTRADOR
+
+    // Rutas solo para admin
     {
       path: 'usuarios',
       element: (
@@ -52,7 +67,7 @@ const MainRoutes = {
       path: 'usuario-nuevo',
       element: (
         <AdminOnlyRoute>
-          <NuevoUsuario/>
+          <NuevoUsuario />
         </AdminOnlyRoute>
       )
     },
@@ -60,26 +75,43 @@ const MainRoutes = {
       path: 'usuario-editar/:id',
       element: (
         <AdminOnlyRoute>
-          <EditarUsuario/>
+          <EditarUsuario />
         </AdminOnlyRoute>
       )
     },
-    // RUTAS PARA TODOS (Administrador, Recepcionista, Doctor)
+
+    // Rutas para todos
     {
       path: 'pacientes',
-      element: <Pacientes />
+      element: (
+        <NonAdminRoute>
+          <Pacientes />
+        </NonAdminRoute>
+      )
     },
     {
       path: 'paciente-nuevo',
-      element: <NuevoPaciente/>
+      element: (
+        <NonAdminRoute>
+          <NuevoPaciente />
+        </NonAdminRoute>
+      )
     },
     {
       path: 'paciente-editar/:id',
-      element: <EditarPaciente/>
+      element: (
+        <NonAdminRoute>
+          <EditarPaciente />
+        </NonAdminRoute>
+      )
     },
     {
       path: 'expediente/:id',
-      element: <Expediente/>
+      element: (
+        <NonAdminRoute>
+          <Expediente />
+        </NonAdminRoute>
+      )
     }
   ]
 };

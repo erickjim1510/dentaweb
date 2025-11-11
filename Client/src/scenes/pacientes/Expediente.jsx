@@ -131,7 +131,6 @@ const Expediente = () => {
     handleChange({ target: { name, value: numericValue } });
   };
 
-  // Componente personalizado para Radio con estilos
   const CustomRadio = (props) => (
     <Radio
       {...props}
@@ -176,7 +175,6 @@ const Expediente = () => {
       <Formik
         onSubmit={handleFormSubmit}
         initialValues={{
-          //Datos personales
           id_sexo: pacienteData.id_sexo || "",
           primer_nombre: pacienteData.primer_nombre || "",
           segundo_nombre: pacienteData.segundo_nombre || "",
@@ -188,25 +186,17 @@ const Expediente = () => {
           ocupacion: pacienteData.ocupacion || "",
           telefono: pacienteData.telefono || "",
           email: pacienteData.email || "",
-
-          //Info Medica
           recomendado_por: pacienteData.recomendado_por || "",
           medico_familiar: pacienteData.medico_familiar || "",
           hora_ultimo_alimento: pacienteData.hora_ultimo_alimento || "",
           glucosa: pacienteData.glucosa || "",
           presion_arterial: pacienteData.presion_arterial || "",
-
-          //Motivo Consulta
           motivo_consulta: pacienteData.motivo_consulta || "",
           duracion_padecimiento: pacienteData.duracion_padecimiento || "",
-
-          //Antecedentes Heredo-Familiares
           antecedentes_padres: pacienteData.antecedentes_padres || "",
           antecedentes_abuelos: pacienteData.antecedentes_abuelos || "",
           antecedentes_tios: pacienteData.antecedentes_tios || "",
           antecedentes_hermanos: pacienteData.antecedentes_hermanos || "",
-
-          //Antecedentes Personales
           diabetes: pacienteData.diabetes || "NO",
           infartos: pacienteData.infartos || "NO",
           anemia: pacienteData.anemia || "NO",
@@ -247,6 +237,23 @@ const Expediente = () => {
           enfermedad_grave_detalle: pacienteData.enfermedad_grave_detalle || "",
           consume_alcohol: pacienteData.consume_alcohol || "NO",
           fuma: pacienteData.fuma || "NO",
+          fecha_ultima_visita_dental:
+            pacienteData.fecha_ultima_visita_dental || "",
+          motivo_visita_dental: pacienteData.motivo_visita_dental || "",
+          cepillado_diario: pacienteData.cepillado_diario || "",
+          usa_aditamento_dental: pacienteData.usa_aditamento_dental || "NO",
+          aditamento_dental_detalle:
+            pacienteData.aditamento_dental_detalle || "",
+          reaccion_anestesia: pacienteData.reaccion_anestesia || "NO",
+          molestia_boca: pacienteData.molestia_boca || "NO",
+          mal_sabor_boca: pacienteData.mal_sabor_boca || "NO",
+          sangrado_encias: pacienteData.sangrado_encias || "NO",
+          dientes_moviles: pacienteData.dientes_moviles || "NO",
+          ruido_boca: pacienteData.ruido_boca || "NO",
+          habitos_orofaciales: pacienteData.habitos_orofaciales || "",
+          respira_boca: pacienteData.respira_boca || "NO",
+          consentimiento_informado:
+            pacienteData.consentimiento_informado || "NO",
         }}
         validationSchema={editSchema}
         enableReinitialize
@@ -262,7 +269,6 @@ const Expediente = () => {
           setFieldValue,
         }) => (
           <form onSubmit={handleSubmit}>
-            {/*Datos Personales*/}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -273,7 +279,6 @@ const Expediente = () => {
                 DATOS PERSONALES
               </Typography>
               <Divider sx={{ mb: 2 }} />
-
               <Box
                 display="grid"
                 gap="20px"
@@ -296,8 +301,8 @@ const Expediente = () => {
                   error={!!touched.primer_nombre && !!errors.primer_nombre}
                   helperText={touched.primer_nombre && errors.primer_nombre}
                   sx={{ gridColumn: "span 3" }}
+                  InputProps={{ readOnly: true }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -310,8 +315,8 @@ const Expediente = () => {
                   error={!!touched.segundo_nombre && !!errors.segundo_nombre}
                   helperText={touched.segundo_nombre && errors.segundo_nombre}
                   sx={{ gridColumn: "span 3" }}
+                  InputProps={{ readOnly: true }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -321,6 +326,7 @@ const Expediente = () => {
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.apellido_paterno}
                   name="apellido_paterno"
+                  InputProps={{ readOnly: true }}
                   error={
                     !!touched.apellido_paterno && !!errors.apellido_paterno
                   }
@@ -329,12 +335,12 @@ const Expediente = () => {
                   }
                   sx={{ gridColumn: "span 3" }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
                   type="text"
                   label="Apellido Materno"
+                  InputProps={{ readOnly: true }}
                   onBlur={handleBlur}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.apellido_materno}
@@ -347,12 +353,12 @@ const Expediente = () => {
                   }
                   sx={{ gridColumn: "span 3" }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
                   type="date"
                   label="Fecha de Nacimiento"
+                  InputProps={{ readOnly: true }}
                   onBlur={handleBlur}
                   onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
@@ -366,12 +372,12 @@ const Expediente = () => {
                   }
                   sx={{ gridColumn: "span 3" }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
                   type="text"
                   label="Edad"
+                  InputProps={{ readOnly: true }}
                   value={
                     values.fecha_nacimiento
                       ? Math.floor(
@@ -381,10 +387,8 @@ const Expediente = () => {
                       : ""
                   }
                   name="edad"
-                  InputProps={{ readOnly: true }}
                   sx={{ gridColumn: "span 2" }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -398,12 +402,12 @@ const Expediente = () => {
                   InputProps={{ readOnly: true }}
                   sx={{ gridColumn: "span 2" }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
                   type="text"
                   label="Dirección"
+                  InputProps={{ readOnly: true }}
                   onBlur={handleBlur}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.direccion}
@@ -412,12 +416,12 @@ const Expediente = () => {
                   helperText={touched.direccion && errors.direccion}
                   sx={{ gridColumn: "span 12" }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
                   type="text"
                   label="Lugar de Nacimiento"
+                  InputProps={{ readOnly: true }}
                   onBlur={handleBlur}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.lugar_nacimiento}
@@ -430,12 +434,12 @@ const Expediente = () => {
                   }
                   sx={{ gridColumn: "span 6" }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
                   type="text"
                   label="Ocupación"
+                  InputProps={{ readOnly: true }}
                   onBlur={handleBlur}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.ocupacion}
@@ -444,12 +448,12 @@ const Expediente = () => {
                   helperText={touched.ocupacion && errors.ocupacion}
                   sx={{ gridColumn: "span 6" }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
                   type="text"
                   label="Teléfono"
+                  InputProps={{ readOnly: true }}
                   onBlur={handleBlur}
                   onChange={(e) => handleNumberChange(e, handleChange)}
                   value={values.telefono}
@@ -458,11 +462,11 @@ const Expediente = () => {
                   helperText={touched.telefono && errors.telefono}
                   sx={{ gridColumn: "span 3" }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
                   type="email"
+                  InputProps={{ readOnly: true }}
                   label="E-mail"
                   onBlur={handleBlur}
                   onChange={handleChange}
@@ -475,7 +479,6 @@ const Expediente = () => {
               </Box>
             </Box>
 
-            {/*Info Medica*/}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -486,7 +489,6 @@ const Expediente = () => {
                 INFORMACION MEDICA
               </Typography>
               <Divider sx={{ mb: 1 }} />
-
               <Box
                 display="grid"
                 gap="20px"
@@ -507,8 +509,8 @@ const Expediente = () => {
                   value={values.recomendado_por}
                   name="recomendado_por"
                   sx={{ gridColumn: "span 6" }}
+                  inputProps={{ maxLength: 30 }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -519,8 +521,8 @@ const Expediente = () => {
                   value={values.medico_familiar}
                   name="medico_familiar"
                   sx={{ gridColumn: "span 6" }}
+                  inputProps={{ maxLength: 30 }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -533,7 +535,6 @@ const Expediente = () => {
                   name="hora_ultimo_alimento"
                   sx={{ gridColumn: "span 4" }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -544,23 +545,50 @@ const Expediente = () => {
                   value={values.glucosa}
                   name="glucosa"
                   sx={{ gridColumn: "span 4" }}
+                  InputProps={{
+                    endAdornment: (
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: colors.grey[100],
+                          fontWeight: "500",
+                          ml: 1,
+                        }}
+                      >
+                        mg/dL
+                      </Typography>
+                    ),
+                  }}
                 />
 
                 <TextField
                   fullWidth
                   variant="outlined"
                   type="text"
-                  label="Presion Arterial"
+                  label="Presión Arterial"
                   onBlur={handleBlur}
                   onChange={handleChange}
                   value={values.presion_arterial}
                   name="presion_arterial"
                   sx={{ gridColumn: "span 4" }}
+                  InputProps={{
+                    endAdornment: (
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: colors.grey[100],
+                          fontWeight: "500",
+                          ml: 1,
+                        }}
+                      >
+                        mmHg
+                      </Typography>
+                    ),
+                  }}
                 />
               </Box>
             </Box>
 
-            {/*Motivo Consulta*/}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -571,7 +599,6 @@ const Expediente = () => {
                 MOTIVO DE CONSULTA
               </Typography>
               <Divider sx={{ mb: 1 }} />
-
               <Box
                 display="grid"
                 gap="20px"
@@ -594,8 +621,8 @@ const Expediente = () => {
                   multiline
                   rows={3}
                   sx={{ gridColumn: "span 8" }}
+                  inputProps={{ maxLength: 50 }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -610,7 +637,6 @@ const Expediente = () => {
               </Box>
             </Box>
 
-            {/*Antecedentes Heredo*/}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -621,7 +647,6 @@ const Expediente = () => {
                 ANTECEDENTES HEREDO-FAMILIARES
               </Typography>
               <Divider sx={{ mb: 1 }} />
-
               <Box
                 display="grid"
                 gap="20px"
@@ -644,8 +669,8 @@ const Expediente = () => {
                   multiline
                   rows={2}
                   sx={{ gridColumn: "span 6" }}
+                  inputProps={{ maxLength: 30 }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -658,8 +683,8 @@ const Expediente = () => {
                   multiline
                   rows={2}
                   sx={{ gridColumn: "span 6" }}
+                  inputProps={{ maxLength: 30 }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -672,8 +697,8 @@ const Expediente = () => {
                   multiline
                   rows={2}
                   sx={{ gridColumn: "span 6" }}
+                  inputProps={{ maxLength: 30 }}
                 />
-
                 <TextField
                   fullWidth
                   variant="outlined"
@@ -686,11 +711,11 @@ const Expediente = () => {
                   multiline
                   rows={2}
                   sx={{ gridColumn: "span 6" }}
+                  inputProps={{ maxLength: 30 }}
                 />
               </Box>
             </Box>
 
-            {/*Antecedentes Personales*/}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -700,11 +725,9 @@ const Expediente = () => {
               >
                 ANTECEDENTES PERSONALES Y/O PADECIMIENTO ACTUAL
               </Typography>
-
               <Typography variant="body1" mb={2}>
                 Padece o ha padecido alguna de las sig. Enfermedades:
               </Typography>
-
               <Box
                 display="grid"
                 gap="15px"
@@ -715,7 +738,6 @@ const Expediente = () => {
                   },
                 }}
               >
-                {/* Fila 1 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -743,7 +765,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -773,7 +794,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -801,8 +821,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
-                {/* Fila 2 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -830,7 +848,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -858,7 +875,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -886,8 +902,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
-                {/* Fila 3 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -915,7 +929,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -945,7 +958,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -973,8 +985,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
-                {/* Fila 4 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1004,7 +1014,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1034,7 +1043,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1064,8 +1072,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
-                {/* Fila 5 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1093,7 +1099,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1121,7 +1126,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1149,8 +1153,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
-                {/* Fila 6 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1180,7 +1182,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1210,7 +1211,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1239,93 +1239,88 @@ const Expediente = () => {
                   </RadioGroup>
                 </Box>
 
-                {/* Enfermedades de la infancia */}
-                <Box
-                  sx={{
-                    gridColumn: "span 12",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 2,
-                  }}
-                >
-                  <Typography sx={{ minWidth: "350px" }}>
+                <Box sx={{ gridColumn: "span 8" }}>
+                  <Typography mb={1}>
                     Enfermedades de la infancia: ej: varicela, rubeola, paperas
                   </Typography>
-                  <RadioGroup
-                    row
-                    name="enfermedades_infancia"
-                    value={values.enfermedades_infancia}
-                    onChange={handleChange}
-                  >
-                    <FormControlLabel
-                      value="SI"
-                      control={<CustomRadio size="small" />}
-                      label="SI"
-                    />
-                    <FormControlLabel
-                      value="NO"
-                      control={<CustomRadio size="small" />}
-                      label="NO"
-                    />
-                  </RadioGroup>
+                  <Box display="flex" flexDirection="column" gap={2}>
+                    <RadioGroup
+                      row
+                      name="enfermedades_infancia"
+                      value={values.enfermedades_infancia}
+                      onChange={handleChange}
+                    >
+                      <FormControlLabel
+                        value="SI"
+                        control={<CustomRadio size="small" />}
+                        label="SI"
+                      />
+                      <FormControlLabel
+                        value="NO"
+                        control={<CustomRadio size="small" />}
+                        label="NO"
+                      />
+                    </RadioGroup>
+
+                    {values.enfermedades_infancia === "SI" && (
+                      <TextField
+                        fullWidth
+                        variant="outlined"
+                        type="text"
+                        label="Explique"
+                        onBlur={handleBlur}
+                        onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                        value={values.enfermedades_infancia_detalle}
+                        name="enfermedades_infancia_detalle"
+                        inputProps={{ maxLength: 30 }}
+                      />
+                    )}
+                  </Box>
                 </Box>
 
-                {values.enfermedades_infancia === "SI" && (
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    type="text"
-                    label="Explique"
-                    onBlur={handleBlur}
-                    onChange={(e) => handleUpperCaseChange(e, handleChange)}
-                    value={values.enfermedades_infancia_detalle}
-                    name="enfermedades_infancia_detalle"
-                    sx={{ gridColumn: "span 12" }}
-                  />
-                )}
-
-                {/* COVID-19 */}
-                <Box
-                  sx={{
-                    gridColumn: "span 6",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 2,
-                  }}
-                >
-                  <Typography sx={{ minWidth: "150px" }}>COVID-19</Typography>
-                  <RadioGroup
-                    row
-                    name="covid19"
-                    value={values.covid19}
-                    onChange={handleChange}
+                <Box sx={{ gridColumn: "span 8" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 2,
+                      mb: 1,
+                    }}
                   >
-                    <FormControlLabel
-                      value="SI"
-                      control={<CustomRadio size="small" />}
-                      label="SI"
-                    />
-                    <FormControlLabel
-                      value="NO"
-                      control={<CustomRadio size="small" />}
-                      label="NO"
-                    />
-                  </RadioGroup>
-                </Box>
+                    <Typography sx={{ minWidth: "150px" }}>COVID-19</Typography>
+                    <RadioGroup
+                      row
+                      name="covid19"
+                      value={values.covid19}
+                      onChange={handleChange}
+                    >
+                      <FormControlLabel
+                        value="SI"
+                        control={<CustomRadio size="small" />}
+                        label="SI"
+                      />
+                      <FormControlLabel
+                        value="NO"
+                        control={<CustomRadio size="small" />}
+                        label="NO"
+                      />
+                    </RadioGroup>
+                  </Box>
 
-                {values.covid19 === "SI" && (
-                  <TextField
-                    fullWidth
-                    variant="outlined"
-                    type="text"
-                    label="Tratamiento"
-                    onBlur={handleBlur}
-                    onChange={(e) => handleUpperCaseChange(e, handleChange)}
-                    value={values.covid19_tratamiento}
-                    name="covid19_tratamiento"
-                    sx={{ gridColumn: "span 6" }}
-                  />
-                )}
+                  {values.covid19 === "SI" && (
+                    <TextField
+                      fullWidth
+                      variant="outlined"
+                      type="text"
+                      label="Tratamiento"
+                      onBlur={handleBlur}
+                      onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                      value={values.covid19_tratamiento}
+                      name="covid19_tratamiento"
+                      inputProps={{ maxLength: 30 }}
+                    />
+                  )}
+                </Box>
 
                 <TextField
                   fullWidth
@@ -1338,13 +1333,13 @@ const Expediente = () => {
                   name="otras_enfermedades"
                   multiline
                   rows={2}
-                  sx={{ gridColumn: "span 12" }}
+                  sx={{ gridColumn: "span 8" }}
+                  inputProps={{ maxLength: 30 }}
                 />
 
-                {/* Consume algún medicamento */}
                 <Box
                   sx={{
-                    gridColumn: "span 12",
+                    gridColumn: "span 8",
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
@@ -1371,7 +1366,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 {values.consume_medicamento === "SI" && (
                   <TextField
                     fullWidth
@@ -1382,14 +1376,14 @@ const Expediente = () => {
                     onChange={(e) => handleUpperCaseChange(e, handleChange)}
                     value={values.medicamento_detalle}
                     name="medicamento_detalle"
-                    sx={{ gridColumn: "span 12" }}
+                    sx={{ gridColumn: "span 8" }}
+                    inputProps={{ maxLength: 30 }}
                   />
                 )}
 
-                {/* Sufre con frecuencia dolores de cabeza */}
                 <Box
                   sx={{
-                    gridColumn: "span 12",
+                    gridColumn: "span 8",
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
@@ -1417,10 +1411,9 @@ const Expediente = () => {
                   </RadioGroup>
                 </Box>
 
-                {/* Es alérgico a alguna sustancia */}
                 <Box
                   sx={{
-                    gridColumn: "span 12",
+                    gridColumn: "span 8",
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
@@ -1448,7 +1441,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 {values.alergico_sustancia === "SI" && (
                   <TextField
                     fullWidth
@@ -1459,14 +1451,14 @@ const Expediente = () => {
                     onChange={(e) => handleUpperCaseChange(e, handleChange)}
                     value={values.alergico_sustancia_detalle}
                     name="alergico_sustancia_detalle"
-                    sx={{ gridColumn: "span 12" }}
+                    sx={{ gridColumn: "span 8" }}
+                    inputProps={{ maxLength: 30 }}
                   />
                 )}
 
-                {/* Ha sido intervenido quirúrgicamente */}
                 <Box
                   sx={{
-                    gridColumn: "span 6",
+                    gridColumn: "span 8",
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
@@ -1493,7 +1485,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 {values.intervencion_quirurgica === "SI" && (
                   <TextField
                     fullWidth
@@ -1504,14 +1495,14 @@ const Expediente = () => {
                     onChange={(e) => handleUpperCaseChange(e, handleChange)}
                     value={values.intervencion_quirurgica_detalle}
                     name="intervencion_quirurgica_detalle"
-                    sx={{ gridColumn: "span 6" }}
+                    sx={{ gridColumn: "span 8" }}
+                    inputProps={{ maxLength: 30 }}
                   />
                 )}
 
-                {/* Sangra excesivamente */}
                 <Box
                   sx={{
-                    gridColumn: "span 12",
+                    gridColumn: "span 8",
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
@@ -1539,10 +1530,9 @@ const Expediente = () => {
                   </RadioGroup>
                 </Box>
 
-                {/* Está embarazada */}
                 <Box
                   sx={{
-                    gridColumn: "span 12",
+                    gridColumn: "span 8",
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
@@ -1570,10 +1560,9 @@ const Expediente = () => {
                   </RadioGroup>
                 </Box>
 
-                {/* Padeció alguna enfermedad grave recientemente */}
                 <Box
                   sx={{
-                    gridColumn: "span 6",
+                    gridColumn: "span 8",
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
@@ -1600,7 +1589,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 {values.enfermedad_grave_reciente === "SI" && (
                   <TextField
                     fullWidth
@@ -1611,11 +1599,11 @@ const Expediente = () => {
                     onChange={(e) => handleUpperCaseChange(e, handleChange)}
                     value={values.enfermedad_grave_detalle}
                     name="enfermedad_grave_detalle"
-                    sx={{ gridColumn: "span 6" }}
+                    sx={{ gridColumn: "span 8" }}
+                    inputProps={{ maxLength: 30 }}
                   />
                 )}
 
-                {/* Consume alcohol y fuma */}
                 <Box
                   sx={{
                     gridColumn: "span 6",
@@ -1645,7 +1633,6 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
-
                 <Box
                   sx={{
                     gridColumn: "span 6",
@@ -1673,6 +1660,380 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
+              </Box>
+            </Box>
+
+            <Box mb={3}>
+              <Typography
+                variant="h5"
+                color={colors.greenAccent[400]}
+                fontWeight="bold"
+                mb={2}
+              >
+                HISTORIA BUCAL Y DENTAL
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+              <Box
+                display="grid"
+                gap="20px"
+                gridTemplateColumns="repeat(12, 1fr)"
+                sx={{
+                  "& > div": {
+                    gridColumn: isNonMobile ? undefined : "span 12",
+                  },
+                }}
+              >
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  type="date"
+                  label="Fecha de la última visita dental"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  InputLabelProps={{ shrink: true }}
+                  value={values.fecha_ultima_visita_dental || ""}
+                  name="fecha_ultima_visita_dental"
+                  sx={{ gridColumn: "span 6" }}
+                />
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  type="text"
+                  label="Motivo"
+                  onBlur={handleBlur}
+                  onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                  value={values.motivo_visita_dental || ""}
+                  name="motivo_visita_dental"
+                  sx={{ gridColumn: "span 6" }}
+                  inputProps={{ maxLength: 30 }}
+                />
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  type="number"
+                  label="¿Cuántas veces al día se cepilla sus dientes?"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.cepillado_diario || ""}
+                  name="cepillado_diario"
+                  inputProps={{ min: 0, max: 10 }}
+                  sx={{ gridColumn: "span 12" }}
+                />
+
+                <Box
+                  sx={{
+                    gridColumn: "span 8",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <Typography sx={{ minWidth: "550px" }}>
+                    ¿Aparte del cepillo utiliza otro aditamento para limpiar sus
+                    dientes?
+                  </Typography>
+                  <RadioGroup
+                    row
+                    name="usa_aditamento_dental"
+                    value={values.usa_aditamento_dental || "NO"}
+                    onChange={handleChange}
+                  >
+                    <FormControlLabel
+                      value="SI"
+                      control={<CustomRadio size="small" />}
+                      label="SI"
+                    />
+                    <FormControlLabel
+                      value="NO"
+                      control={<CustomRadio size="small" />}
+                      label="NO"
+                    />
+                  </RadioGroup>
+                </Box>
+                {values.usa_aditamento_dental === "SI" && (
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    type="text"
+                    label="¿Cuáles?"
+                    onBlur={handleBlur}
+                    onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                    value={values.aditamento_dental_detalle || ""}
+                    name="aditamento_dental_detalle"
+                    sx={{ gridColumn: "span 8" }}
+                    inputProps={{ maxLength: 30 }}
+                  />
+                )}
+
+                <Box
+                  sx={{
+                    gridColumn: "span 12",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <Typography sx={{ minWidth: "550px" }}>
+                    ¿Tuvo alguna vez reacción a la anestesia dental?
+                  </Typography>
+                  <RadioGroup
+                    row
+                    name="reaccion_anestesia"
+                    value={values.reaccion_anestesia || "NO"}
+                    onChange={handleChange}
+                  >
+                    <FormControlLabel
+                      value="SI"
+                      control={<CustomRadio size="small" />}
+                      label="SI"
+                    />
+                    <FormControlLabel
+                      value="NO"
+                      control={<CustomRadio size="small" />}
+                      label="NO"
+                    />
+                  </RadioGroup>
+                </Box>
+
+                <Box
+                  sx={{
+                    gridColumn: "span 12",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <Typography sx={{ minWidth: "350px" }}>
+                    ¿Molestia o dolor en boca?
+                  </Typography>
+                  <RadioGroup
+                    row
+                    name="molestia_boca"
+                    value={values.molestia_boca || "NO"}
+                    onChange={handleChange}
+                  >
+                    <FormControlLabel
+                      value="SI"
+                      control={<CustomRadio size="small" />}
+                      label="SI"
+                    />
+                    <FormControlLabel
+                      value="NO"
+                      control={<CustomRadio size="small" />}
+                      label="NO"
+                    />
+                  </RadioGroup>
+                </Box>
+
+                <Box
+                  sx={{
+                    gridColumn: "span 12",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <Typography sx={{ minWidth: "350px" }}>
+                    ¿Mal olor o mal sabor de boca?
+                  </Typography>
+                  <RadioGroup
+                    row
+                    name="mal_sabor_boca"
+                    value={values.mal_sabor_boca || "NO"}
+                    onChange={handleChange}
+                  >
+                    <FormControlLabel
+                      value="SI"
+                      control={<CustomRadio size="small" />}
+                      label="SI"
+                    />
+                    <FormControlLabel
+                      value="NO"
+                      control={<CustomRadio size="small" />}
+                      label="NO"
+                    />
+                  </RadioGroup>
+                </Box>
+
+                <Box
+                  sx={{
+                    gridColumn: "span 12",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <Typography sx={{ minWidth: "350px" }}>
+                    ¿Le sangran las encías?
+                  </Typography>
+                  <RadioGroup
+                    row
+                    name="sangrado_encias"
+                    value={values.sangrado_encias || "NO"}
+                    onChange={handleChange}
+                  >
+                    <FormControlLabel
+                      value="SI"
+                      control={<CustomRadio size="small" />}
+                      label="SI"
+                    />
+                    <FormControlLabel
+                      value="NO"
+                      control={<CustomRadio size="small" />}
+                      label="NO"
+                    />
+                  </RadioGroup>
+                </Box>
+
+                <Box
+                  sx={{
+                    gridColumn: "span 12",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <Typography sx={{ minWidth: "550px" }}>
+                    ¿Siente sus dientes móviles aprieta o rechina sus dientes?
+                  </Typography>
+                  <RadioGroup
+                    row
+                    name="dientes_moviles"
+                    value={values.dientes_moviles || "NO"}
+                    onChange={handleChange}
+                  >
+                    <FormControlLabel
+                      value="SI"
+                      control={<CustomRadio size="small" />}
+                      label="SI"
+                    />
+                    <FormControlLabel
+                      value="NO"
+                      control={<CustomRadio size="small" />}
+                      label="NO"
+                    />
+                  </RadioGroup>
+                </Box>
+
+                <Box
+                  sx={{
+                    gridColumn: "span 8",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <Typography sx={{ minWidth: "350px" }}>
+                    ¿Molestia o ruido al abrir y cerrar su boca?
+                  </Typography>
+                  <RadioGroup
+                    row
+                    name="ruido_boca"
+                    value={values.ruido_boca || "NO"}
+                    onChange={handleChange}
+                  >
+                    <FormControlLabel
+                      value="SI"
+                      control={<CustomRadio size="small" />}
+                      label="SI"
+                    />
+                    <FormControlLabel
+                      value="NO"
+                      control={<CustomRadio size="small" />}
+                      label="NO"
+                    />
+                  </RadioGroup>
+                </Box>
+
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  type="text"
+                  label="¿Malos hábitos orofaciales? (morder las uñas, chupar los dedos, morder el lápiz)"
+                  onBlur={handleBlur}
+                  onChange={(e) => handleUpperCaseChange(e, handleChange)}
+                  value={values.habitos_orofaciales || ""}
+                  name="habitos_orofaciales"
+                  sx={{ gridColumn: "span 8" }}
+                  inputProps={{ maxLength: 30 }}
+                />
+
+                <Box
+                  sx={{
+                    gridColumn: "span 12",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 2,
+                  }}
+                >
+                  <Typography sx={{ minWidth: "250px" }}>
+                    ¿Respira con su boca?
+                  </Typography>
+                  <RadioGroup
+                    row
+                    name="respira_boca"
+                    value={values.respira_boca || "NO"}
+                    onChange={handleChange}
+                  >
+                    <FormControlLabel
+                      value="SI"
+                      control={<CustomRadio size="small" />}
+                      label="SI"
+                    />
+                    <FormControlLabel
+                      value="NO"
+                      control={<CustomRadio size="small" />}
+                      label="NO"
+                    />
+                  </RadioGroup>
+                </Box>
+              </Box>
+            </Box>
+
+            <Box mb={3}>
+              <Typography
+                variant="h5"
+                color={colors.greenAccent[400]}
+                fontWeight="bold"
+                mb={2}
+              >
+                CONSENTIMIENTO INFORMADO
+              </Typography>
+              <Divider sx={{ mb: 2 }} />
+              <Typography variant="body3" mb={3} sx={{ textAlign: "justify" }}>
+                Doy mi consentimiento a la odontóloga para recetar y efectuar
+                cualquier tratar ento dental, operación dental. anestesia y
+                otros procedimientos dentales que considere necesarios y en los
+                que estemos mutuamerte deacuerdo, responsabilizándome de la
+                veracidad de la información confidencial arriba mencionada
+                Comprometiéndome a asistir puntualmente a las citas programadas
+                y en caso d no poder asistir avisar con 24 hrs. De anticipación
+                y si la Doctora por alguna razón no puede atenderio a su ca se
+                cancelará de igual manera.
+              </Typography>
+              <Box
+                sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
+              >
+                <Typography variant="body4" sx={{ minWidth: "350px" }}>
+                  Acepto los términos del consentimiento informado:
+                </Typography>
+                <RadioGroup
+                  row
+                  name="consentimiento_informado"
+                  value={values.consentimiento_informado || "NO"}
+                  onChange={handleChange}
+                >
+                  <FormControlLabel
+                    value="SI"
+                    control={<CustomRadio size="small" />}
+                    label="SI, ACEPTO"
+                  />
+                  <FormControlLabel
+                    value="NO"
+                    control={<CustomRadio size="small" />}
+                    label="NO ACEPTO"
+                  />
+                </RadioGroup>
               </Box>
             </Box>
 
@@ -1708,68 +2069,54 @@ const fechaMaxima = new Date();
 fechaMaxima.setFullYear(fechaMaxima.getFullYear() - 1);
 
 const editSchema = yup.object().shape({
-  //Datos Perso
   id_sexo: yup.string().required("Debe seleccionar un sexo"),
-  primer_nombre: yup
-    .string()
-    .matches(/^[A-Z\s]+$/, "Solo se permiten letras mayúsculas")
-    .required("El primer nombre es requerido"),
-  segundo_nombre: yup
-    .string()
-    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
-  apellido_paterno: yup
-    .string()
-    .matches(/^[A-Z\s]+$/, "Solo se permiten letras mayúsculas")
-    .required("El apellido paterno es requerido"),
-  apellido_materno: yup
-    .string()
-    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
-  fecha_nacimiento: yup
-    .date()
-    .min(fechaMinima, "La edad no puede ser mayor a 100 años")
-    .max(fechaMaxima, "El paciente debe tener al menos 1 año")
-    .required("La fecha de nacimiento es requerida"),
-  lugar_nacimiento: yup
-    .string()
-    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
-  direccion: yup
-    .string()
-    .matches(/^[A-Z0-9\s,.#-]*$/, "Formato de dirección inválido")
-    .required("La dirección es requerida"),
-  ocupacion: yup
-    .string()
-    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
-  telefono: yup
-    .string()
-    .matches(phoneRegExp, "El teléfono debe tener entre 10 y 15 dígitos")
-    .required("El teléfono es requerido"),
-  email: yup
-    .string()
-    .matches(emailRegExp, "Formato de email inválido")
-    .email("Email inválido"),
-
-  //Info Medica
+  primer_nombre: yup.string(),
+  segundo_nombre: yup.string(),
+  apellido_paterno: yup.string(),
+  apellido_materno: yup.string(),
+  fecha_nacimiento: yup.date(),
+  lugar_nacimiento: yup.string(),
+  direccion: yup.string(),
+  ocupacion: yup.string(),
+  telefono: yup.string(),
+  email: yup.string(),
   recomendado_por: yup
     .string()
+    .max(30, "Máximo 30 caracteres")
     .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
   medico_familiar: yup
     .string()
+    .max(30, "Máximo 30 caracteres")
     .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
   hora_ultimo_alimento: yup.string(),
-  glucosa: yup.string(),
-  presion_arterial: yup.string(),
-
-  //Motivo
-  motivo_consulta: yup.string(),
-  duracion_padecimiento: yup.string(),
-
-  //Antecedentes Heredo-Familiares
-  antecedentes_padres: yup.string(),
-  antecedentes_abuelos: yup.string(),
-  antecedentes_tios: yup.string(),
-  antecedentes_hermanos: yup.string(),
-
-  //Antecedentes Personales
+  glucosa: yup
+    .string()
+    .matches(/^\d*$/, "Solo números")
+    .test("range", "Valor fuera de rango (40-300)", function (value) {
+      if (!value) return true;
+      const num = parseInt(value);
+      return num >= 40 && num <= 300;
+    }),
+  presion_arterial: yup
+    .string()
+    .matches(/^\d{2,3}\/\d{2,3}$/, "Formato incorrecto (Ej: 120/80)")
+    .test("range", "Valores fuera de rango", function (value) {
+      if (!value) return true;
+      const [sistolica, diastolica] = value.split("/").map(Number);
+      return (
+        sistolica >= 70 &&
+        sistolica <= 200 &&
+        diastolica >= 40 &&
+        diastolica <= 130 &&
+        sistolica > diastolica
+      );
+    }),
+  motivo_consulta: yup.string().max(30, "Máximo 30 caracteres"),
+  duracion_padecimiento: yup.string().max(30, "Máximo 30 caracteres"),
+  antecedentes_padres: yup.string().max(30, "Máximo 30 caracteres"),
+  antecedentes_abuelos: yup.string().max(30, "Máximo 30 caracteres"),
+  antecedentes_tios: yup.string().max(30, "Máximo 30 caracteres"),
+  antecedentes_hermanos: yup.string().max(30, "Máximo 30 caracteres"),
   diabetes: yup.string().oneOf(["SI", "NO"]),
   infartos: yup.string().oneOf(["SI", "NO"]),
   anemia: yup.string().oneOf(["SI", "NO"]),
@@ -1789,23 +2136,40 @@ const editSchema = yup.object().shape({
   mareos: yup.string().oneOf(["SI", "NO"]),
   lupus: yup.string().oneOf(["SI", "NO"]),
   enfermedades_infancia: yup.string().oneOf(["SI", "NO"]),
-  enfermedades_infancia_detalle: yup.string(),
+  enfermedades_infancia_detalle: yup.string().max(30, "Máximo 30 caracteres"),
   covid19: yup.string().oneOf(["SI", "NO"]),
-  covid19_tratamiento: yup.string(),
-  otras_enfermedades: yup.string(),
+  covid19_tratamiento: yup.string().max(30, "Máximo 30 caracteres"),
+  otras_enfermedades: yup.string().max(30, "Máximo 30 caracteres"),
   consume_medicamento: yup.string().oneOf(["SI", "NO"]),
-  medicamento_detalle: yup.string(),
+  medicamento_detalle: yup.string().max(30, "Máximo 30 caracteres"),
   dolores_cabeza: yup.string().oneOf(["SI", "NO"]),
   alergico_sustancia: yup.string().oneOf(["SI", "NO"]),
-  alergico_sustancia_detalle: yup.string(),
+  alergico_sustancia_detalle: yup.string().max(30, "Máximo 30 caracteres"),
   intervencion_quirurgica: yup.string().oneOf(["SI", "NO"]),
-  intervencion_quirurgica_detalle: yup.string(),
+  intervencion_quirurgica_detalle: yup.string().max(30, "Máximo 30 caracteres"),
   sangra_excesivamente: yup.string().oneOf(["SI", "NO"]),
   embarazada: yup.string().oneOf(["SI", "NO"]),
   enfermedad_grave_reciente: yup.string().oneOf(["SI", "NO"]),
-  enfermedad_grave_detalle: yup.string(),
+  enfermedad_grave_detalle: yup.string().max(30, "Máximo 30 caracteres"),
   consume_alcohol: yup.string().oneOf(["SI", "NO"]),
   fuma: yup.string().oneOf(["SI", "NO"]),
+  fecha_ultima_visita_dental: yup.date(),
+  motivo_visita_dental: yup.string().max(30, "Máximo 30 caracteres"),
+  cepillado_diario: yup
+    .number()
+    .min(0, "Debe ser un número positivo")
+    .max(10, "Máximo 10 veces al día"),
+  usa_aditamento_dental: yup.string().oneOf(["SI", "NO"]),
+  aditamento_dental_detalle: yup.string().max(30, "Máximo 30 caracteres"),
+  reaccion_anestesia: yup.string().oneOf(["SI", "NO"]),
+  molestia_boca: yup.string().oneOf(["SI", "NO"]),
+  mal_sabor_boca: yup.string().oneOf(["SI", "NO"]),
+  sangrado_encias: yup.string().oneOf(["SI", "NO"]),
+  dientes_moviles: yup.string().oneOf(["SI", "NO"]),
+  ruido_boca: yup.string().oneOf(["SI", "NO"]),
+  habitos_orofaciales: yup.string().max(30, "Máximo 30 caracteres"),
+  respira_boca: yup.string().oneOf(["SI", "NO"]),
+  consentimiento_informado: yup.string().oneOf(["SI", "NO"]),
 });
 
 export default Expediente;

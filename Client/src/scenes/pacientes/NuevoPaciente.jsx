@@ -302,7 +302,7 @@ const NuevoPaciente = () => {
                 error={!!touched.telefono && !!errors.telefono}
                 helperText={touched.telefono && errors.telefono}
                 sx={{ gridColumn: "span 2" }}
-                inputProps={{ maxLength: 15 }}
+                inputProps={{ maxLength: 10 }}
               />
 
               <TextField
@@ -317,7 +317,7 @@ const NuevoPaciente = () => {
                 error={!!touched.email && !!errors.email}
                 helperText={touched.email && errors.email}
                 sx={{ gridColumn: "span 4" }}
-                inputProps={{ maxLength: 50 }}
+                inputProps={{ maxLength: 30 }}
               />
             </Box>
 
@@ -345,7 +345,7 @@ const NuevoPaciente = () => {
   );
 };
 
-const phoneRegExp = /^[0-9]{10,15}$/;
+const phoneRegExp = /^[0-9]{10}$/;
 const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const fechaMinima = new Date();

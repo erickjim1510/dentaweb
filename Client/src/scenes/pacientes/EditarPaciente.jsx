@@ -216,6 +216,7 @@ const EditarPaciente = () => {
                 error={!!touched.primer_nombre && !!errors.primer_nombre}
                 helperText={touched.primer_nombre && errors.primer_nombre}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -230,6 +231,7 @@ const EditarPaciente = () => {
                 error={!!touched.segundo_nombre && !!errors.segundo_nombre}
                 helperText={touched.segundo_nombre && errors.segundo_nombre}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -244,6 +246,7 @@ const EditarPaciente = () => {
                 error={!!touched.apellido_paterno && !!errors.apellido_paterno}
                 helperText={touched.apellido_paterno && errors.apellido_paterno}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -258,6 +261,7 @@ const EditarPaciente = () => {
                 error={!!touched.apellido_materno && !!errors.apellido_materno}
                 helperText={touched.apellido_materno && errors.apellido_materno}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -287,6 +291,7 @@ const EditarPaciente = () => {
                 error={!!touched.lugar_nacimiento && !!errors.lugar_nacimiento}
                 helperText={touched.lugar_nacimiento && errors.lugar_nacimiento}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 50 }}
               />
 
               <TextField
@@ -301,6 +306,7 @@ const EditarPaciente = () => {
                 error={!!touched.direccion && !!errors.direccion}
                 helperText={touched.direccion && errors.direccion}
                 sx={{ gridColumn: "span 4" }}
+                inputProps={{ maxLength: 50 }}
               />
 
               <TextField
@@ -315,6 +321,7 @@ const EditarPaciente = () => {
                 error={!!touched.ocupacion && !!errors.ocupacion}
                 helperText={touched.ocupacion && errors.ocupacion}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 30 }}
               />
 
               <TextField
@@ -329,6 +336,7 @@ const EditarPaciente = () => {
                 error={!!touched.telefono && !!errors.telefono}
                 helperText={touched.telefono && errors.telefono}
                 sx={{ gridColumn: "span 2" }}
+                inputProps={{ maxLength: 10 }}
               />
 
               <TextField
@@ -343,6 +351,7 @@ const EditarPaciente = () => {
                 error={!!touched.email && !!errors.email}
                 helperText={touched.email && errors.email}
                 sx={{ gridColumn: "span 4" }}
+                inputProps={{ maxLength: 30 }}
               />
             </Box>
 
@@ -370,7 +379,7 @@ const EditarPaciente = () => {
   );
 };
 
-const phoneRegExp = /^[0-9]{10,15}$/;
+const phoneRegExp = /^[0-9]{10}$/;
 const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const fechaMinima = new Date();
 fechaMinima.setFullYear(fechaMinima.getFullYear() - 100);
@@ -381,17 +390,21 @@ const editSchema = yup.object().shape({
   id_sexo: yup.string().required("Debe seleccionar un sexo"),
   primer_nombre: yup
     .string()
+    .max(30, "Máximo 30 caracteres")
     .matches(/^[A-Z\s]+$/, "Solo se permiten letras mayúsculas")
     .required("El primer nombre es requerido"),
   segundo_nombre: yup
     .string()
+    .max(30, "Máximo 30 caracteres")
     .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
   apellido_paterno: yup
     .string()
+    .max(30, "Máximo 30 caracteres")
     .matches(/^[A-Z\s]+$/, "Solo se permiten letras mayúsculas")
     .required("El apellido paterno es requerido"),
   apellido_materno: yup
     .string()
+    .max(30, "Máximo 30 caracteres")
     .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
   fecha_nacimiento: yup
     .date()
@@ -400,20 +413,24 @@ const editSchema = yup.object().shape({
     .required("La fecha de nacimiento es requerida"),
   lugar_nacimiento: yup
     .string()
+    .max(50, "Máximo 50 caracteres")
     .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
   direccion: yup
     .string()
     .matches(/^[A-Z0-9\s,.#-]*$/, "Formato de dirección inválido")
+    .max(50, "Máximo 50 caracteres")
     .required("La dirección es requerida"),
   ocupacion: yup
     .string()
+    .max(30, "Máximo 30 caracteres")
     .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
   telefono: yup
     .string()
-    .matches(phoneRegExp, "El teléfono debe tener entre 10 y 15 dígitos")
+    .matches(phoneRegExp, "El teléfono debe tener 10 dígitos")
     .required("El teléfono es requerido"),
   email: yup
     .string()
+    .max(30, "Máximo 30 caracteres")
     .matches(emailRegExp, "Formato de email inválido")
     .email("Email inválido"),
 });
