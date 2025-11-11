@@ -101,3 +101,28 @@ class ExpedienteController:
         except Exception as e:
             db.session.rollback()
             return {'success': False, 'mensaje': f'Error al actualizar expediente: {str(e)}'}
+
+    @staticmethod
+    def eliminar_expediente(id_paciente):
+        try:
+            if not id_paciente:
+                return {'success': False, 'mensaje': 'Se requiere el id_paciente'}
+
+            expediente = Expediente.query.filter_by(id_paciente=id_paciente).first()
+            if not expediente:
+                return {'success': False, 'mensaje': 'Expediente no encontrado'}
+
+            db.session.delete(expediente)
+            db.session.commit()
+
+            return {
+                'success': True,
+                'mensaje': 'Expediente eliminado exitosamente'
+            }
+
+        except Exception as e:
+            db.session.rollback()
+            return {
+                'success': False,
+                'mensaje': f'Error al eliminar expediente: {str(e)}'
+            }

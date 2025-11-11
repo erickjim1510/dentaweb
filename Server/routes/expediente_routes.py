@@ -32,3 +32,4 @@ def actualizar_expediente(id_paciente):
     resultado = ExpedienteController.actualizar_expediente(data)
     status_code = 200 if resultado['success'] else 400
     return jsonify(resultado), status_code
+

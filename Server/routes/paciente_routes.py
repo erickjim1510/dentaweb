@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from controllers.paciente_controller import PacienteController
+from controllers.expediente_controller import ExpedienteController
 
 paciente_bp = Blueprint('paciente', __name__)
 
@@ -55,6 +56,7 @@ def eliminar_paciente():
     if not data:
         return jsonify({'success': False, 'mensaje': 'No se enviaron datos'}), 400
     
+    ExpedienteController.eliminar_expediente(data.get('id_paciente'))
     resultado = PacienteController.eliminar_paciente(data)
     status_code = 200 if resultado['success'] else 404
     return jsonify(resultado), status_code
