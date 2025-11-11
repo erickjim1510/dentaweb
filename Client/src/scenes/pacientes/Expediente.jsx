@@ -12,12 +12,12 @@ import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material";
-import { tokens } from "../../theme"; // Mantenido
-import Header from "../../components/Header"; // Mantenido
+import { tokens } from "../../theme";
+import Header from "../../components/Header";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../../services/api.js"; // Mantenido
-import Swal from "sweetalert2"; // Mantenido
+import api from "../../services/api.js";
+import Swal from "sweetalert2";
 
 const Expediente = () => {
   const theme = useTheme();
@@ -39,13 +39,11 @@ const Expediente = () => {
     try {
       setLoading(true);
 
-      // Cargar sexos
       const sexosResponse = await api.get("/sexos");
       if (sexosResponse.data.success) {
         setSexos(sexosResponse.data.data);
       }
-
-      // Cargar datos del paciente
+      //Funcion para cargar datos del paciente
       const pacienteResponse = await api.get(`/pacientes/${id}`);
       if (pacienteResponse.data.success) {
         setPacienteData(pacienteResponse.data.data);
@@ -60,14 +58,13 @@ const Expediente = () => {
         return;
       }
 
-      // Cargar expediente (si existe)
+      //Cargar expediente  en caso de que tenga
       try {
         const expedienteResponse = await api.get(`/expedientes/${id}`);
         if (expedienteResponse.data.success) {
           setExpedienteData(expedienteResponse.data.data);
         }
       } catch (error) {
-        // Si no existe expediente, no es un error crítico
         console.log("No se encontró expediente previo");
       }
     } catch (error) {
@@ -83,13 +80,16 @@ const Expediente = () => {
     }
   };
 
+  const preventNumbers = (e) => {
+    if (/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   const handleFormSubmit = async (values, { setSubmitting }) => {
     try {
-      // Copiar valores para no mutar el estado de formik directamente
       const formValues = { ...values };
 
-      // --- LÓGICA DE LIMPIEZA ---
-      // Limpiar campos de detalle si la respuesta es "NO"
       if (formValues.enfermedades_infancia === "NO") {
         formValues.enfermedades_infancia_detalle = "";
       }
@@ -111,15 +111,13 @@ const Expediente = () => {
       if (formValues.usa_aditamento_dental === "NO") {
         formValues.aditamento_dental_detalle = "";
       }
-      // --- FIN LÓGICA DE LIMPIEZA ---
 
-      // Preparar datos solo del expediente para enviar
       const dataToSend = {
         id_paciente: parseInt(id),
         recomendado_por: formValues.recomendado_por,
         medico_familiar: formValues.medico_familiar,
-        hora_ultimo_alimento: formValues.hora_ultimo_alimento || null, // Enviar null si está vacío
-        glucosa: formValues.glucosa || null, // Enviar null si está vacío
+        hora_ultimo_alimento: formValues.hora_ultimo_alimento || null,
+        glucosa: formValues.glucosa || null,
         presion_arterial: formValues.presion_arterial,
         motivo_consulta: formValues.motivo_consulta,
         duracion_padecimiento: formValues.duracion_padecimiento,
@@ -145,7 +143,6 @@ const Expediente = () => {
         enf_respiratorias: formValues.enf_respiratorias,
         mareos: formValues.mareos,
         lupus: formValues.lupus,
-        // 'enfermedades_infancia' (SI/NO) no se envía, solo el detalle
         enfermedades_infancia_detalle: formValues.enfermedades_infancia_detalle,
         covid19: formValues.covid19,
         covid19_tratamiento: formValues.covid19_tratamiento,
@@ -153,7 +150,6 @@ const Expediente = () => {
         consume_medicamento: formValues.consume_medicamento,
         medicamento_detalle: formValues.medicamento_detalle,
         dolores_cabeza: formValues.dolores_cabeza,
-        // 'alergico_sustancia' (SI/NO) no se envía, solo el detalle
         alergico_sustancia_detalle: formValues.alergico_sustancia_detalle,
         intervencion_quirurgica: formValues.intervencion_quirurgica,
         intervencion_quirurgica_detalle:
@@ -165,9 +161,9 @@ const Expediente = () => {
         consume_alcohol: formValues.consume_alcohol,
         fuma: formValues.fuma,
         fecha_ultima_visita_dental:
-          formValues.fecha_ultima_visita_dental || null, // Enviar null si está vacío
+          formValues.fecha_ultima_visita_dental || null,
         motivo_visita_dental: formValues.motivo_visita_dental,
-        cepillado_diario: formValues.cepillado_diario || null, // Enviar null si está vacío
+        cepillado_diario: formValues.cepillado_diario || null,
         usa_aditamento_dental: formValues.usa_aditamento_dental,
         aditamento_dental_detalle: formValues.aditamento_dental_detalle,
         reaccion_anestesia: formValues.reaccion_anestesia,
@@ -183,10 +179,10 @@ const Expediente = () => {
 
       let response;
       if (expedienteData) {
-        // Actualizar expediente existente
+        //Actualizar expediente
         response = await api.put(`/expedientes/${id}`, dataToSend);
       } else {
-        // Crear nuevo expediente
+        //Crear nuevo expediente
         response = await api.post("/expedientes", dataToSend);
       }
 
@@ -282,9 +278,8 @@ const Expediente = () => {
     );
   }
 
-  // Valores iniciales combinando datos del paciente y expediente
   const initialValues = {
-    // Datos del paciente (solo lectura)
+    //Datos del paciente
     id_sexo: pacienteData.id_sexo || "",
     primer_nombre: pacienteData.primer_nombre || "",
     segundo_nombre: pacienteData.segundo_nombre || "",
@@ -297,7 +292,7 @@ const Expediente = () => {
     telefono: pacienteData.telefono || "",
     email: pacienteData.email || "",
 
-    // Datos del expediente (editables)
+    //Datos del expediente
     recomendado_por: expedienteData?.recomendado_por || "",
     medico_familiar: expedienteData?.medico_familiar || "",
     hora_ultimo_alimento: expedienteData?.hora_ultimo_alimento || "",
@@ -327,30 +322,20 @@ const Expediente = () => {
     enf_respiratorias: expedienteData?.enf_respiratorias || "NO",
     mareos: expedienteData?.mareos || "NO",
     lupus: expedienteData?.lupus || "NO",
-
-    // --- LÓGICA CORREGIDA ---
-    // El valor SI/NO se deriva de si el detalle tiene contenido
     enfermedades_infancia:
       (expedienteData?.enfermedades_infancia_detalle ? "SI" : "NO") || "NO",
     enfermedades_infancia_detalle:
       expedienteData?.enfermedades_infancia_detalle || "",
-    // --- FIN LÓGICA CORREGIDA ---
-
     covid19: expedienteData?.covid19 || "NO",
     covid19_tratamiento: expedienteData?.covid19_tratamiento || "",
     otras_enfermedades: expedienteData?.otras_enfermedades || "",
     consume_medicamento: expedienteData?.consume_medicamento || "NO",
     medicamento_detalle: expedienteData?.medicamento_detalle || "",
     dolores_cabeza: expedienteData?.dolores_cabeza || "NO",
-
-    // --- LÓGICA CORREGIDA ---
-    // El valor SI/NO se deriva de si el detalle tiene contenido
     alergico_sustancia:
       (expedienteData?.alergico_sustancia_detalle ? "SI" : "NO") || "NO",
     alergico_sustancia_detalle:
       expedienteData?.alergico_sustancia_detalle || "",
-    // --- FIN LÓGICA CORREGIDA ---
-
     intervencion_quirurgica: expedienteData?.intervencion_quirurgica || "NO",
     intervencion_quirurgica_detalle:
       expedienteData?.intervencion_quirurgica_detalle || "",
@@ -389,7 +374,7 @@ const Expediente = () => {
         onSubmit={handleFormSubmit}
         initialValues={initialValues}
         validationSchema={editSchema}
-        enableReinitialize // Importante para que los valores iniciales se actualicen tras la carga de datos
+        enableReinitialize
       >
         {({
           values,
@@ -401,7 +386,6 @@ const Expediente = () => {
           isSubmitting,
         }) => (
           <form onSubmit={handleSubmit}>
-            {/* --- DATOS PERSONALES (SIN CAMBIOS) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -556,7 +540,6 @@ const Expediente = () => {
               </Box>
             </Box>
 
-            {/* --- INFORMACION MEDICA (SIN CAMBIOS) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -583,6 +566,7 @@ const Expediente = () => {
                   type="text"
                   label="Recomendado por"
                   onBlur={handleBlur}
+                  onKeyPress={preventNumbers}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.recomendado_por}
                   name="recomendado_por"
@@ -597,6 +581,7 @@ const Expediente = () => {
                   type="text"
                   label="Medico Familiar"
                   onBlur={handleBlur}
+                  onKeyPress={preventNumbers}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.medico_familiar}
                   name="medico_familiar"
@@ -677,7 +662,6 @@ const Expediente = () => {
                     if (parts[1] && parts[1].length > 3)
                       parts[1] = parts[1].substring(0, 3);
 
-                    // Evitar que se ponga más de una /
                     if (parts.length > 2) {
                       value = `${parts[0]}/${parts[1]}`;
                     } else {
@@ -719,7 +703,6 @@ const Expediente = () => {
               </Box>
             </Box>
 
-            {/* --- MOTIVO DE CONSULTA (SIN CAMBIOS) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -746,6 +729,7 @@ const Expediente = () => {
                   type="text"
                   label="Descripción"
                   onBlur={handleBlur}
+                  onKeyPress={preventNumbers}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.motivo_consulta}
                   name="motivo_consulta"
@@ -779,7 +763,6 @@ const Expediente = () => {
               </Box>
             </Box>
 
-            {/* --- ANTECEDENTES HEREDO-FAMILIARES (SIN CAMBIOS) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -805,6 +788,7 @@ const Expediente = () => {
                   variant="outlined"
                   type="text"
                   label="Padres"
+                  onKeyPress={preventNumbers}
                   onBlur={handleBlur}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.antecedentes_padres}
@@ -827,6 +811,7 @@ const Expediente = () => {
                   type="text"
                   label="Abuelos"
                   onBlur={handleBlur}
+                  onKeyPress={preventNumbers}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.antecedentes_abuelos}
                   name="antecedentes_abuelos"
@@ -848,6 +833,7 @@ const Expediente = () => {
                   type="text"
                   label="Tios"
                   onBlur={handleBlur}
+                  onKeyPress={preventNumbers}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.antecedentes_tios}
                   name="antecedentes_tios"
@@ -868,6 +854,7 @@ const Expediente = () => {
                   type="text"
                   label="Hermanos"
                   onBlur={handleBlur}
+                  onKeyPress={preventNumbers}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.antecedentes_hermanos}
                   name="antecedentes_hermanos"
@@ -887,7 +874,6 @@ const Expediente = () => {
               </Box>
             </Box>
 
-            {/* --- ANTECEDENTES PERSONALES (SIN CAMBIOS EN HTML, LÓGICA DE VALORES CORREGIDA ARRIBA) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -910,7 +896,6 @@ const Expediente = () => {
                   },
                 }}
               >
-                {/* Fila 1 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -995,7 +980,6 @@ const Expediente = () => {
                   </RadioGroup>
                 </Box>
 
-                {/* Fila 2 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1078,7 +1062,6 @@ const Expediente = () => {
                   </RadioGroup>
                 </Box>
 
-                {/* Fila 3 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1163,7 +1146,6 @@ const Expediente = () => {
                   </RadioGroup>
                 </Box>
 
-                {/* Fila 4 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1252,7 +1234,6 @@ const Expediente = () => {
                   </RadioGroup>
                 </Box>
 
-                {/* Fila 5 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1335,7 +1316,6 @@ const Expediente = () => {
                   </RadioGroup>
                 </Box>
 
-                {/* Fila 6 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1422,8 +1402,6 @@ const Expediente = () => {
                   </RadioGroup>
                 </Box>
 
-                {/* --- Campos de Texto Condicionales --- */}
-
                 <Box sx={{ gridColumn: "span 8", mt: 2 }}>
                   <Typography mb={1}>
                     Enfermedades de la infancia: ej: varicela, rubeola, paperas
@@ -1454,6 +1432,7 @@ const Expediente = () => {
                         type="text"
                         label="Explique"
                         onBlur={handleBlur}
+                        onKeyPress={preventNumbers}
                         onChange={(e) => handleUpperCaseChange(e, handleChange)}
                         value={values.enfermedades_infancia_detalle}
                         name="enfermedades_infancia_detalle"
@@ -1507,6 +1486,7 @@ const Expediente = () => {
                       type="text"
                       label="Tratamiento"
                       onBlur={handleBlur}
+                      onKeyPress={preventNumbers}
                       onChange={(e) => handleUpperCaseChange(e, handleChange)}
                       value={values.covid19_tratamiento}
                       name="covid19_tratamiento"
@@ -1529,6 +1509,7 @@ const Expediente = () => {
                   type="text"
                   label="Otras Enfermedades - Explique"
                   onBlur={handleBlur}
+                  onKeyPress={preventNumbers}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.otras_enfermedades}
                   name="otras_enfermedades"
@@ -1580,6 +1561,7 @@ const Expediente = () => {
                     variant="outlined"
                     type="text"
                     label="¿Cuál?"
+                    onKeyPress={preventNumbers}
                     onBlur={handleBlur}
                     onChange={(e) => handleUpperCaseChange(e, handleChange)}
                     value={values.medicamento_detalle}
@@ -1665,6 +1647,7 @@ const Expediente = () => {
                     type="text"
                     label="¿Cuál?"
                     onBlur={handleBlur}
+                    onKeyPress={preventNumbers}
                     onChange={(e) => handleUpperCaseChange(e, handleChange)}
                     value={values.alergico_sustancia_detalle}
                     name="alergico_sustancia_detalle"
@@ -1718,6 +1701,7 @@ const Expediente = () => {
                     type="text"
                     label="¿Cuándo y de qué?"
                     onBlur={handleBlur}
+                    onKeyPress={preventNumbers}
                     onChange={(e) => handleUpperCaseChange(e, handleChange)}
                     value={values.intervencion_quirurgica_detalle}
                     name="intervencion_quirurgica_detalle"
@@ -1833,6 +1817,7 @@ const Expediente = () => {
                     type="text"
                     label="¿Cuál?"
                     onBlur={handleBlur}
+                    onKeyPress={preventNumbers}
                     onChange={(e) => handleUpperCaseChange(e, handleChange)}
                     value={values.enfermedad_grave_detalle}
                     name="enfermedad_grave_detalle"
@@ -1910,7 +1895,6 @@ const Expediente = () => {
               </Box>
             </Box>
 
-            {/* --- HISTORIA BUCAL Y DENTAL (SIN CAMBIOS) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -1957,6 +1941,7 @@ const Expediente = () => {
                   type="text"
                   label="Motivo"
                   onBlur={handleBlur}
+                  onKeyPress={preventNumbers}
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.motivo_visita_dental || ""}
                   name="motivo_visita_dental"
@@ -2282,7 +2267,6 @@ const Expediente = () => {
               </Box>
             </Box>
 
-            {/* --- CONSENTIMIENTO INFORMADO (SIN CAMBIOS) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -2330,7 +2314,6 @@ const Expediente = () => {
               </Box>
             </Box>
 
-            {/* --- BOTONES (SIN CAMBIOS) --- */}
             <Box display="flex" justifyContent="end" mt="30px" gap="10px">
               <Button
                 color="secondary"
@@ -2355,9 +2338,7 @@ const Expediente = () => {
   );
 };
 
-// --- VALIDATION SCHEMA (Corregido) ---
 const editSchema = yup.object().shape({
-  // --- Campos de Paciente (solo lectura, no necesitan validación estricta aquí) ---
   id_sexo: yup.string(),
   primer_nombre: yup.string(),
   segundo_nombre: yup.string(),
@@ -2370,7 +2351,6 @@ const editSchema = yup.object().shape({
   telefono: yup.string(),
   email: yup.string(),
 
-  // --- Campos de Expediente (editables) ---
   recomendado_por: yup
     .string()
     .max(30, "Máximo 30 caracteres")
@@ -2394,13 +2374,13 @@ const editSchema = yup.object().shape({
   presion_arterial: yup
     .string()
     .test("format", "Formato incorrecto (Ej: 120/80)", function (value) {
-      if (!value || value.trim() === "") return true; // Permite vacío
+      if (!value || value.trim() === "") return true;
       return /^\d{2,3}\/\d{2,3}$/.test(value);
     })
     .test("range", "Valores fuera de rango", function (value) {
-      if (!value || value.trim() === "") return true; // Permite vacío
+      if (!value || value.trim() === "") return true;
       const parts = value.split("/");
-      if (parts.length !== 2) return true; // Ya cubierto por 'format'
+      if (parts.length !== 2) return true;
       const [sistolica, diastolica] = parts.map(Number);
       if (isNaN(sistolica) || isNaN(diastolica)) return false;
       return (
@@ -2412,7 +2392,7 @@ const editSchema = yup.object().shape({
       );
     })
     .nullable(),
-  motivo_consulta: yup.string().max(50, "Máximo 50 caracteres").nullable(), // Ajustado a 50
+  motivo_consulta: yup.string().max(50, "Máximo 50 caracteres").nullable(),
   duracion_padecimiento: yup
     .string()
     .max(30, "Máximo 30 caracteres")
@@ -2425,7 +2405,6 @@ const editSchema = yup.object().shape({
     .max(30, "Máximo 30 caracteres")
     .nullable(),
 
-  // --- Enfermedades ---
   diabetes: yup.string().oneOf(["SI", "NO"]),
   infartos: yup.string().oneOf(["SI", "NO"]),
   anemia: yup.string().oneOf(["SI", "NO"]),
@@ -2445,7 +2424,6 @@ const editSchema = yup.object().shape({
   mareos: yup.string().oneOf(["SI", "NO"]),
   lupus: yup.string().oneOf(["SI", "NO"]),
 
-  // --- Campos condicionales ---
   enfermedades_infancia: yup.string().oneOf(["SI", "NO"]),
   enfermedades_infancia_detalle: yup
     .string()
@@ -2477,7 +2455,6 @@ const editSchema = yup.object().shape({
   consume_alcohol: yup.string().oneOf(["SI", "NO"]),
   fuma: yup.string().oneOf(["SI", "NO"]),
 
-  // --- Historia Bucal ---
   fecha_ultima_visita_dental: yup.date().nullable(),
   motivo_visita_dental: yup.string().max(30, "Máximo 30 caracteres").nullable(),
   cepillado_diario: yup
@@ -2498,7 +2475,10 @@ const editSchema = yup.object().shape({
   ruido_boca: yup.string().oneOf(["SI", "NO"]),
   habitos_orofaciales: yup.string().max(30, "Máximo 30 caracteres").nullable(),
   respira_boca: yup.string().oneOf(["SI", "NO"]),
-  consentimiento_informado: yup.string().oneOf(["SI", "NO"]),
+  consentimiento_informado: yup
+    .string()
+    .oneOf(["SI", "NO"])
+    .required("Debe aceptar el consentimiento informado para continuar"),
 });
 
 export default Expediente;

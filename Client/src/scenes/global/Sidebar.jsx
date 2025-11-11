@@ -118,7 +118,7 @@ const Sidebar = () => {
                   {user.primer_nombre || "Usuario"}
                 </Typography>
                 <Typography variant="h5" color={colors.greenAccent[500]}>
-                  {user.email || "Usuario"}
+                  {user.nombre_rol || "Usuario"}
                 </Typography>
               </Box>
             </Box>

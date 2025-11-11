@@ -122,6 +122,12 @@ const EditarPaciente = () => {
     handleChange({ target: { name, value: numericValue } });
   };
 
+  const preventNumbers = (e) => {
+    if (/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   if (loading) {
     return (
       <Box m="20px">
@@ -210,6 +216,7 @@ const EditarPaciente = () => {
                 type="text"
                 label="Primer Nombre"
                 onBlur={handleBlur}
+                onKeyPress={preventNumbers}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
                 value={values.primer_nombre}
                 name="primer_nombre"
@@ -224,6 +231,7 @@ const EditarPaciente = () => {
                 variant="outlined"
                 type="text"
                 label="Segundo Nombre (Opcional)"
+                onKeyPress={preventNumbers}
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
                 value={values.segundo_nombre}
@@ -239,6 +247,7 @@ const EditarPaciente = () => {
                 variant="outlined"
                 type="text"
                 label="Apellido Paterno"
+                onKeyPress={preventNumbers}
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
                 value={values.apellido_paterno}
@@ -254,6 +263,7 @@ const EditarPaciente = () => {
                 variant="outlined"
                 type="text"
                 label="Apellido Materno"
+                onKeyPress={preventNumbers}
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
                 value={values.apellido_materno}
@@ -284,6 +294,7 @@ const EditarPaciente = () => {
                 variant="outlined"
                 type="text"
                 label="Lugar de Nacimiento"
+                onKeyPress={preventNumbers}
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
                 value={values.lugar_nacimiento}
@@ -314,6 +325,7 @@ const EditarPaciente = () => {
                 variant="outlined"
                 type="text"
                 label="Ocupación"
+                onKeyPress={preventNumbers}
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
                 value={values.ocupacion}
