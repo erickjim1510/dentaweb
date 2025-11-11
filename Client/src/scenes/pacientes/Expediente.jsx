@@ -541,7 +541,19 @@ const Expediente = () => {
                   type="text"
                   label="Glucosa"
                   onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    // Solo permite números
+                    const value = e.target.value.replace(/[^\d]/g, "");
+                    // Limitar a 3 dígitos
+                    if (value.length <= 3) {
+                      handleChange({
+                        target: {
+                          name: "glucosa",
+                          value: value,
+                        },
+                      });
+                    }
+                  }}
                   value={values.glucosa}
                   name="glucosa"
                   sx={{ gridColumn: "span 4" }}
@@ -567,10 +579,32 @@ const Expediente = () => {
                   type="text"
                   label="Presión Arterial"
                   onBlur={handleBlur}
-                  onChange={handleChange}
+                  onChange={(e) => {
+                    let value = e.target.value;
+
+                    // Solo permite números y "/"
+                    value = value.replace(/[^\d/]/g, "");
+
+                    // Limitar formato: máximo 3 dígitos antes de / y 3 después
+                    const parts = value.split("/");
+                    if (parts[0] && parts[0].length > 3)
+                      parts[0] = parts[0].substring(0, 3);
+                    if (parts[1] && parts[1].length > 3)
+                      parts[1] = parts[1].substring(0, 3);
+
+                    value = parts.join("/");
+
+                    handleChange({
+                      target: {
+                        name: "presion_arterial",
+                        value: value,
+                      },
+                    });
+                  }}
                   value={values.presion_arterial}
                   name="presion_arterial"
                   sx={{ gridColumn: "span 4" }}
+                  placeholder="120/80"
                   InputProps={{
                     endAdornment: (
                       <Typography
@@ -2097,6 +2131,7 @@ const editSchema = yup.object().shape({
       const num = parseInt(value);
       return num >= 40 && num <= 300;
     }),
+
   presion_arterial: yup
     .string()
     .matches(/^\d{2,3}\/\d{2,3}$/, "Formato incorrecto (Ej: 120/80)")
