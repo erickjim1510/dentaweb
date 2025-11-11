@@ -1,3 +1,4 @@
+# models/expediente.py
 from db import db
 
 class Expediente(db.Model):
@@ -5,138 +6,157 @@ class Expediente(db.Model):
 
     id_expediente = db.Column(db.Integer, primary_key=True)
     id_paciente = db.Column(db.Integer, db.ForeignKey("pacientes.id_paciente"), nullable=False)
-    cmp1 = db.Column(db.String(50)) #medico familiar
-    cmp2 = db.Column(db.Integer) #glucosa
-    cmp3 = db.Column(db.String(30)) #presion arterial
-    cmp4 = db.Column(db.Time) #hora ultimo alimento
-    cmp5 = db.Column(db.Date) #fecha ultima consulta
-    cmp6 = db.Column(db.String(50)) #motivo
-    cmp7 = db.Column(db.String(100)) #descripcion
-    cmp8 = db.Column(db.Integer) #duracion
-    cmp9 = db.Column(db.String(50)) #padres
-    cmp10 = db.Column(db.String(50)) #abuelos
+    
+    # INFORMACIÓN MÉDICA
+    cmp1 = db.Column(db.String(50))   # medico_familiar
+    cmp2 = db.Column(db.Integer)      # glucosa
+    cmp3 = db.Column(db.String(30))   # presion_arterial
+    cmp4 = db.Column(db.Time)         # hora_ultimo_alimento
+    cmp5 = db.Column(db.String(50))   # recomendado_por (CORREGIDO: era date, ahora string)
+    
+    # MOTIVO DE CONSULTA
+    cmp6 = db.Column(db.String(50))   # (reservado)
+    cmp7 = db.Column(db.String(100))  # motivo_consulta
+    cmp8 = db.Column(db.String(50))   # duracion_padecimiento (CORREGIDO: era int, ahora string)
+    
+    # ANTECEDENTES HEREDO-FAMILIARES
+    cmp9 = db.Column(db.String(50))   # antecedentes_padres
+    cmp10 = db.Column(db.String(50))  # antecedentes_abuelos
+    cmp11 = db.Column(db.String(50))  # antecedentes_tios
+    cmp12 = db.Column(db.String(50))  # antecedentes_hermanos
+    
+    # ENFERMEDADES (Boolean)
+    cmp13 = db.Column(db.Boolean)     # diabetes
+    cmp14 = db.Column(db.Boolean)     # hipertension
+    cmp15 = db.Column(db.Boolean)     # hepatitis
+    cmp16 = db.Column(db.Boolean)     # infartos
+    cmp17 = db.Column(db.Boolean)     # migrania
+    cmp18 = db.Column(db.Boolean)     # tuberculos
+    cmp19 = db.Column(db.Boolean)     # anemia
+    cmp20 = db.Column(db.Boolean)     # asma_bronquial
+    cmp21 = db.Column(db.Boolean)     # epilepsia
+    cmp22 = db.Column(db.Boolean)     # enf_rinon
+    cmp23 = db.Column(db.Boolean)     # enf_tiroides
+    cmp24 = db.Column(db.Boolean)     # enf_respiratorias
+    cmp25 = db.Column(db.Boolean)     # vih_sida
+    cmp26 = db.Column(db.Boolean)     # cancer
+    cmp27 = db.Column(db.Boolean)     # mareos
+    cmp28 = db.Column(db.Boolean)     # artritis_reumatica
+    cmp29 = db.Column(db.Boolean)     # fiebre_reumatica
+    cmp30 = db.Column(db.Boolean)     # lupus
+    
+    # OTRAS ENFERMEDADES Y MEDICAMENTOS
+    cmp31 = db.Column(db.String(50))  # enfermedades_infancia_detalle
+    cmp32 = db.Column(db.Boolean)     # covid19
+    cmp33 = db.Column(db.String(50))  # covid19_tratamiento
+    cmp34 = db.Column(db.Boolean)     # consume_medicamento (CORREGIDO: era tinyint según ALTER)
+    cmp35 = db.Column(db.String(50))  # otras_enfermedades
+    cmp36 = db.Column(db.String(50))  # medicamento_detalle
+    cmp37 = db.Column(db.Boolean)     # dolores_cabeza
+    cmp38 = db.Column(db.String(50))  # alergico_sustancia_detalle
+    cmp39 = db.Column(db.Boolean)     # intervencion_quirurgica
+    cmp40 = db.Column(db.String(50))  # intervencion_quirurgica_detalle
+    cmp41 = db.Column(db.Boolean)     # sangra_excesivamente (CORREGIDO: era date, ahora boolean)
+    cmp42 = db.Column(db.Boolean)     # embarazada
+    cmp43 = db.Column(db.Boolean)     # enfermedad_grave_reciente
+    cmp44 = db.Column(db.String(50))  # enfermedad_grave_detalle
+    cmp45 = db.Column(db.Boolean)     # consume_alcohol
+    cmp46 = db.Column(db.Boolean)     # fuma
+    
+    # HISTORIA BUCAL Y DENTAL
+    cmp47 = db.Column(db.Date)        # fecha_ultima_visita_dental
+    cmp48 = db.Column(db.String(50))  # motivo_visita_dental
+    cmp49 = db.Column(db.Integer)     # cepillado_diario (CORREGIDO: según ALTER es int)
+    cmp50 = db.Column(db.Boolean)     # usa_aditamento_dental
+    cmp51 = db.Column(db.String(50))  # aditamento_dental_detalle
+    cmp52 = db.Column(db.Boolean)     # reaccion_anestesia
+    cmp53 = db.Column(db.Boolean)     # molestia_boca
+    cmp54 = db.Column(db.Boolean)     # mal_sabor_boca
+    cmp55 = db.Column(db.Boolean)     # sangrado_encias
+    cmp56 = db.Column(db.Boolean)     # dientes_moviles
+    cmp57 = db.Column(db.Boolean)     # ruido_boca
+    cmp58 = db.Column(db.String(50))  # habitos_orofaciales (CORREGIDO: según ALTER es varchar)
+    cmp59 = db.Column(db.Boolean)     # respira_boca
+    cmp60 = db.Column(db.Boolean)  # consentimiento_informado
 
-    cmp11 = db.Column(db.String(50)) #tios
-    cmp12 = db.Column(db.String(50)) #hermanos
-    cmp13 = db.Column(db.Boolean) #diabetes
-    cmp14 = db.Column(db.Boolean) #hipertension
-    cmp15 = db.Column(db.Boolean) #hepatitis
-    cmp16 = db.Column(db.Boolean) #infartos
-    cmp17 = db.Column(db.Boolean) #migraña
-    cmp18 = db.Column(db.Boolean) #tuberculosis
-    cmp19 = db.Column(db.Boolean) #anemia
-    cmp20 = db.Column(db.Boolean) #asma bronquial
-
-    cmp21 = db.Column(db.Boolean) #epilepsia
-    cmp22 = db.Column(db.Boolean) #enfermedad riñon
-    cmp23 = db.Column(db.Boolean) #enfermedad tiroides
-    cmp24 = db.Column(db.Boolean) #enfermedad respiratorias
-    cmp25 = db.Column(db.Boolean) #vih sida
-    cmp26 = db.Column(db.Boolean) #cancer
-    cmp27 = db.Column(db.Boolean) #mareos
-    cmp28 = db.Column(db.Boolean) #artritis reumatica
-    cmp29 = db.Column(db.Boolean) #fiebre reumatica
-    cmp30 = db.Column(db.Boolean) #lupus
-
-    cmp31 = db.Column(db.String(50)) #enfermedades infacia
-    cmp32 = db.Column(db.Boolean) #covid 19
-    cmp33 = db.Column(db.String(50)) #tratamiento covid 19
-    cmp34 = db.Column(db.Boolean) #otros
-    cmp35 = db.Column(db.String(50)) #explique otros
-    cmp36 = db.Column(db.String(50)) #consumo medicamento
-    cmp37 = db.Column(db.Boolean) #sufre dolores cabeza
-    cmp38 = db.Column(db.String(50)) #alergias
-    cmp39 = db.Column(db.Boolean) #intervenido quirurgicamente
-    cmp40 = db.Column(db.String(50)) #que intervencion
-
-    cmp41 = db.Column(db.Date) #fecha intervencion
-    cmp42 = db.Column(db.Boolean) #sangra excesivamente
-    cmp43 = db.Column(db.Boolean) #esta embarazada
-    cmp44 = db.Column(db.String(50)) #padecio enfermedad grave
-    cmp45 = db.Column(db.Boolean) #consume alcohol
-    cmp46 = db.Column(db.Boolean) #fuma
-    cmp47 = db.Column(db.Date) #fecha ultima visita dental
-    cmp48 = db.Column(db.String(50)) #motivo
-    cmp49 = db.Column(db.Boolean) #cantidad cepillados diarios
-    cmp50 = db.Column(db.Boolean) #utiliza otro aditamento
-
-    cmp51 = db.Column(db.String(50)) #cuales aditamentos
-    cmp52 = db.Column(db.Boolean) #reaccion anestecia local
-    cmp53 = db.Column(db.Boolean) #molestia dolor bucal
-    cmp54 = db.Column(db.Boolean) #mal olor mal sabor boca
-    cmp55 = db.Column(db.Boolean) #sangran encias
-    cmp56 = db.Column(db.Boolean) #siente dientes moviles aprieta rechinan sus dientes
-    cmp57 = db.Column(db.Boolean) #molestia ruido al abrir y cerrar su boca
-    cmp58 = db.Column(db.Boolean) #malos habitos orofaciales
-    cmp59 = db.Column(db.Boolean) #repira con boca
 
     paciente = db.relationship('Paciente', back_populates='expediente')
 
     def to_dict(self):
-        """Convierte el objeto Expediente a un diccionario"""
-        expediente_dict = {
+        """Convierte el objeto Expediente a un diccionario con nombres legibles"""
+        return {
             'id_expediente': self.id_expediente,
             'id_paciente': self.id_paciente,
-            'cmp1': self.cmp1,
-            'cmp2': self.cmp2,
-            'cmp3': self.cmp3,
-            'cmp4': self.cmp4.isoformat() if self.cmp4 else None,  # Time a string
-            'cmp5': self.cmp5.isoformat() if self.cmp5 else None,  # Date a string
-            'cmp6': self.cmp6,
-            'cmp7': self.cmp7,
-            'cmp8': self.cmp8,
-            'cmp9': self.cmp9,
-            'cmp10': self.cmp10,
-            'cmp11': self.cmp11,
-            'cmp12': self.cmp12,
-            'cmp13': self.cmp13,
-            'cmp14': self.cmp14,
-            'cmp15': self.cmp15,
-            'cmp16': self.cmp16,
-            'cmp17': self.cmp17,
-            'cmp18': self.cmp18,
-            'cmp19': self.cmp19,
-            'cmp20': self.cmp20,
-            'cmp21': self.cmp21,
-            'cmp22': self.cmp22,
-            'cmp23': self.cmp23,
-            'cmp24': self.cmp24,
-            'cmp25': self.cmp25,
-            'cmp26': self.cmp26,
-            'cmp27': self.cmp27,
-            'cmp28': self.cmp28,
-            'cmp29': self.cmp29,
-            'cmp30': self.cmp30,
-            'cmp31': self.cmp31,
-            'cmp32': self.cmp32,
-            'cmp33': self.cmp33,
-            'cmp34': self.cmp34,
-            'cmp35': self.cmp35,
-            'cmp36': self.cmp36,
-            'cmp37': self.cmp37,
-            'cmp38': self.cmp38,
-            'cmp39': self.cmp39,
-            'cmp40': self.cmp40,
-            'cmp41': self.cmp41.isoformat() if self.cmp41 else None,  # Date a string
-            'cmp42': self.cmp42,
-            'cmp43': self.cmp43,
-            'cmp44': self.cmp44,
-            'cmp45': self.cmp45,
-            'cmp46': self.cmp46,
-            'cmp47': self.cmp47.isoformat() if self.cmp47 else None,  # Date a string
-            'cmp48': self.cmp48,
-            'cmp49': self.cmp49,
-            'cmp50': self.cmp50,
-            'cmp51': self.cmp51,
-            'cmp52': self.cmp52,
-            'cmp53': self.cmp53,
-            'cmp54': self.cmp54,
-            'cmp55': self.cmp55,
-            'cmp56': self.cmp56,
-            'cmp57': self.cmp57,
-            'cmp58': self.cmp58,
-            'cmp59': self.cmp59
+            
+            # INFORMACIÓN MÉDICA
+            'medico_familiar': self.cmp1,
+            'glucosa': self.cmp2,
+            'presion_arterial': self.cmp3,
+            'hora_ultimo_alimento': self.cmp4.isoformat() if self.cmp4 else None,
+            'recomendado_por': self.cmp5,
+            
+            # MOTIVO DE CONSULTA
+            'motivo_consulta': self.cmp7,
+            'duracion_padecimiento': self.cmp8,
+            
+            # ANTECEDENTES HEREDO-FAMILIARES
+            'antecedentes_padres': self.cmp9,
+            'antecedentes_abuelos': self.cmp10,
+            'antecedentes_tios': self.cmp11,
+            'antecedentes_hermanos': self.cmp12,
+            
+            # ENFERMEDADES
+            'diabetes': 'SI' if self.cmp13 else 'NO',
+            'hipertension': 'SI' if self.cmp14 else 'NO',
+            'hepatitis': 'SI' if self.cmp15 else 'NO',
+            'infartos': 'SI' if self.cmp16 else 'NO',
+            'migrania': 'SI' if self.cmp17 else 'NO',
+            'tuberculos': 'SI' if self.cmp18 else 'NO',
+            'anemia': 'SI' if self.cmp19 else 'NO',
+            'asma_bronquial': 'SI' if self.cmp20 else 'NO',
+            'epilepsia': 'SI' if self.cmp21 else 'NO',
+            'enf_rinon': 'SI' if self.cmp22 else 'NO',
+            'enf_tiroides': 'SI' if self.cmp23 else 'NO',
+            'enf_respiratorias': 'SI' if self.cmp24 else 'NO',
+            'vih_sida': 'SI' if self.cmp25 else 'NO',
+            'cancer': 'SI' if self.cmp26 else 'NO',
+            'mareos': 'SI' if self.cmp27 else 'NO',
+            'artritis_reumatica': 'SI' if self.cmp28 else 'NO',
+            'fiebre_reumatica': 'SI' if self.cmp29 else 'NO',
+            'lupus': 'SI' if self.cmp30 else 'NO',
+            
+            # OTRAS ENFERMEDADES Y MEDICAMENTOS
+            'enfermedades_infancia_detalle': self.cmp31,
+            'covid19': 'SI' if self.cmp32 else 'NO',
+            'covid19_tratamiento': self.cmp33,
+            'consume_medicamento': 'SI' if self.cmp34 else 'NO',
+            'otras_enfermedades': self.cmp35,
+            'medicamento_detalle': self.cmp36,
+            'dolores_cabeza': 'SI' if self.cmp37 else 'NO',
+            'alergico_sustancia_detalle': self.cmp38,
+            'intervencion_quirurgica': 'SI' if self.cmp39 else 'NO',
+            'intervencion_quirurgica_detalle': self.cmp40,
+            'sangra_excesivamente': 'SI' if self.cmp41 else 'NO',
+            'embarazada': 'SI' if self.cmp42 else 'NO',
+            'enfermedad_grave_reciente': 'SI' if self.cmp43 else 'NO',
+            'enfermedad_grave_detalle': self.cmp44,
+            'consume_alcohol': 'SI' if self.cmp45 else 'NO',
+            'fuma': 'SI' if self.cmp46 else 'NO',
+            
+            # HISTORIA BUCAL Y DENTAL
+            'fecha_ultima_visita_dental': self.cmp47.isoformat() if self.cmp47 else None,
+            'motivo_visita_dental': self.cmp48,
+            'cepillado_diario': self.cmp49,
+            'usa_aditamento_dental': 'SI' if self.cmp50 else 'NO',
+            'aditamento_dental_detalle': self.cmp51,
+            'reaccion_anestesia': 'SI' if self.cmp52 else 'NO',
+            'molestia_boca': 'SI' if self.cmp53 else 'NO',
+            'mal_sabor_boca': 'SI' if self.cmp54 else 'NO',
+            'sangrado_encias': 'SI' if self.cmp55 else 'NO',
+            'dientes_moviles': 'SI' if self.cmp56 else 'NO',
+            'ruido_boca': 'SI' if self.cmp57 else 'NO',
+            'habitos_orofaciales': self.cmp58,
+            'respira_boca': 'SI' if self.cmp59 else 'NO',
+            'consentimiento_informado': 'SI' if self.cmp60 else 'NO',
+
         }
-        return expediente_dict
-    
-        

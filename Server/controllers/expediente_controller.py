@@ -1,7 +1,92 @@
+# controllers/expediente_controller.py
 from db import db
 from models.expediente import Expediente
 
 class ExpedienteController:
+    
+    @staticmethod
+    def _convertir_si_no_a_bool(valor):
+        """Convierte 'SI'/'NO' a True/False"""
+        if isinstance(valor, str):
+            return valor.upper() == 'SI'
+        return bool(valor)
+    
+    @staticmethod
+    def _preparar_datos_para_db(data):
+        """Convierte los datos del frontend al formato de la base de datos"""
+        return {
+            # INFORMACIÓN MÉDICA
+            'cmp1': data.get('medico_familiar'),
+            'cmp2': int(data.get('glucosa')) if data.get('glucosa') else None,
+            'cmp3': data.get('presion_arterial'),
+            'cmp4': data.get('hora_ultimo_alimento'),
+            'cmp5': data.get('recomendado_por'),
+            
+            # MOTIVO DE CONSULTA
+            'cmp7': data.get('motivo_consulta'),
+            'cmp8': data.get('duracion_padecimiento'),
+            
+            # ANTECEDENTES HEREDO-FAMILIARES
+            'cmp9': data.get('antecedentes_padres'),
+            'cmp10': data.get('antecedentes_abuelos'),
+            'cmp11': data.get('antecedentes_tios'),
+            'cmp12': data.get('antecedentes_hermanos'),
+            
+            # ENFERMEDADES
+            'cmp13': ExpedienteController._convertir_si_no_a_bool(data.get('diabetes', 'NO')),
+            'cmp14': ExpedienteController._convertir_si_no_a_bool(data.get('hipertension', 'NO')),
+            'cmp15': ExpedienteController._convertir_si_no_a_bool(data.get('hepatitis', 'NO')),
+            'cmp16': ExpedienteController._convertir_si_no_a_bool(data.get('infartos', 'NO')),
+            'cmp17': ExpedienteController._convertir_si_no_a_bool(data.get('migrania', 'NO')),
+            'cmp18': ExpedienteController._convertir_si_no_a_bool(data.get('tuberculos', 'NO')),
+            'cmp19': ExpedienteController._convertir_si_no_a_bool(data.get('anemia', 'NO')),
+            'cmp20': ExpedienteController._convertir_si_no_a_bool(data.get('asma_bronquial', 'NO')),
+            'cmp21': ExpedienteController._convertir_si_no_a_bool(data.get('epilepsia', 'NO')),
+            'cmp22': ExpedienteController._convertir_si_no_a_bool(data.get('enf_rinon', 'NO')),
+            'cmp23': ExpedienteController._convertir_si_no_a_bool(data.get('enf_tiroides', 'NO')),
+            'cmp24': ExpedienteController._convertir_si_no_a_bool(data.get('enf_respiratorias', 'NO')),
+            'cmp25': ExpedienteController._convertir_si_no_a_bool(data.get('vih_sida', 'NO')),
+            'cmp26': ExpedienteController._convertir_si_no_a_bool(data.get('cancer', 'NO')),
+            'cmp27': ExpedienteController._convertir_si_no_a_bool(data.get('mareos', 'NO')),
+            'cmp28': ExpedienteController._convertir_si_no_a_bool(data.get('artritis_reumatica', 'NO')),
+            'cmp29': ExpedienteController._convertir_si_no_a_bool(data.get('fiebre_reumatica', 'NO')),
+            'cmp30': ExpedienteController._convertir_si_no_a_bool(data.get('lupus', 'NO')),
+            
+            # OTRAS ENFERMEDADES Y MEDICAMENTOS
+            'cmp31': data.get('enfermedades_infancia_detalle'),
+            'cmp32': ExpedienteController._convertir_si_no_a_bool(data.get('covid19', 'NO')),
+            'cmp33': data.get('covid19_tratamiento'),
+            'cmp34': ExpedienteController._convertir_si_no_a_bool(data.get('consume_medicamento', 'NO')),
+            'cmp35': data.get('otras_enfermedades'),
+            'cmp36': data.get('medicamento_detalle'),
+            'cmp37': ExpedienteController._convertir_si_no_a_bool(data.get('dolores_cabeza', 'NO')),
+            'cmp38': data.get('alergico_sustancia_detalle'),
+            'cmp39': ExpedienteController._convertir_si_no_a_bool(data.get('intervencion_quirurgica', 'NO')),
+            'cmp40': data.get('intervencion_quirurgica_detalle'),
+            'cmp41': ExpedienteController._convertir_si_no_a_bool(data.get('sangra_excesivamente', 'NO')),
+            'cmp42': ExpedienteController._convertir_si_no_a_bool(data.get('embarazada', 'NO')),
+            'cmp43': ExpedienteController._convertir_si_no_a_bool(data.get('enfermedad_grave_reciente', 'NO')),
+            'cmp44': data.get('enfermedad_grave_detalle'),
+            'cmp45': ExpedienteController._convertir_si_no_a_bool(data.get('consume_alcohol', 'NO')),
+            'cmp46': ExpedienteController._convertir_si_no_a_bool(data.get('fuma', 'NO')),
+            
+            # HISTORIA BUCAL Y DENTAL
+            'cmp47': data.get('fecha_ultima_visita_dental'),
+            'cmp48': data.get('motivo_visita_dental'),
+            'cmp49': int(data.get('cepillado_diario')) if data.get('cepillado_diario') else None,
+            'cmp50': ExpedienteController._convertir_si_no_a_bool(data.get('usa_aditamento_dental', 'NO')),
+            'cmp51': data.get('aditamento_dental_detalle'),
+            'cmp52': ExpedienteController._convertir_si_no_a_bool(data.get('reaccion_anestesia', 'NO')),
+            'cmp53': ExpedienteController._convertir_si_no_a_bool(data.get('molestia_boca', 'NO')),
+            'cmp54': ExpedienteController._convertir_si_no_a_bool(data.get('mal_sabor_boca', 'NO')),
+            'cmp55': ExpedienteController._convertir_si_no_a_bool(data.get('sangrado_encias', 'NO')),
+            'cmp56': ExpedienteController._convertir_si_no_a_bool(data.get('dientes_moviles', 'NO')),
+            'cmp57': ExpedienteController._convertir_si_no_a_bool(data.get('ruido_boca', 'NO')),
+            'cmp58': data.get('habitos_orofaciales'),
+            'cmp59': ExpedienteController._convertir_si_no_a_bool(data.get('respira_boca', 'NO')),
+            # CORREGIDO: era 'consentimiento', debe ser 'consentimiento_informado'
+            'cmp60': ExpedienteController._convertir_si_no_a_bool(data.get('consentimiento_informado', 'NO')),
+        }
     
     @staticmethod
     def obtener_por_id(id_paciente):
@@ -26,26 +111,20 @@ class ExpedienteController:
     @staticmethod
     def crear_expediente(data):
         try:
-            campos_requeridos = [
-                'id_paciente','cmp1','cmp2','cmp3','cmp4','cmp5','cmp6','cmp7','cmp8','cmp9','cmp10',
-                'cmp11','cmp12','cmp13','cmp14','cmp15','cmp16','cmp17','cmp18','cmp19','cmp20',
-                'cmp21','cmp22','cmp23','cmp24','cmp25','cmp26','cmp27','cmp28','cmp29','cmp30',
-                'cmp31','cmp32','cmp33','cmp34','cmp35','cmp36','cmp37','cmp38','cmp39','cmp40',
-                'cmp41','cmp42','cmp43','cmp44','cmp45','cmp46','cmp47','cmp48','cmp49','cmp50',
-                'cmp51','cmp52','cmp53','cmp54','cmp55','cmp56','cmp57','cmp58','cmp59'
-            ]
-
-            for campo in campos_requeridos:
-                if campo not in data or data[campo] is None:
-                    return {'success': False, 'mensaje': f'El campo {campo} es requerido'}
+            if 'id_paciente' not in data:
+                return {'success': False, 'mensaje': 'El campo id_paciente es requerido'}
 
             # Verificar si ya existe un expediente para ese paciente
             expediente_existente = Expediente.query.filter_by(id_paciente=data['id_paciente']).first()
             if expediente_existente:
                 return {'success': False, 'mensaje': 'Ya existe un expediente para este paciente'}
 
+            # Preparar datos para la base de datos
+            datos_db = ExpedienteController._preparar_datos_para_db(data)
+            datos_db['id_paciente'] = data['id_paciente']
+
             # Crear nuevo expediente
-            nuevo_expediente = Expediente(**{campo: data[campo] for campo in campos_requeridos})
+            nuevo_expediente = Expediente(**datos_db)
 
             db.session.add(nuevo_expediente)
             db.session.commit()
@@ -71,24 +150,13 @@ class ExpedienteController:
             if not expediente:
                 return {'success': False, 'mensaje': 'Expediente no encontrado'}
 
-            # Campos actualizables
-            campos_actualizables = [
-                'cmp1','cmp2','cmp3','cmp4','cmp5','cmp6','cmp7','cmp8','cmp9','cmp10',
-                'cmp11','cmp12','cmp13','cmp14','cmp15','cmp16','cmp17','cmp18','cmp19','cmp20',
-                'cmp21','cmp22','cmp23','cmp24','cmp25','cmp26','cmp27','cmp28','cmp29','cmp30',
-                'cmp31','cmp32','cmp33','cmp34','cmp35','cmp36','cmp37','cmp38','cmp39','cmp40',
-                'cmp41','cmp42','cmp43','cmp44','cmp45','cmp46','cmp47','cmp48','cmp49','cmp50',
-                'cmp51','cmp52','cmp53','cmp54','cmp55','cmp56','cmp57','cmp58','cmp59'
-            ]
+            # Preparar datos para actualización
+            datos_db = ExpedienteController._preparar_datos_para_db(data)
 
-            cambios_realizados = False
-            for campo in campos_actualizables:
-                if campo in data:
-                    setattr(expediente, campo, data[campo])
-                    cambios_realizados = True
-
-            if not cambios_realizados:
-                return {'success': False, 'mensaje': 'No se proporcionaron campos para actualizar'}
+            # Actualizar campos
+            for campo, valor in datos_db.items():
+                if hasattr(expediente, campo):
+                    setattr(expediente, campo, valor)
 
             db.session.commit()
 

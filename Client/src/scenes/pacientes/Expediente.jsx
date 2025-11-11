@@ -2,27 +2,22 @@ import {
   Box,
   Button,
   TextField,
-  MenuItem,
   Typography,
   Divider,
-  FormControl,
-  FormLabel,
   FormControlLabel,
   RadioGroup,
   Radio,
-  Checkbox,
-  FormGroup,
 } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material";
-import { tokens } from "../../theme";
-import Header from "../../components/Header";
+import { tokens } from "../../theme"; // Mantenido
+import Header from "../../components/Header"; // Mantenido
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api from "../../services/api.js";
-import Swal from "sweetalert2";
+import api from "../../services/api.js"; // Mantenido
+import Swal from "sweetalert2"; // Mantenido
 
 const Expediente = () => {
   const theme = useTheme();
@@ -34,6 +29,7 @@ const Expediente = () => {
   const [sexos, setSexos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pacienteData, setPacienteData] = useState(null);
+  const [expedienteData, setExpedienteData] = useState(null);
 
   useEffect(() => {
     cargarDatos();
@@ -43,11 +39,13 @@ const Expediente = () => {
     try {
       setLoading(true);
 
+      // Cargar sexos
       const sexosResponse = await api.get("/sexos");
       if (sexosResponse.data.success) {
         setSexos(sexosResponse.data.data);
       }
 
+      // Cargar datos del paciente
       const pacienteResponse = await api.get(`/pacientes/${id}`);
       if (pacienteResponse.data.success) {
         setPacienteData(pacienteResponse.data.data);
@@ -59,6 +57,18 @@ const Expediente = () => {
           confirmButtonColor: "#d33",
         });
         navigate("/pacientes");
+        return;
+      }
+
+      // Cargar expediente (si existe)
+      try {
+        const expedienteResponse = await api.get(`/expedientes/${id}`);
+        if (expedienteResponse.data.success) {
+          setExpedienteData(expedienteResponse.data.data);
+        }
+      } catch (error) {
+        // Si no existe expediente, no es un error crítico
+        console.log("No se encontró expediente previo");
       }
     } catch (error) {
       console.error("Error al cargar datos:", error);
@@ -75,20 +85,127 @@ const Expediente = () => {
 
   const handleFormSubmit = async (values, { setSubmitting }) => {
     try {
-      const response = await api.put(`/pacientes/${id}`, values);
+      // Copiar valores para no mutar el estado de formik directamente
+      const formValues = { ...values };
+
+      // --- LÓGICA DE LIMPIEZA ---
+      // Limpiar campos de detalle si la respuesta es "NO"
+      if (formValues.enfermedades_infancia === "NO") {
+        formValues.enfermedades_infancia_detalle = "";
+      }
+      if (formValues.alergico_sustancia === "NO") {
+        formValues.alergico_sustancia_detalle = "";
+      }
+      if (formValues.covid19 === "NO") {
+        formValues.covid19_tratamiento = "";
+      }
+      if (formValues.consume_medicamento === "NO") {
+        formValues.medicamento_detalle = "";
+      }
+      if (formValues.intervencion_quirurgica === "NO") {
+        formValues.intervencion_quirurgica_detalle = "";
+      }
+      if (formValues.enfermedad_grave_reciente === "NO") {
+        formValues.enfermedad_grave_detalle = "";
+      }
+      if (formValues.usa_aditamento_dental === "NO") {
+        formValues.aditamento_dental_detalle = "";
+      }
+      // --- FIN LÓGICA DE LIMPIEZA ---
+
+      // Preparar datos solo del expediente para enviar
+      const dataToSend = {
+        id_paciente: parseInt(id),
+        recomendado_por: formValues.recomendado_por,
+        medico_familiar: formValues.medico_familiar,
+        hora_ultimo_alimento: formValues.hora_ultimo_alimento || null, // Enviar null si está vacío
+        glucosa: formValues.glucosa || null, // Enviar null si está vacío
+        presion_arterial: formValues.presion_arterial,
+        motivo_consulta: formValues.motivo_consulta,
+        duracion_padecimiento: formValues.duracion_padecimiento,
+        antecedentes_padres: formValues.antecedentes_padres,
+        antecedentes_abuelos: formValues.antecedentes_abuelos,
+        antecedentes_tios: formValues.antecedentes_tios,
+        antecedentes_hermanos: formValues.antecedentes_hermanos,
+        diabetes: formValues.diabetes,
+        infartos: formValues.infartos,
+        anemia: formValues.anemia,
+        enf_rinon: formValues.enf_rinon,
+        vih_sida: formValues.vih_sida,
+        artritis_reumatica: formValues.artritis_reumatica,
+        hipertension: formValues.hipertension,
+        migrania: formValues.migrania,
+        asma_bronquial: formValues.asma_bronquial,
+        enf_tiroides: formValues.enf_tiroides,
+        cancer: formValues.cancer,
+        fiebre_reumatica: formValues.fiebre_reumatica,
+        hepatitis: formValues.hepatitis,
+        tuberculos: formValues.tuberculos,
+        epilepsia: formValues.epilepsia,
+        enf_respiratorias: formValues.enf_respiratorias,
+        mareos: formValues.mareos,
+        lupus: formValues.lupus,
+        // 'enfermedades_infancia' (SI/NO) no se envía, solo el detalle
+        enfermedades_infancia_detalle: formValues.enfermedades_infancia_detalle,
+        covid19: formValues.covid19,
+        covid19_tratamiento: formValues.covid19_tratamiento,
+        otras_enfermedades: formValues.otras_enfermedades,
+        consume_medicamento: formValues.consume_medicamento,
+        medicamento_detalle: formValues.medicamento_detalle,
+        dolores_cabeza: formValues.dolores_cabeza,
+        // 'alergico_sustancia' (SI/NO) no se envía, solo el detalle
+        alergico_sustancia_detalle: formValues.alergico_sustancia_detalle,
+        intervencion_quirurgica: formValues.intervencion_quirurgica,
+        intervencion_quirurgica_detalle:
+          formValues.intervencion_quirurgica_detalle,
+        sangra_excesivamente: formValues.sangra_excesivamente,
+        embarazada: formValues.embarazada,
+        enfermedad_grave_reciente: formValues.enfermedad_grave_reciente,
+        enfermedad_grave_detalle: formValues.enfermedad_grave_detalle,
+        consume_alcohol: formValues.consume_alcohol,
+        fuma: formValues.fuma,
+        fecha_ultima_visita_dental:
+          formValues.fecha_ultima_visita_dental || null, // Enviar null si está vacío
+        motivo_visita_dental: formValues.motivo_visita_dental,
+        cepillado_diario: formValues.cepillado_diario || null, // Enviar null si está vacío
+        usa_aditamento_dental: formValues.usa_aditamento_dental,
+        aditamento_dental_detalle: formValues.aditamento_dental_detalle,
+        reaccion_anestesia: formValues.reaccion_anestesia,
+        molestia_boca: formValues.molestia_boca,
+        mal_sabor_boca: formValues.mal_sabor_boca,
+        sangrado_encias: formValues.sangrado_encias,
+        dientes_moviles: formValues.dientes_moviles,
+        ruido_boca: formValues.ruido_boca,
+        habitos_orofaciales: formValues.habitos_orofaciales,
+        respira_boca: formValues.respira_boca,
+        consentimiento_informado: formValues.consentimiento_informado,
+      };
+
+      let response;
+      if (expedienteData) {
+        // Actualizar expediente existente
+        response = await api.put(`/expedientes/${id}`, dataToSend);
+      } else {
+        // Crear nuevo expediente
+        response = await api.post("/expedientes", dataToSend);
+      }
 
       if (response.data && response.data.success) {
         Swal.fire({
           icon: "success",
-          title: "Expediente Actualizado!",
-          text: "El Expediente ha sido Actualizado Exitosamente",
+          title: expedienteData
+            ? "Expediente Actualizado!"
+            : "Expediente Creado!",
+          text: expedienteData
+            ? "El Expediente ha sido Actualizado Exitosamente"
+            : "El Expediente ha sido Creado Exitosamente",
           confirmButtonColor: "#3085d6",
         }).then(() => {
           navigate("/pacientes");
         });
       }
     } catch (error) {
-      console.error("Error al Actualizar el Expediente:", error);
+      console.error("Error al guardar el Expediente:", error);
 
       if (error.response && error.response.data) {
         if (error.response.data.mensaje) {
@@ -102,7 +219,7 @@ const Expediente = () => {
           Swal.fire({
             icon: "error",
             title: "Error",
-            text: "Error al actualizar el expediente",
+            text: "Error al guardar el expediente",
             confirmButtonColor: "#d33",
           });
         }
@@ -160,10 +277,106 @@ const Expediente = () => {
   if (!pacienteData) {
     return (
       <Box m="20px">
-        <Header title="ERROR" subtitle="Expediente no encontrado" />
+        <Header title="ERROR" subtitle="Paciente no encontrado" />
       </Box>
     );
   }
+
+  // Valores iniciales combinando datos del paciente y expediente
+  const initialValues = {
+    // Datos del paciente (solo lectura)
+    id_sexo: pacienteData.id_sexo || "",
+    primer_nombre: pacienteData.primer_nombre || "",
+    segundo_nombre: pacienteData.segundo_nombre || "",
+    apellido_paterno: pacienteData.apellido_paterno || "",
+    apellido_materno: pacienteData.apellido_materno || "",
+    fecha_nacimiento: pacienteData.fecha_nacimiento || "",
+    lugar_nacimiento: pacienteData.lugar_nacimiento || "",
+    direccion: pacienteData.direccion || "",
+    ocupacion: pacienteData.ocupacion || "",
+    telefono: pacienteData.telefono || "",
+    email: pacienteData.email || "",
+
+    // Datos del expediente (editables)
+    recomendado_por: expedienteData?.recomendado_por || "",
+    medico_familiar: expedienteData?.medico_familiar || "",
+    hora_ultimo_alimento: expedienteData?.hora_ultimo_alimento || "",
+    glucosa: expedienteData?.glucosa || "",
+    presion_arterial: expedienteData?.presion_arterial || "",
+    motivo_consulta: expedienteData?.motivo_consulta || "",
+    duracion_padecimiento: expedienteData?.duracion_padecimiento || "",
+    antecedentes_padres: expedienteData?.antecedentes_padres || "",
+    antecedentes_abuelos: expedienteData?.antecedentes_abuelos || "",
+    antecedentes_tios: expedienteData?.antecedentes_tios || "",
+    antecedentes_hermanos: expedienteData?.antecedentes_hermanos || "",
+    diabetes: expedienteData?.diabetes || "NO",
+    infartos: expedienteData?.infartos || "NO",
+    anemia: expedienteData?.anemia || "NO",
+    enf_rinon: expedienteData?.enf_rinon || "NO",
+    vih_sida: expedienteData?.vih_sida || "NO",
+    artritis_reumatica: expedienteData?.artritis_reumatica || "NO",
+    hipertension: expedienteData?.hipertension || "NO",
+    migrania: expedienteData?.migrania || "NO",
+    asma_bronquial: expedienteData?.asma_bronquial || "NO",
+    enf_tiroides: expedienteData?.enf_tiroides || "NO",
+    cancer: expedienteData?.cancer || "NO",
+    fiebre_reumatica: expedienteData?.fiebre_reumatica || "NO",
+    hepatitis: expedienteData?.hepatitis || "NO",
+    tuberculos: expedienteData?.tuberculos || "NO",
+    epilepsia: expedienteData?.epilepsia || "NO",
+    enf_respiratorias: expedienteData?.enf_respiratorias || "NO",
+    mareos: expedienteData?.mareos || "NO",
+    lupus: expedienteData?.lupus || "NO",
+
+    // --- LÓGICA CORREGIDA ---
+    // El valor SI/NO se deriva de si el detalle tiene contenido
+    enfermedades_infancia:
+      (expedienteData?.enfermedades_infancia_detalle ? "SI" : "NO") || "NO",
+    enfermedades_infancia_detalle:
+      expedienteData?.enfermedades_infancia_detalle || "",
+    // --- FIN LÓGICA CORREGIDA ---
+
+    covid19: expedienteData?.covid19 || "NO",
+    covid19_tratamiento: expedienteData?.covid19_tratamiento || "",
+    otras_enfermedades: expedienteData?.otras_enfermedades || "",
+    consume_medicamento: expedienteData?.consume_medicamento || "NO",
+    medicamento_detalle: expedienteData?.medicamento_detalle || "",
+    dolores_cabeza: expedienteData?.dolores_cabeza || "NO",
+
+    // --- LÓGICA CORREGIDA ---
+    // El valor SI/NO se deriva de si el detalle tiene contenido
+    alergico_sustancia:
+      (expedienteData?.alergico_sustancia_detalle ? "SI" : "NO") || "NO",
+    alergico_sustancia_detalle:
+      expedienteData?.alergico_sustancia_detalle || "",
+    // --- FIN LÓGICA CORREGIDA ---
+
+    intervencion_quirurgica: expedienteData?.intervencion_quirurgica || "NO",
+    intervencion_quirurgica_detalle:
+      expedienteData?.intervencion_quirurgica_detalle || "",
+    sangra_excesivamente: expedienteData?.sangra_excesivamente || "NO",
+    embarazada: expedienteData?.embarazada || "NO",
+    enfermedad_grave_reciente:
+      expedienteData?.enfermedad_grave_reciente || "NO",
+    enfermedad_grave_detalle: expedienteData?.enfermedad_grave_detalle || "",
+    consume_alcohol: expedienteData?.consume_alcohol || "NO",
+    fuma: expedienteData?.fuma || "NO",
+    fecha_ultima_visita_dental:
+      expedienteData?.fecha_ultima_visita_dental || "",
+    motivo_visita_dental: expedienteData?.motivo_visita_dental || "",
+    cepillado_diario: expedienteData?.cepillado_diario || "",
+    usa_aditamento_dental: expedienteData?.usa_aditamento_dental || "NO",
+    aditamento_dental_detalle: expedienteData?.aditamento_dental_detalle || "",
+    reaccion_anestesia: expedienteData?.reaccion_anestesia || "NO",
+    molestia_boca: expedienteData?.molestia_boca || "NO",
+    mal_sabor_boca: expedienteData?.mal_sabor_boca || "NO",
+    sangrado_encias: expedienteData?.sangrado_encias || "NO",
+    dientes_moviles: expedienteData?.dientes_moviles || "NO",
+    ruido_boca: expedienteData?.ruido_boca || "NO",
+    habitos_orofaciales: expedienteData?.habitos_orofaciales || "",
+    respira_boca: expedienteData?.respira_boca || "NO",
+    consentimiento_informado: expedienteData?.consentimiento_informado || "NO",
+  };
 
   return (
     <Box m="20px">
@@ -174,89 +387,9 @@ const Expediente = () => {
 
       <Formik
         onSubmit={handleFormSubmit}
-        initialValues={{
-          id_sexo: pacienteData.id_sexo || "",
-          primer_nombre: pacienteData.primer_nombre || "",
-          segundo_nombre: pacienteData.segundo_nombre || "",
-          apellido_paterno: pacienteData.apellido_paterno || "",
-          apellido_materno: pacienteData.apellido_materno || "",
-          fecha_nacimiento: pacienteData.fecha_nacimiento || "",
-          lugar_nacimiento: pacienteData.lugar_nacimiento || "",
-          direccion: pacienteData.direccion || "",
-          ocupacion: pacienteData.ocupacion || "",
-          telefono: pacienteData.telefono || "",
-          email: pacienteData.email || "",
-          recomendado_por: pacienteData.recomendado_por || "",
-          medico_familiar: pacienteData.medico_familiar || "",
-          hora_ultimo_alimento: pacienteData.hora_ultimo_alimento || "",
-          glucosa: pacienteData.glucosa || "",
-          presion_arterial: pacienteData.presion_arterial || "",
-          motivo_consulta: pacienteData.motivo_consulta || "",
-          duracion_padecimiento: pacienteData.duracion_padecimiento || "",
-          antecedentes_padres: pacienteData.antecedentes_padres || "",
-          antecedentes_abuelos: pacienteData.antecedentes_abuelos || "",
-          antecedentes_tios: pacienteData.antecedentes_tios || "",
-          antecedentes_hermanos: pacienteData.antecedentes_hermanos || "",
-          diabetes: pacienteData.diabetes || "NO",
-          infartos: pacienteData.infartos || "NO",
-          anemia: pacienteData.anemia || "NO",
-          enf_rinon: pacienteData.enf_rinon || "NO",
-          vih_sida: pacienteData.vih_sida || "NO",
-          artritis_reumatica: pacienteData.artritis_reumatica || "NO",
-          hipertension: pacienteData.hipertension || "NO",
-          migrania: pacienteData.migrania || "NO",
-          asma_bronquial: pacienteData.asma_bronquial || "NO",
-          enf_tiroides: pacienteData.enf_tiroides || "NO",
-          cancer: pacienteData.cancer || "NO",
-          fiebre_reumatica: pacienteData.fiebre_reumatica || "NO",
-          hepatitis: pacienteData.hepatitis || "NO",
-          tuberculos: pacienteData.tuberculos || "NO",
-          epilepsia: pacienteData.epilepsia || "NO",
-          enf_respiratorias: pacienteData.enf_respiratorias || "NO",
-          mareos: pacienteData.mareos || "NO",
-          lupus: pacienteData.lupus || "NO",
-          enfermedades_infancia: pacienteData.enfermedades_infancia || "NO",
-          enfermedades_infancia_detalle:
-            pacienteData.enfermedades_infancia_detalle || "",
-          covid19: pacienteData.covid19 || "NO",
-          covid19_tratamiento: pacienteData.covid19_tratamiento || "",
-          otras_enfermedades: pacienteData.otras_enfermedades || "",
-          consume_medicamento: pacienteData.consume_medicamento || "NO",
-          medicamento_detalle: pacienteData.medicamento_detalle || "",
-          dolores_cabeza: pacienteData.dolores_cabeza || "NO",
-          alergico_sustancia: pacienteData.alergico_sustancia || "NO",
-          alergico_sustancia_detalle:
-            pacienteData.alergico_sustancia_detalle || "",
-          intervencion_quirurgica: pacienteData.intervencion_quirurgica || "NO",
-          intervencion_quirurgica_detalle:
-            pacienteData.intervencion_quirurgica_detalle || "",
-          sangra_excesivamente: pacienteData.sangra_excesivamente || "NO",
-          embarazada: pacienteData.embarazada || "NO",
-          enfermedad_grave_reciente:
-            pacienteData.enfermedad_grave_reciente || "NO",
-          enfermedad_grave_detalle: pacienteData.enfermedad_grave_detalle || "",
-          consume_alcohol: pacienteData.consume_alcohol || "NO",
-          fuma: pacienteData.fuma || "NO",
-          fecha_ultima_visita_dental:
-            pacienteData.fecha_ultima_visita_dental || "",
-          motivo_visita_dental: pacienteData.motivo_visita_dental || "",
-          cepillado_diario: pacienteData.cepillado_diario || "",
-          usa_aditamento_dental: pacienteData.usa_aditamento_dental || "NO",
-          aditamento_dental_detalle:
-            pacienteData.aditamento_dental_detalle || "",
-          reaccion_anestesia: pacienteData.reaccion_anestesia || "NO",
-          molestia_boca: pacienteData.molestia_boca || "NO",
-          mal_sabor_boca: pacienteData.mal_sabor_boca || "NO",
-          sangrado_encias: pacienteData.sangrado_encias || "NO",
-          dientes_moviles: pacienteData.dientes_moviles || "NO",
-          ruido_boca: pacienteData.ruido_boca || "NO",
-          habitos_orofaciales: pacienteData.habitos_orofaciales || "",
-          respira_boca: pacienteData.respira_boca || "NO",
-          consentimiento_informado:
-            pacienteData.consentimiento_informado || "NO",
-        }}
+        initialValues={initialValues}
         validationSchema={editSchema}
-        enableReinitialize
+        enableReinitialize // Importante para que los valores iniciales se actualicen tras la carga de datos
       >
         {({
           values,
@@ -266,9 +399,9 @@ const Expediente = () => {
           handleChange,
           handleSubmit,
           isSubmitting,
-          setFieldValue,
         }) => (
           <form onSubmit={handleSubmit}>
+            {/* --- DATOS PERSONALES (SIN CAMBIOS) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -294,12 +427,8 @@ const Expediente = () => {
                   variant="outlined"
                   type="text"
                   label="Primer Nombre"
-                  onBlur={handleBlur}
-                  onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.primer_nombre}
                   name="primer_nombre"
-                  error={!!touched.primer_nombre && !!errors.primer_nombre}
-                  helperText={touched.primer_nombre && errors.primer_nombre}
                   sx={{ gridColumn: "span 3" }}
                   InputProps={{ readOnly: true }}
                 />
@@ -308,12 +437,8 @@ const Expediente = () => {
                   variant="outlined"
                   type="text"
                   label="Segundo Nombre"
-                  onBlur={handleBlur}
-                  onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.segundo_nombre}
                   name="segundo_nombre"
-                  error={!!touched.segundo_nombre && !!errors.segundo_nombre}
-                  helperText={touched.segundo_nombre && errors.segundo_nombre}
                   sx={{ gridColumn: "span 3" }}
                   InputProps={{ readOnly: true }}
                 />
@@ -322,17 +447,9 @@ const Expediente = () => {
                   variant="outlined"
                   type="text"
                   label="Apellido Paterno"
-                  onBlur={handleBlur}
-                  onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.apellido_paterno}
                   name="apellido_paterno"
                   InputProps={{ readOnly: true }}
-                  error={
-                    !!touched.apellido_paterno && !!errors.apellido_paterno
-                  }
-                  helperText={
-                    touched.apellido_paterno && errors.apellido_paterno
-                  }
                   sx={{ gridColumn: "span 3" }}
                 />
                 <TextField
@@ -341,16 +458,8 @@ const Expediente = () => {
                   type="text"
                   label="Apellido Materno"
                   InputProps={{ readOnly: true }}
-                  onBlur={handleBlur}
-                  onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.apellido_materno}
                   name="apellido_materno"
-                  error={
-                    !!touched.apellido_materno && !!errors.apellido_materno
-                  }
-                  helperText={
-                    touched.apellido_materno && errors.apellido_materno
-                  }
                   sx={{ gridColumn: "span 3" }}
                 />
                 <TextField
@@ -359,17 +468,9 @@ const Expediente = () => {
                   type="date"
                   label="Fecha de Nacimiento"
                   InputProps={{ readOnly: true }}
-                  onBlur={handleBlur}
-                  onChange={handleChange}
                   InputLabelProps={{ shrink: true }}
                   value={values.fecha_nacimiento}
                   name="fecha_nacimiento"
-                  error={
-                    !!touched.fecha_nacimiento && !!errors.fecha_nacimiento
-                  }
-                  helperText={
-                    touched.fecha_nacimiento && errors.fecha_nacimiento
-                  }
                   sx={{ gridColumn: "span 3" }}
                 />
                 <TextField
@@ -408,12 +509,8 @@ const Expediente = () => {
                   type="text"
                   label="Dirección"
                   InputProps={{ readOnly: true }}
-                  onBlur={handleBlur}
-                  onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.direccion}
                   name="direccion"
-                  error={!!touched.direccion && !!errors.direccion}
-                  helperText={touched.direccion && errors.direccion}
                   sx={{ gridColumn: "span 12" }}
                 />
                 <TextField
@@ -422,16 +519,8 @@ const Expediente = () => {
                   type="text"
                   label="Lugar de Nacimiento"
                   InputProps={{ readOnly: true }}
-                  onBlur={handleBlur}
-                  onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.lugar_nacimiento}
                   name="lugar_nacimiento"
-                  error={
-                    !!touched.lugar_nacimiento && !!errors.lugar_nacimiento
-                  }
-                  helperText={
-                    touched.lugar_nacimiento && errors.lugar_nacimiento
-                  }
                   sx={{ gridColumn: "span 6" }}
                 />
                 <TextField
@@ -440,12 +529,8 @@ const Expediente = () => {
                   type="text"
                   label="Ocupación"
                   InputProps={{ readOnly: true }}
-                  onBlur={handleBlur}
-                  onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.ocupacion}
                   name="ocupacion"
-                  error={!!touched.ocupacion && !!errors.ocupacion}
-                  helperText={touched.ocupacion && errors.ocupacion}
                   sx={{ gridColumn: "span 6" }}
                 />
                 <TextField
@@ -454,12 +539,8 @@ const Expediente = () => {
                   type="text"
                   label="Teléfono"
                   InputProps={{ readOnly: true }}
-                  onBlur={handleBlur}
-                  onChange={(e) => handleNumberChange(e, handleChange)}
                   value={values.telefono}
                   name="telefono"
-                  error={!!touched.telefono && !!errors.telefono}
-                  helperText={touched.telefono && errors.telefono}
                   sx={{ gridColumn: "span 3" }}
                 />
                 <TextField
@@ -468,17 +549,14 @@ const Expediente = () => {
                   type="email"
                   InputProps={{ readOnly: true }}
                   label="E-mail"
-                  onBlur={handleBlur}
-                  onChange={handleChange}
                   value={values.email}
                   name="email"
-                  error={!!touched.email && !!errors.email}
-                  helperText={touched.email && errors.email}
                   sx={{ gridColumn: "span 3" }}
                 />
               </Box>
             </Box>
 
+            {/* --- INFORMACION MEDICA (SIN CAMBIOS) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -510,6 +588,8 @@ const Expediente = () => {
                   name="recomendado_por"
                   sx={{ gridColumn: "span 6" }}
                   inputProps={{ maxLength: 30 }}
+                  error={!!touched.recomendado_por && !!errors.recomendado_por}
+                  helperText={touched.recomendado_por && errors.recomendado_por}
                 />
                 <TextField
                   fullWidth
@@ -522,6 +602,8 @@ const Expediente = () => {
                   name="medico_familiar"
                   sx={{ gridColumn: "span 6" }}
                   inputProps={{ maxLength: 30 }}
+                  error={!!touched.medico_familiar && !!errors.medico_familiar}
+                  helperText={touched.medico_familiar && errors.medico_familiar}
                 />
                 <TextField
                   fullWidth
@@ -534,6 +616,13 @@ const Expediente = () => {
                   value={values.hora_ultimo_alimento}
                   name="hora_ultimo_alimento"
                   sx={{ gridColumn: "span 4" }}
+                  error={
+                    !!touched.hora_ultimo_alimento &&
+                    !!errors.hora_ultimo_alimento
+                  }
+                  helperText={
+                    touched.hora_ultimo_alimento && errors.hora_ultimo_alimento
+                  }
                 />
                 <TextField
                   fullWidth
@@ -542,9 +631,7 @@ const Expediente = () => {
                   label="Glucosa"
                   onBlur={handleBlur}
                   onChange={(e) => {
-                    // Solo permite números
                     const value = e.target.value.replace(/[^\d]/g, "");
-                    // Limitar a 3 dígitos
                     if (value.length <= 3) {
                       handleChange({
                         target: {
@@ -571,6 +658,8 @@ const Expediente = () => {
                       </Typography>
                     ),
                   }}
+                  error={!!touched.glucosa && !!errors.glucosa}
+                  helperText={touched.glucosa && errors.glucosa}
                 />
 
                 <TextField
@@ -581,18 +670,19 @@ const Expediente = () => {
                   onBlur={handleBlur}
                   onChange={(e) => {
                     let value = e.target.value;
-
-                    // Solo permite números y "/"
                     value = value.replace(/[^\d/]/g, "");
-
-                    // Limitar formato: máximo 3 dígitos antes de / y 3 después
                     const parts = value.split("/");
                     if (parts[0] && parts[0].length > 3)
                       parts[0] = parts[0].substring(0, 3);
                     if (parts[1] && parts[1].length > 3)
                       parts[1] = parts[1].substring(0, 3);
 
-                    value = parts.join("/");
+                    // Evitar que se ponga más de una /
+                    if (parts.length > 2) {
+                      value = `${parts[0]}/${parts[1]}`;
+                    } else {
+                      value = parts.join("/");
+                    }
 
                     handleChange({
                       target: {
@@ -619,10 +709,17 @@ const Expediente = () => {
                       </Typography>
                     ),
                   }}
+                  error={
+                    !!touched.presion_arterial && !!errors.presion_arterial
+                  }
+                  helperText={
+                    touched.presion_arterial && errors.presion_arterial
+                  }
                 />
               </Box>
             </Box>
 
+            {/* --- MOTIVO DE CONSULTA (SIN CAMBIOS) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -656,6 +753,8 @@ const Expediente = () => {
                   rows={3}
                   sx={{ gridColumn: "span 8" }}
                   inputProps={{ maxLength: 50 }}
+                  error={!!touched.motivo_consulta && !!errors.motivo_consulta}
+                  helperText={touched.motivo_consulta && errors.motivo_consulta}
                 />
                 <TextField
                   fullWidth
@@ -667,10 +766,20 @@ const Expediente = () => {
                   value={values.duracion_padecimiento}
                   name="duracion_padecimiento"
                   sx={{ gridColumn: "span 4" }}
+                  inputProps={{ maxLength: 30 }}
+                  error={
+                    !!touched.duracion_padecimiento &&
+                    !!errors.duracion_padecimiento
+                  }
+                  helperText={
+                    touched.duracion_padecimiento &&
+                    errors.duracion_padecimiento
+                  }
                 />
               </Box>
             </Box>
 
+            {/* --- ANTECEDENTES HEREDO-FAMILIARES (SIN CAMBIOS) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -704,6 +813,13 @@ const Expediente = () => {
                   rows={2}
                   sx={{ gridColumn: "span 6" }}
                   inputProps={{ maxLength: 30 }}
+                  error={
+                    !!touched.antecedentes_padres &&
+                    !!errors.antecedentes_padres
+                  }
+                  helperText={
+                    touched.antecedentes_padres && errors.antecedentes_padres
+                  }
                 />
                 <TextField
                   fullWidth
@@ -718,6 +834,13 @@ const Expediente = () => {
                   rows={2}
                   sx={{ gridColumn: "span 6" }}
                   inputProps={{ maxLength: 30 }}
+                  error={
+                    !!touched.antecedentes_abuelos &&
+                    !!errors.antecedentes_abuelos
+                  }
+                  helperText={
+                    touched.antecedentes_abuelos && errors.antecedentes_abuelos
+                  }
                 />
                 <TextField
                   fullWidth
@@ -732,6 +855,12 @@ const Expediente = () => {
                   rows={2}
                   sx={{ gridColumn: "span 6" }}
                   inputProps={{ maxLength: 30 }}
+                  error={
+                    !!touched.antecedentes_tios && !!errors.antecedentes_tios
+                  }
+                  helperText={
+                    touched.antecedentes_tios && errors.antecedentes_tios
+                  }
                 />
                 <TextField
                   fullWidth
@@ -746,10 +875,19 @@ const Expediente = () => {
                   rows={2}
                   sx={{ gridColumn: "span 6" }}
                   inputProps={{ maxLength: 30 }}
+                  error={
+                    !!touched.antecedentes_hermanos &&
+                    !!errors.antecedentes_hermanos
+                  }
+                  helperText={
+                    touched.antecedentes_hermanos &&
+                    errors.antecedentes_hermanos
+                  }
                 />
               </Box>
             </Box>
 
+            {/* --- ANTECEDENTES PERSONALES (SIN CAMBIOS EN HTML, LÓGICA DE VALORES CORREGIDA ARRIBA) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -772,6 +910,7 @@ const Expediente = () => {
                   },
                 }}
               >
+                {/* Fila 1 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -855,6 +994,8 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
+
+                {/* Fila 2 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -936,6 +1077,8 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
+
+                {/* Fila 3 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1019,6 +1162,8 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
+
+                {/* Fila 4 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1106,6 +1251,8 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
+
+                {/* Fila 5 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1187,6 +1334,8 @@ const Expediente = () => {
                     />
                   </RadioGroup>
                 </Box>
+
+                {/* Fila 6 */}
                 <Box
                   sx={{
                     gridColumn: "span 4",
@@ -1273,7 +1422,9 @@ const Expediente = () => {
                   </RadioGroup>
                 </Box>
 
-                <Box sx={{ gridColumn: "span 8" }}>
+                {/* --- Campos de Texto Condicionales --- */}
+
+                <Box sx={{ gridColumn: "span 8", mt: 2 }}>
                   <Typography mb={1}>
                     Enfermedades de la infancia: ej: varicela, rubeola, paperas
                   </Typography>
@@ -1307,12 +1458,20 @@ const Expediente = () => {
                         value={values.enfermedades_infancia_detalle}
                         name="enfermedades_infancia_detalle"
                         inputProps={{ maxLength: 30 }}
+                        error={
+                          !!touched.enfermedades_infancia_detalle &&
+                          !!errors.enfermedades_infancia_detalle
+                        }
+                        helperText={
+                          touched.enfermedades_infancia_detalle &&
+                          errors.enfermedades_infancia_detalle
+                        }
                       />
                     )}
                   </Box>
                 </Box>
 
-                <Box sx={{ gridColumn: "span 8" }}>
+                <Box sx={{ gridColumn: "span 8", mt: 2 }}>
                   <Box
                     sx={{
                       display: "flex",
@@ -1352,6 +1511,14 @@ const Expediente = () => {
                       value={values.covid19_tratamiento}
                       name="covid19_tratamiento"
                       inputProps={{ maxLength: 30 }}
+                      error={
+                        !!touched.covid19_tratamiento &&
+                        !!errors.covid19_tratamiento
+                      }
+                      helperText={
+                        touched.covid19_tratamiento &&
+                        errors.covid19_tratamiento
+                      }
                     />
                   )}
                 </Box>
@@ -1367,8 +1534,14 @@ const Expediente = () => {
                   name="otras_enfermedades"
                   multiline
                   rows={2}
-                  sx={{ gridColumn: "span 8" }}
+                  sx={{ gridColumn: "span 8", mt: 2 }}
                   inputProps={{ maxLength: 30 }}
+                  error={
+                    !!touched.otras_enfermedades && !!errors.otras_enfermedades
+                  }
+                  helperText={
+                    touched.otras_enfermedades && errors.otras_enfermedades
+                  }
                 />
 
                 <Box
@@ -1377,6 +1550,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "250px" }}>
@@ -1412,6 +1586,13 @@ const Expediente = () => {
                     name="medicamento_detalle"
                     sx={{ gridColumn: "span 8" }}
                     inputProps={{ maxLength: 30 }}
+                    error={
+                      !!touched.medicamento_detalle &&
+                      !!errors.medicamento_detalle
+                    }
+                    helperText={
+                      touched.medicamento_detalle && errors.medicamento_detalle
+                    }
                   />
                 )}
 
@@ -1421,6 +1602,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "350px" }}>
@@ -1451,6 +1633,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "350px" }}>
@@ -1487,6 +1670,14 @@ const Expediente = () => {
                     name="alergico_sustancia_detalle"
                     sx={{ gridColumn: "span 8" }}
                     inputProps={{ maxLength: 30 }}
+                    error={
+                      !!touched.alergico_sustancia_detalle &&
+                      !!errors.alergico_sustancia_detalle
+                    }
+                    helperText={
+                      touched.alergico_sustancia_detalle &&
+                      errors.alergico_sustancia_detalle
+                    }
                   />
                 )}
 
@@ -1496,6 +1687,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "350px" }}>
@@ -1531,6 +1723,14 @@ const Expediente = () => {
                     name="intervencion_quirurgica_detalle"
                     sx={{ gridColumn: "span 8" }}
                     inputProps={{ maxLength: 30 }}
+                    error={
+                      !!touched.intervencion_quirurgica_detalle &&
+                      !!errors.intervencion_quirurgica_detalle
+                    }
+                    helperText={
+                      touched.intervencion_quirurgica_detalle &&
+                      errors.intervencion_quirurgica_detalle
+                    }
                   />
                 )}
 
@@ -1540,6 +1740,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "350px" }}>
@@ -1570,6 +1771,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "250px" }}>
@@ -1600,6 +1802,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "350px" }}>
@@ -1635,6 +1838,14 @@ const Expediente = () => {
                     name="enfermedad_grave_detalle"
                     sx={{ gridColumn: "span 8" }}
                     inputProps={{ maxLength: 30 }}
+                    error={
+                      !!touched.enfermedad_grave_detalle &&
+                      !!errors.enfermedad_grave_detalle
+                    }
+                    helperText={
+                      touched.enfermedad_grave_detalle &&
+                      errors.enfermedad_grave_detalle
+                    }
                   />
                 )}
 
@@ -1644,6 +1855,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "200px" }}>
@@ -1673,6 +1885,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "150px" }}>¿Fuma?</Typography>
@@ -1697,6 +1910,7 @@ const Expediente = () => {
               </Box>
             </Box>
 
+            {/* --- HISTORIA BUCAL Y DENTAL (SIN CAMBIOS) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -1728,6 +1942,14 @@ const Expediente = () => {
                   value={values.fecha_ultima_visita_dental || ""}
                   name="fecha_ultima_visita_dental"
                   sx={{ gridColumn: "span 6" }}
+                  error={
+                    !!touched.fecha_ultima_visita_dental &&
+                    !!errors.fecha_ultima_visita_dental
+                  }
+                  helperText={
+                    touched.fecha_ultima_visita_dental &&
+                    errors.fecha_ultima_visita_dental
+                  }
                 />
                 <TextField
                   fullWidth
@@ -1740,6 +1962,13 @@ const Expediente = () => {
                   name="motivo_visita_dental"
                   sx={{ gridColumn: "span 6" }}
                   inputProps={{ maxLength: 30 }}
+                  error={
+                    !!touched.motivo_visita_dental &&
+                    !!errors.motivo_visita_dental
+                  }
+                  helperText={
+                    touched.motivo_visita_dental && errors.motivo_visita_dental
+                  }
                 />
                 <TextField
                   fullWidth
@@ -1752,6 +1981,12 @@ const Expediente = () => {
                   name="cepillado_diario"
                   inputProps={{ min: 0, max: 10 }}
                   sx={{ gridColumn: "span 12" }}
+                  error={
+                    !!touched.cepillado_diario && !!errors.cepillado_diario
+                  }
+                  helperText={
+                    touched.cepillado_diario && errors.cepillado_diario
+                  }
                 />
 
                 <Box
@@ -1760,6 +1995,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "550px" }}>
@@ -1796,6 +2032,14 @@ const Expediente = () => {
                     name="aditamento_dental_detalle"
                     sx={{ gridColumn: "span 8" }}
                     inputProps={{ maxLength: 30 }}
+                    error={
+                      !!touched.aditamento_dental_detalle &&
+                      !!errors.aditamento_dental_detalle
+                    }
+                    helperText={
+                      touched.aditamento_dental_detalle &&
+                      errors.aditamento_dental_detalle
+                    }
                   />
                 )}
 
@@ -1805,6 +2049,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "550px" }}>
@@ -1835,6 +2080,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "350px" }}>
@@ -1865,6 +2111,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "350px" }}>
@@ -1895,6 +2142,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "350px" }}>
@@ -1925,6 +2173,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "550px" }}>
@@ -1955,6 +2204,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "350px" }}>
@@ -1988,8 +2238,15 @@ const Expediente = () => {
                   onChange={(e) => handleUpperCaseChange(e, handleChange)}
                   value={values.habitos_orofaciales || ""}
                   name="habitos_orofaciales"
-                  sx={{ gridColumn: "span 8" }}
+                  sx={{ gridColumn: "span 8", mt: 2 }}
                   inputProps={{ maxLength: 30 }}
+                  error={
+                    !!touched.habitos_orofaciales &&
+                    !!errors.habitos_orofaciales
+                  }
+                  helperText={
+                    touched.habitos_orofaciales && errors.habitos_orofaciales
+                  }
                 />
 
                 <Box
@@ -1998,6 +2255,7 @@ const Expediente = () => {
                     display: "flex",
                     alignItems: "center",
                     gap: 2,
+                    mt: 2,
                   }}
                 >
                   <Typography sx={{ minWidth: "250px" }}>
@@ -2024,6 +2282,7 @@ const Expediente = () => {
               </Box>
             </Box>
 
+            {/* --- CONSENTIMIENTO INFORMADO (SIN CAMBIOS) --- */}
             <Box mb={3}>
               <Typography
                 variant="h5"
@@ -2034,21 +2293,21 @@ const Expediente = () => {
                 CONSENTIMIENTO INFORMADO
               </Typography>
               <Divider sx={{ mb: 2 }} />
-              <Typography variant="body3" mb={3} sx={{ textAlign: "justify" }}>
+              <Typography variant="body2" mb={3} sx={{ textAlign: "justify" }}>
                 Doy mi consentimiento a la odontóloga para recetar y efectuar
-                cualquier tratar ento dental, operación dental. anestesia y
+                cualquier tratamiento dental, operación dental, anestesia y
                 otros procedimientos dentales que considere necesarios y en los
-                que estemos mutuamerte deacuerdo, responsabilizándome de la
-                veracidad de la información confidencial arriba mencionada
+                que estemos mutuamente de acuerdo, responsabilizándome de la
+                veracidad de la información confidencial arriba mencionada.
                 Comprometiéndome a asistir puntualmente a las citas programadas
-                y en caso d no poder asistir avisar con 24 hrs. De anticipación
-                y si la Doctora por alguna razón no puede atenderio a su ca se
+                y en caso de no poder asistir avisar con 24 hrs. de anticipación
+                y si la Doctora por alguna razón no puede atenderlo a su cita se
                 cancelará de igual manera.
               </Typography>
               <Box
                 sx={{ display: "flex", alignItems: "center", gap: 2, mb: 2 }}
               >
-                <Typography variant="body4" sx={{ minWidth: "350px" }}>
+                <Typography variant="body1" sx={{ minWidth: "350px" }}>
                   Acepto los términos del consentimiento informado:
                 </Typography>
                 <RadioGroup
@@ -2071,6 +2330,7 @@ const Expediente = () => {
               </Box>
             </Box>
 
+            {/* --- BOTONES (SIN CAMBIOS) --- */}
             <Box display="flex" justifyContent="end" mt="30px" gap="10px">
               <Button
                 color="secondary"
@@ -2085,7 +2345,7 @@ const Expediente = () => {
                 variant="contained"
                 disabled={isSubmitting}
               >
-                {isSubmitting ? "Actualizando..." : "Guardar Expediente"}
+                {isSubmitting ? "Guardando..." : "Guardar Expediente"}
               </Button>
             </Box>
           </form>
@@ -2095,15 +2355,10 @@ const Expediente = () => {
   );
 };
 
-const phoneRegExp = /^[0-9]{10,15}$/;
-const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const fechaMinima = new Date();
-fechaMinima.setFullYear(fechaMinima.getFullYear() - 100);
-const fechaMaxima = new Date();
-fechaMaxima.setFullYear(fechaMaxima.getFullYear() - 1);
-
+// --- VALIDATION SCHEMA (Corregido) ---
 const editSchema = yup.object().shape({
-  id_sexo: yup.string().required("Debe seleccionar un sexo"),
+  // --- Campos de Paciente (solo lectura, no necesitan validación estricta aquí) ---
+  id_sexo: yup.string(),
   primer_nombre: yup.string(),
   segundo_nombre: yup.string(),
   apellido_paterno: yup.string(),
@@ -2114,30 +2369,40 @@ const editSchema = yup.object().shape({
   ocupacion: yup.string(),
   telefono: yup.string(),
   email: yup.string(),
+
+  // --- Campos de Expediente (editables) ---
   recomendado_por: yup
     .string()
     .max(30, "Máximo 30 caracteres")
-    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
+    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas")
+    .nullable(),
   medico_familiar: yup
     .string()
     .max(30, "Máximo 30 caracteres")
-    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
-  hora_ultimo_alimento: yup.string(),
+    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas")
+    .nullable(),
+  hora_ultimo_alimento: yup.string().nullable(),
   glucosa: yup
     .string()
     .matches(/^\d*$/, "Solo números")
     .test("range", "Valor fuera de rango (40-300)", function (value) {
-      if (!value) return true;
+      if (!value || value.trim() === "") return true; // Permite vacío
       const num = parseInt(value);
       return num >= 40 && num <= 300;
-    }),
-
+    })
+    .nullable(),
   presion_arterial: yup
     .string()
-    .matches(/^\d{2,3}\/\d{2,3}$/, "Formato incorrecto (Ej: 120/80)")
+    .test("format", "Formato incorrecto (Ej: 120/80)", function (value) {
+      if (!value || value.trim() === "") return true; // Permite vacío
+      return /^\d{2,3}\/\d{2,3}$/.test(value);
+    })
     .test("range", "Valores fuera de rango", function (value) {
-      if (!value) return true;
-      const [sistolica, diastolica] = value.split("/").map(Number);
+      if (!value || value.trim() === "") return true; // Permite vacío
+      const parts = value.split("/");
+      if (parts.length !== 2) return true; // Ya cubierto por 'format'
+      const [sistolica, diastolica] = parts.map(Number);
+      if (isNaN(sistolica) || isNaN(diastolica)) return false;
       return (
         sistolica >= 70 &&
         sistolica <= 200 &&
@@ -2145,13 +2410,22 @@ const editSchema = yup.object().shape({
         diastolica <= 130 &&
         sistolica > diastolica
       );
-    }),
-  motivo_consulta: yup.string().max(30, "Máximo 30 caracteres"),
-  duracion_padecimiento: yup.string().max(30, "Máximo 30 caracteres"),
-  antecedentes_padres: yup.string().max(30, "Máximo 30 caracteres"),
-  antecedentes_abuelos: yup.string().max(30, "Máximo 30 caracteres"),
-  antecedentes_tios: yup.string().max(30, "Máximo 30 caracteres"),
-  antecedentes_hermanos: yup.string().max(30, "Máximo 30 caracteres"),
+    })
+    .nullable(),
+  motivo_consulta: yup.string().max(50, "Máximo 50 caracteres").nullable(), // Ajustado a 50
+  duracion_padecimiento: yup
+    .string()
+    .max(30, "Máximo 30 caracteres")
+    .nullable(),
+  antecedentes_padres: yup.string().max(30, "Máximo 30 caracteres").nullable(),
+  antecedentes_abuelos: yup.string().max(30, "Máximo 30 caracteres").nullable(),
+  antecedentes_tios: yup.string().max(30, "Máximo 30 caracteres").nullable(),
+  antecedentes_hermanos: yup
+    .string()
+    .max(30, "Máximo 30 caracteres")
+    .nullable(),
+
+  // --- Enfermedades ---
   diabetes: yup.string().oneOf(["SI", "NO"]),
   infartos: yup.string().oneOf(["SI", "NO"]),
   anemia: yup.string().oneOf(["SI", "NO"]),
@@ -2170,39 +2444,59 @@ const editSchema = yup.object().shape({
   enf_respiratorias: yup.string().oneOf(["SI", "NO"]),
   mareos: yup.string().oneOf(["SI", "NO"]),
   lupus: yup.string().oneOf(["SI", "NO"]),
+
+  // --- Campos condicionales ---
   enfermedades_infancia: yup.string().oneOf(["SI", "NO"]),
-  enfermedades_infancia_detalle: yup.string().max(30, "Máximo 30 caracteres"),
+  enfermedades_infancia_detalle: yup
+    .string()
+    .max(30, "Máximo 30 caracteres")
+    .nullable(),
   covid19: yup.string().oneOf(["SI", "NO"]),
-  covid19_tratamiento: yup.string().max(30, "Máximo 30 caracteres"),
-  otras_enfermedades: yup.string().max(30, "Máximo 30 caracteres"),
+  covid19_tratamiento: yup.string().max(30, "Máximo 30 caracteres").nullable(),
+  otras_enfermedades: yup.string().max(30, "Máximo 30 caracteres").nullable(),
   consume_medicamento: yup.string().oneOf(["SI", "NO"]),
-  medicamento_detalle: yup.string().max(30, "Máximo 30 caracteres"),
+  medicamento_detalle: yup.string().max(30, "Máximo 30 caracteres").nullable(),
   dolores_cabeza: yup.string().oneOf(["SI", "NO"]),
   alergico_sustancia: yup.string().oneOf(["SI", "NO"]),
-  alergico_sustancia_detalle: yup.string().max(30, "Máximo 30 caracteres"),
+  alergico_sustancia_detalle: yup
+    .string()
+    .max(30, "Máximo 30 caracteres")
+    .nullable(),
   intervencion_quirurgica: yup.string().oneOf(["SI", "NO"]),
-  intervencion_quirurgica_detalle: yup.string().max(30, "Máximo 30 caracteres"),
+  intervencion_quirurgica_detalle: yup
+    .string()
+    .max(30, "Máximo 30 caracteres")
+    .nullable(),
   sangra_excesivamente: yup.string().oneOf(["SI", "NO"]),
   embarazada: yup.string().oneOf(["SI", "NO"]),
   enfermedad_grave_reciente: yup.string().oneOf(["SI", "NO"]),
-  enfermedad_grave_detalle: yup.string().max(30, "Máximo 30 caracteres"),
+  enfermedad_grave_detalle: yup
+    .string()
+    .max(30, "Máximo 30 caracteres")
+    .nullable(),
   consume_alcohol: yup.string().oneOf(["SI", "NO"]),
   fuma: yup.string().oneOf(["SI", "NO"]),
-  fecha_ultima_visita_dental: yup.date(),
-  motivo_visita_dental: yup.string().max(30, "Máximo 30 caracteres"),
+
+  // --- Historia Bucal ---
+  fecha_ultima_visita_dental: yup.date().nullable(),
+  motivo_visita_dental: yup.string().max(30, "Máximo 30 caracteres").nullable(),
   cepillado_diario: yup
     .number()
     .min(0, "Debe ser un número positivo")
-    .max(10, "Máximo 10 veces al día"),
+    .max(10, "Máximo 10 veces al día")
+    .nullable(),
   usa_aditamento_dental: yup.string().oneOf(["SI", "NO"]),
-  aditamento_dental_detalle: yup.string().max(30, "Máximo 30 caracteres"),
+  aditamento_dental_detalle: yup
+    .string()
+    .max(30, "Máximo 30 caracteres")
+    .nullable(),
   reaccion_anestesia: yup.string().oneOf(["SI", "NO"]),
   molestia_boca: yup.string().oneOf(["SI", "NO"]),
   mal_sabor_boca: yup.string().oneOf(["SI", "NO"]),
   sangrado_encias: yup.string().oneOf(["SI", "NO"]),
   dientes_moviles: yup.string().oneOf(["SI", "NO"]),
   ruido_boca: yup.string().oneOf(["SI", "NO"]),
-  habitos_orofaciales: yup.string().max(30, "Máximo 30 caracteres"),
+  habitos_orofaciales: yup.string().max(30, "Máximo 30 caracteres").nullable(),
   respira_boca: yup.string().oneOf(["SI", "NO"]),
   consentimiento_informado: yup.string().oneOf(["SI", "NO"]),
 });
