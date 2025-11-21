@@ -44,6 +44,12 @@ const NuevoPaciente = () => {
     }
   };
 
+  const preventNumbers = (e) => {
+    if (/[0-9]/.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   const handleFormSubmit = async (
     values,
     { setSubmitting, setFieldError, resetForm }
@@ -172,6 +178,7 @@ const NuevoPaciente = () => {
                 type="text"
                 label="Primer Nombre"
                 onBlur={handleBlur}
+                onKeyPress={preventNumbers}
                 onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.primer_nombre}
                 name="primer_nombre"
@@ -186,6 +193,7 @@ const NuevoPaciente = () => {
                 variant="outlined"
                 type="text"
                 label="Segundo Nombre (Opcional)"
+                onKeyPress={preventNumbers}
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.segundo_nombre}
@@ -201,6 +209,7 @@ const NuevoPaciente = () => {
                 variant="outlined"
                 type="text"
                 label="Apellido Paterno"
+                onKeyPress={preventNumbers}
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.apellido_paterno}
@@ -216,6 +225,7 @@ const NuevoPaciente = () => {
                 variant="outlined"
                 type="text"
                 label="Apellido Materno"
+                onKeyPress={preventNumbers}
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.apellido_materno}
@@ -250,6 +260,7 @@ const NuevoPaciente = () => {
                 variant="outlined"
                 type="text"
                 label="Lugar de Nacimiento"
+                onKeyPress={preventNumbers}
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange, 50)}
                 value={values.lugar_nacimiento}
@@ -265,6 +276,7 @@ const NuevoPaciente = () => {
                 variant="outlined"
                 type="text"
                 label="Dirección"
+                onKeyPress={preventNumbers}
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange, 50)}
                 value={values.direccion}
@@ -281,6 +293,7 @@ const NuevoPaciente = () => {
                 type="text"
                 label="Ocupación"
                 onBlur={handleBlur}
+                onKeyPress={preventNumbers}
                 onChange={(e) => handleUpperCaseChange(e, handleChange, 30)}
                 value={values.ocupacion}
                 name="ocupacion"
