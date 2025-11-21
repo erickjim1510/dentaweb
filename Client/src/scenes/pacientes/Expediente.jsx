@@ -1459,11 +1459,12 @@ const Expediente = () => {
                   </Box>
 
                   <Box sx={{ gridColumn: "span 8", mt: 2 }}>
-                    <Typography mb={1}>
+                    <Typography sx={{ minWidth: "150px", mb: 1 }}>
                       Enfermedades de la infancia: ej: varicela, rubeola,
                       paperas
                     </Typography>
-                    <Box display="flex" flexDirection="column" gap={2}>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                       <RadioGroup
                         row
                         name="enfermedades_infancia"
@@ -1484,7 +1485,7 @@ const Expediente = () => {
 
                       {values.enfermedades_infancia === "SI" && (
                         <TextField
-                          fullWidth
+                          sx={{ flex: 1 }}
                           variant="outlined"
                           type="text"
                           label="Explique"
@@ -1510,17 +1511,11 @@ const Expediente = () => {
                   </Box>
 
                   <Box sx={{ gridColumn: "span 8", mt: 2 }}>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 2,
-                        mb: 1,
-                      }}
-                    >
-                      <Typography sx={{ minWidth: "150px" }}>
-                        COVID-19
-                      </Typography>
+                    <Typography sx={{ minWidth: "150px", mb: 1 }}>
+                      COVID-19
+                    </Typography>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                       <RadioGroup
                         row
                         name="covid19"
@@ -1538,30 +1533,32 @@ const Expediente = () => {
                           label="NO"
                         />
                       </RadioGroup>
-                    </Box>
 
-                    {values.covid19 === "SI" && (
-                      <TextField
-                        fullWidth
-                        variant="outlined"
-                        type="text"
-                        label="Tratamiento"
-                        onBlur={handleBlur}
-                        onKeyPress={preventNumbers}
-                        onChange={(e) => handleUpperCaseChange(e, handleChange)}
-                        value={values.covid19_tratamiento}
-                        name="covid19_tratamiento"
-                        inputProps={{ maxLength: 30 }}
-                        error={
-                          !!touched.covid19_tratamiento &&
-                          !!errors.covid19_tratamiento
-                        }
-                        helperText={
-                          touched.covid19_tratamiento &&
-                          errors.covid19_tratamiento
-                        }
-                      />
-                    )}
+                      {values.covid19 === "SI" && (
+                        <TextField
+                          sx={{ flex: 1 }}
+                          variant="outlined"
+                          type="text"
+                          label="Tratamiento"
+                          onBlur={handleBlur}
+                          onKeyPress={preventNumbers}
+                          onChange={(e) =>
+                            handleUpperCaseChange(e, handleChange)
+                          }
+                          value={values.covid19_tratamiento}
+                          name="covid19_tratamiento"
+                          inputProps={{ maxLength: 30 }}
+                          error={
+                            !!touched.covid19_tratamiento &&
+                            !!errors.covid19_tratamiento
+                          }
+                          helperText={
+                            touched.covid19_tratamiento &&
+                            errors.covid19_tratamiento
+                          }
+                        />
+                      )}
+                    </Box>
                   </Box>
 
                   <TextField
@@ -1587,373 +1584,339 @@ const Expediente = () => {
                     }
                   />
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 8",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "250px" }}>
+                  <Box sx={{ gridColumn: "span 8", mt: 2 }}>
+                    <Typography sx={{ minWidth: "250px", mb: 1 }}>
                       ¿Consume algún medicamento?:
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="consume_medicamento"
-                      value={values.consume_medicamento}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
-                  </Box>
-                  {values.consume_medicamento === "SI" && (
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      type="text"
-                      label="¿Cuál?"
-                      onKeyPress={preventNumbers}
-                      onBlur={handleBlur}
-                      onChange={(e) => handleUpperCaseChange(e, handleChange)}
-                      value={values.medicamento_detalle}
-                      name="medicamento_detalle"
-                      sx={{ gridColumn: "span 8" }}
-                      inputProps={{ maxLength: 30 }}
-                      error={
-                        !!touched.medicamento_detalle &&
-                        !!errors.medicamento_detalle
-                      }
-                      helperText={
-                        touched.medicamento_detalle &&
-                        errors.medicamento_detalle
-                      }
-                    />
-                  )}
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 8",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "350px" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="consume_medicamento"
+                        value={values.consume_medicamento}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+
+                      {values.consume_medicamento === "SI" && (
+                        <TextField
+                          sx={{ flex: 1 }}
+                          variant="outlined"
+                          type="text"
+                          label="¿Cuál?"
+                          onKeyPress={preventNumbers}
+                          onBlur={handleBlur}
+                          onChange={(e) =>
+                            handleUpperCaseChange(e, handleChange)
+                          }
+                          value={values.medicamento_detalle}
+                          name="medicamento_detalle"
+                          inputProps={{ maxLength: 30 }}
+                          error={
+                            !!touched.medicamento_detalle &&
+                            !!errors.medicamento_detalle
+                          }
+                          helperText={
+                            touched.medicamento_detalle &&
+                            errors.medicamento_detalle
+                          }
+                        />
+                      )}
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ gridColumn: "span 8", mt: 2 }}>
+                    <Typography sx={{ minWidth: "350px", mb: 1 }}>
                       ¿Sufre con frecuencia dolores de cabeza?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="dolores_cabeza"
-                      value={values.dolores_cabeza}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="dolores_cabeza"
+                        value={values.dolores_cabeza}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+                    </Box>
                   </Box>
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 8",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "350px" }}>
+                  <Box sx={{ gridColumn: "span 8", mt: 2 }}>
+                    <Typography sx={{ minWidth: "350px", mb: 1 }}>
                       ¿Es alérgico a alguna sustancia o medicamento? (Ej.
                       Penicilina)
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="alergico_sustancia"
-                      value={values.alergico_sustancia}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
-                  </Box>
-                  {values.alergico_sustancia === "SI" && (
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      type="text"
-                      label="¿Cuál?"
-                      onBlur={handleBlur}
-                      onKeyPress={preventNumbers}
-                      onChange={(e) => handleUpperCaseChange(e, handleChange)}
-                      value={values.alergico_sustancia_detalle}
-                      name="alergico_sustancia_detalle"
-                      sx={{ gridColumn: "span 8" }}
-                      inputProps={{ maxLength: 30 }}
-                      error={
-                        !!touched.alergico_sustancia_detalle &&
-                        !!errors.alergico_sustancia_detalle
-                      }
-                      helperText={
-                        touched.alergico_sustancia_detalle &&
-                        errors.alergico_sustancia_detalle
-                      }
-                    />
-                  )}
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 8",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "350px" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="alergico_sustancia"
+                        value={values.alergico_sustancia}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+
+                      {values.alergico_sustancia === "SI" && (
+                        <TextField
+                          sx={{ flex: 1 }}
+                          variant="outlined"
+                          type="text"
+                          label="¿Cuál?"
+                          onBlur={handleBlur}
+                          onKeyPress={preventNumbers}
+                          onChange={(e) =>
+                            handleUpperCaseChange(e, handleChange)
+                          }
+                          value={values.alergico_sustancia_detalle}
+                          name="alergico_sustancia_detalle"
+                          inputProps={{ maxLength: 30 }}
+                          error={
+                            !!touched.alergico_sustancia_detalle &&
+                            !!errors.alergico_sustancia_detalle
+                          }
+                          helperText={
+                            touched.alergico_sustancia_detalle &&
+                            errors.alergico_sustancia_detalle
+                          }
+                        />
+                      )}
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ gridColumn: "span 8", mt: 2 }}>
+                    <Typography sx={{ minWidth: "350px", mb: 1 }}>
                       ¿Ha sido intervenido quirúrgicamente alguna vez?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="intervencion_quirurgica"
-                      value={values.intervencion_quirurgica}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
-                  </Box>
-                  {values.intervencion_quirurgica === "SI" && (
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      type="text"
-                      label="¿Cuándo y de qué?"
-                      onBlur={handleBlur}
-                      onKeyPress={preventNumbers}
-                      onChange={(e) => handleUpperCaseChange(e, handleChange)}
-                      value={values.intervencion_quirurgica_detalle}
-                      name="intervencion_quirurgica_detalle"
-                      sx={{ gridColumn: "span 8" }}
-                      inputProps={{ maxLength: 30 }}
-                      error={
-                        !!touched.intervencion_quirurgica_detalle &&
-                        !!errors.intervencion_quirurgica_detalle
-                      }
-                      helperText={
-                        touched.intervencion_quirurgica_detalle &&
-                        errors.intervencion_quirurgica_detalle
-                      }
-                    />
-                  )}
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 8",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "350px" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="intervencion_quirurgica"
+                        value={values.intervencion_quirurgica}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+
+                      {values.intervencion_quirurgica === "SI" && (
+                        <TextField
+                          sx={{ flex: 1 }}
+                          variant="outlined"
+                          type="text"
+                          label="¿Cuándo y de qué?"
+                          onBlur={handleBlur}
+                          onKeyPress={preventNumbers}
+                          onChange={(e) =>
+                            handleUpperCaseChange(e, handleChange)
+                          }
+                          value={values.intervencion_quirurgica_detalle}
+                          name="intervencion_quirurgica_detalle"
+                          inputProps={{ maxLength: 30 }}
+                          error={
+                            !!touched.intervencion_quirurgica_detalle &&
+                            !!errors.intervencion_quirurgica_detalle
+                          }
+                          helperText={
+                            touched.intervencion_quirurgica_detalle &&
+                            errors.intervencion_quirurgica_detalle
+                          }
+                        />
+                      )}
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ gridColumn: "span 8", mt: 2 }}>
+                    <Typography sx={{ minWidth: "350px", mb: 1 }}>
                       ¿Sangra excesivamente cuando sufre un corte?:
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="sangra_excesivamente"
-                      value={values.sangra_excesivamente}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="sangra_excesivamente"
+                        value={values.sangra_excesivamente}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+                    </Box>
                   </Box>
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 8",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "250px" }}>
+                  <Box sx={{ gridColumn: "span 8", mt: 2 }}>
+                    <Typography sx={{ minWidth: "250px", mb: 1 }}>
                       ¿Está Ud. Embarazada?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="embarazada"
-                      value={values.embarazada}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="embarazada"
+                        value={values.embarazada}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+                    </Box>
                   </Box>
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 8",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "350px" }}>
+                  <Box sx={{ gridColumn: "span 8", mt: 2 }}>
+                    <Typography sx={{ minWidth: "350px", mb: 1 }}>
                       ¿Padeció alguna enfermedad grave recientemente?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="enfermedad_grave_reciente"
-                      value={values.enfermedad_grave_reciente}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
-                  </Box>
-                  {values.enfermedad_grave_reciente === "SI" && (
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      type="text"
-                      label="¿Cuál?"
-                      onBlur={handleBlur}
-                      onKeyPress={preventNumbers}
-                      onChange={(e) => handleUpperCaseChange(e, handleChange)}
-                      value={values.enfermedad_grave_detalle}
-                      name="enfermedad_grave_detalle"
-                      sx={{ gridColumn: "span 8" }}
-                      inputProps={{ maxLength: 30 }}
-                      error={
-                        !!touched.enfermedad_grave_detalle &&
-                        !!errors.enfermedad_grave_detalle
-                      }
-                      helperText={
-                        touched.enfermedad_grave_detalle &&
-                        errors.enfermedad_grave_detalle
-                      }
-                    />
-                  )}
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 6",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "200px" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="enfermedad_grave_reciente"
+                        value={values.enfermedad_grave_reciente}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+
+                      {values.enfermedad_grave_reciente === "SI" && (
+                        <TextField
+                          sx={{ flex: 1 }}
+                          variant="outlined"
+                          type="text"
+                          label="¿Cuál?"
+                          onBlur={handleBlur}
+                          onKeyPress={preventNumbers}
+                          onChange={(e) =>
+                            handleUpperCaseChange(e, handleChange)
+                          }
+                          value={values.enfermedad_grave_detalle}
+                          name="enfermedad_grave_detalle"
+                          inputProps={{ maxLength: 30 }}
+                          error={
+                            !!touched.enfermedad_grave_detalle &&
+                            !!errors.enfermedad_grave_detalle
+                          }
+                          helperText={
+                            touched.enfermedad_grave_detalle &&
+                            errors.enfermedad_grave_detalle
+                          }
+                        />
+                      )}
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ gridColumn: "span 6", mt: 2 }}>
+                    <Typography sx={{ minWidth: "200px", mb: 1 }}>
                       ¿Consume Ud. Alcohol?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="consume_alcohol"
-                      value={values.consume_alcohol}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="consume_alcohol"
+                        value={values.consume_alcohol}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+                    </Box>
                   </Box>
-                  <Box
-                    sx={{
-                      gridColumn: "span 6",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "150px" }}>¿Fuma?</Typography>
-                    <RadioGroup
-                      row
-                      name="fuma"
-                      value={values.fuma}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
+
+                  <Box sx={{ gridColumn: "span 8", mt: 2 }}>
+                    <Typography sx={{ minWidth: "150px", mb: 1 }}>
+                      ¿Fuma?
+                    </Typography>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="fuma"
+                        value={values.fuma}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+                    </Box>
                   </Box>
                 </Box>
               </Box>
@@ -2040,244 +2003,211 @@ const Expediente = () => {
                     }
                   />
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 8",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "550px" }}>
+                  <Box sx={{ gridColumn: "span 8", mt: 2 }}>
+                    <Typography sx={{ minWidth: "550px", mb: 1 }}>
                       ¿Aparte del cepillo utiliza otro aditamento para limpiar
                       sus dientes?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="usa_aditamento_dental"
-                      value={values.usa_aditamento_dental || "NO"}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
-                  </Box>
-                  {values.usa_aditamento_dental === "SI" && (
-                    <TextField
-                      fullWidth
-                      variant="outlined"
-                      type="text"
-                      label="¿Cuáles?"
-                      onBlur={handleBlur}
-                      onChange={(e) => handleUpperCaseChange(e, handleChange)}
-                      value={values.aditamento_dental_detalle || ""}
-                      name="aditamento_dental_detalle"
-                      sx={{ gridColumn: "span 8" }}
-                      inputProps={{ maxLength: 30 }}
-                      error={
-                        !!touched.aditamento_dental_detalle &&
-                        !!errors.aditamento_dental_detalle
-                      }
-                      helperText={
-                        touched.aditamento_dental_detalle &&
-                        errors.aditamento_dental_detalle
-                      }
-                    />
-                  )}
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 12",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "550px" }}>
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="usa_aditamento_dental"
+                        value={values.usa_aditamento_dental || "NO"}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+
+                      {values.usa_aditamento_dental === "SI" && (
+                        <TextField
+                          sx={{ flex: 1 }}
+                          variant="outlined"
+                          type="text"
+                          label="¿Cuáles?"
+                          onBlur={handleBlur}
+                          onChange={(e) =>
+                            handleUpperCaseChange(e, handleChange)
+                          }
+                          value={values.aditamento_dental_detalle || ""}
+                          name="aditamento_dental_detalle"
+                          inputProps={{ maxLength: 30 }}
+                          error={
+                            !!touched.aditamento_dental_detalle &&
+                            !!errors.aditamento_dental_detalle
+                          }
+                          helperText={
+                            touched.aditamento_dental_detalle &&
+                            errors.aditamento_dental_detalle
+                          }
+                        />
+                      )}
+                    </Box>
+                  </Box>
+
+                  <Box sx={{ gridColumn: "span 12", mt: 2 }}>
+                    <Typography sx={{ minWidth: "550px", mb: 1 }}>
                       ¿Tuvo alguna vez reacción a la anestesia dental?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="reaccion_anestesia"
-                      value={values.reaccion_anestesia || "NO"}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="reaccion_anestesia"
+                        value={values.reaccion_anestesia || "NO"}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+                    </Box>
                   </Box>
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 12",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "350px" }}>
+                  <Box sx={{ gridColumn: "span 12", mt: 2 }}>
+                    <Typography sx={{ minWidth: "350px", mb: 1 }}>
                       ¿Molestia o dolor en boca?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="molestia_boca"
-                      value={values.molestia_boca || "NO"}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="molestia_boca"
+                        value={values.molestia_boca || "NO"}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+                    </Box>
                   </Box>
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 12",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "350px" }}>
+                  <Box sx={{ gridColumn: "span 12", mt: 2 }}>
+                    <Typography sx={{ minWidth: "350px", mb: 1 }}>
                       ¿Mal olor o mal sabor de boca?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="mal_sabor_boca"
-                      value={values.mal_sabor_boca || "NO"}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="mal_sabor_boca"
+                        value={values.mal_sabor_boca || "NO"}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+                    </Box>
                   </Box>
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 12",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "350px" }}>
+                  <Box sx={{ gridColumn: "span 12", mt: 2 }}>
+                    <Typography sx={{ minWidth: "350px", mb: 1 }}>
                       ¿Le sangran las encías?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="sangrado_encias"
-                      value={values.sangrado_encias || "NO"}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="sangrado_encias"
+                        value={values.sangrado_encias || "NO"}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+                    </Box>
                   </Box>
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 12",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "550px" }}>
+                  <Box sx={{ gridColumn: "span 12", mt: 2 }}>
+                    <Typography sx={{ minWidth: "550px", mb: 1 }}>
                       ¿Siente sus dientes móviles aprieta o rechina sus dientes?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="dientes_moviles"
-                      value={values.dientes_moviles || "NO"}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="dientes_moviles"
+                        value={values.dientes_moviles || "NO"}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+                    </Box>
                   </Box>
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 8",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "350px" }}>
+                  <Box sx={{ gridColumn: "span 8", mt: 2 }}>
+                    <Typography sx={{ minWidth: "350px", mb: 1 }}>
                       ¿Molestia o ruido al abrir y cerrar su boca?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="ruido_boca"
-                      value={values.ruido_boca || "NO"}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="ruido_boca"
+                        value={values.ruido_boca || "NO"}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+                    </Box>
                   </Box>
 
                   <TextField
@@ -2300,35 +2230,30 @@ const Expediente = () => {
                     }
                   />
 
-                  <Box
-                    sx={{
-                      gridColumn: "span 12",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 2,
-                      mt: 2,
-                    }}
-                  >
-                    <Typography sx={{ minWidth: "250px" }}>
+                  <Box sx={{ gridColumn: "span 12", mt: 2 }}>
+                    <Typography sx={{ minWidth: "250px", mb: 1 }}>
                       ¿Respira con su boca?
                     </Typography>
-                    <RadioGroup
-                      row
-                      name="respira_boca"
-                      value={values.respira_boca || "NO"}
-                      onChange={handleChange}
-                    >
-                      <FormControlLabel
-                        value="SI"
-                        control={<CustomRadio size="small" />}
-                        label="SI"
-                      />
-                      <FormControlLabel
-                        value="NO"
-                        control={<CustomRadio size="small" />}
-                        label="NO"
-                      />
-                    </RadioGroup>
+
+                    <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <RadioGroup
+                        row
+                        name="respira_boca"
+                        value={values.respira_boca || "NO"}
+                        onChange={handleChange}
+                      >
+                        <FormControlLabel
+                          value="SI"
+                          control={<CustomRadio size="small" />}
+                          label="SI"
+                        />
+                        <FormControlLabel
+                          value="NO"
+                          control={<CustomRadio size="small" />}
+                          label="NO"
+                        />
+                      </RadioGroup>
+                    </Box>
                   </Box>
                 </Box>
               </Box>
