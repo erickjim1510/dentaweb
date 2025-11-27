@@ -8,12 +8,14 @@ from models.usuario import Usuario
 from models.sexo import Sexo
 from models.paciente import Paciente
 from models.expediente import Expediente
+from models.cita import Cita
 from routes.estado_routes import estado_bp
 from routes.rol_routes import rol_bp
 from routes.usuario_routes import usuario_bp
 from routes.sexo_routes import sexo_bp
 from routes.paciente_routes import paciente_bp
 from routes.expediente_routes import expediente_bp
+from routes.cita_routes import citas_bp
 
 
 def create_app():
@@ -30,6 +32,7 @@ def create_app():
     app.register_blueprint(sexo_bp)
     app.register_blueprint(paciente_bp)
     app.register_blueprint(expediente_bp)
+    app.register_blueprint(citas_bp)
     
     return app  
 
