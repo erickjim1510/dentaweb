@@ -1,17 +1,33 @@
 from db import db
 from datetime import datetime
+from sqlalchemy.dialects.mysql import INTEGER
 
 class Cita(db.Model):
     __tablename__ = 'citas'
 
-    id_cita = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    id_paciente = db.Column(db.Integer, nullable=False)
-    id_usuario = db.Column(db.Integer, nullable=False)
+    id_cita = db.Column(INTEGER(unsigned=True), primary_key=True, autoincrement=True)
+
+    id_paciente = db.Column(
+        INTEGER(unsigned=True),
+        db.ForeignKey('pacientes.id_paciente'),
+        nullable=False
+    )
+
+    id_usuario = db.Column(
+        INTEGER(unsigned=True),
+        db.ForeignKey('usuarios.id_usuario'),
+        nullable=False
+    )
+
     fecha = db.Column(db.Date, nullable=False)
     hora = db.Column(db.Time, nullable=False)
-    motivo = db.Column(db.String(255), nullable=True)
-    estado = db.Column(db.String(50), nullable=True)
+    motivo = db.Column(db.String(255))
+    estado = db.Column(db.String(50))
     fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relaciones
+    paciente = db.relationship('Paciente', back_populates='citas')
+    usuario = db.relationship('Usuario', back_populates='citas')
 
     def to_dict(self):
         return {

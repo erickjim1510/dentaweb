@@ -66,7 +66,7 @@ const ListaPacientes = () => {
 
   const handleEliminarPaciente = async (idPaciente) => {
     Swal.fire({
-      title: "Estass seguro?",
+      title: "Estas seguro?",
       text: "Deseas eliminar a este paciente?",
       icon: "warning",
       showCancelButton: true,
@@ -258,6 +258,7 @@ const ListaPacientes = () => {
         <TextField
           placeholder="Buscar por Nombre, Apellido o Email"
           value={busqueda}
+          inputProps={{ maxLength: 30 }}
           onChange={(e) => setBusqueda(e.target.value)}
           sx={{
             minWidth: "400px",

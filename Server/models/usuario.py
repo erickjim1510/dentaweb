@@ -23,6 +23,9 @@ class Usuario(db.Model):
     # Relaciones
     rol = db.relationship('Rol', back_populates='usuarios')
     estado = db.relationship('Estado', back_populates='usuarios')
+
+    citas = db.relationship('Cita', back_populates='usuario', cascade='all, delete')
+
     
     def to_dict(self, exclude_password=False):
         data = {

@@ -6,12 +6,14 @@ import ProtectedRoute from '../components/ProtectRoute';
 import EditarUsuario from '../scenes/usuarios/EditarUsuario';
 import EditarPaciente from '../scenes/pacientes/EditarPaciente';
 import Expediente from '../scenes/pacientes/Expediente';
+import Citas from '../scenes/calendar/calendar';
 
 const DashboardDefault = Loadable(lazy(() => import('../scenes/dashboard')));
 const Usuarios = Loadable(lazy(() => import('../scenes/usuarios')));
 const NuevoUsuario = Loadable(lazy(() => import('../scenes/usuarios/Nuevo')));
 const Pacientes = Loadable(lazy(() => import('../scenes/pacientes')));
 const NuevoPaciente = Loadable(lazy(() => import('../scenes/pacientes/NuevoPaciente')));
+const CitaNueva = Loadable(lazy(() => import('../scenes/calendar/calendar')));
 
 const getUser = () => JSON.parse(sessionStorage.getItem("user") || "{}");
 
@@ -110,6 +112,14 @@ const MainRoutes = {
       element: (
         <NonAdminRoute>
           <Expediente />
+        </NonAdminRoute>
+      )
+    },
+    {
+      path: 'citas',
+      element: (
+        <NonAdminRoute>
+          <Citas />
         </NonAdminRoute>
       )
     }

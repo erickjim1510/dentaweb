@@ -23,6 +23,9 @@ class Paciente(db.Model):
 
     # Relación con Expediente
     expediente = db.relationship("Expediente", back_populates="paciente")
+
+    citas = db.relationship('Cita', back_populates='paciente', cascade='all, delete')
+
     
     def to_dict(self):
         return {
