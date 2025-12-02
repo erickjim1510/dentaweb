@@ -221,6 +221,7 @@ const Calendar = () => {
       }
 
       if (response.data.success) {
+        setOpenDialog(false);
         Swal.fire({
           icon: "success",
           title: editMode
@@ -229,9 +230,9 @@ const Calendar = () => {
           text: response.data.mensaje,
           confirmButtonColor: "#3085d6",
         });
-        setOpenDialog(false);
         cargarCitas();
       } else {
+        setOpenDialog(false);
         Swal.fire({
           icon: "error",
           title: "Error",
@@ -248,6 +249,7 @@ const Calendar = () => {
         setErrors(validationErrors);
       } else {
         console.error("Error al guardar cita:", error);
+        setOpenDialog(false);
         Swal.fire({
           icon: "error",
           title: "Error",
@@ -441,6 +443,7 @@ const Calendar = () => {
             value={fechaInicio}
             onChange={(e) => setFechaInicio(e.target.value)}
             InputLabelProps={{ shrink: true }}
+            onKeyDown={(e) => e.preventDefault()}
             sx={{
               minWidth: "200px",
               "& .MuiOutlinedInput-root": {
@@ -473,6 +476,7 @@ const Calendar = () => {
             value={fechaFin}
             onChange={(e) => setFechaFin(e.target.value)}
             InputLabelProps={{ shrink: true }}
+            onKeyDown={(e) => e.preventDefault()}
             sx={{
               minWidth: "200px",
               "& .MuiOutlinedInput-root": {
@@ -773,7 +777,10 @@ const Calendar = () => {
                   setErrors({ ...errors, fecha: "" });
                 }}
                 InputLabelProps={{ shrink: true }}
-                inputProps={{ min: getFechaMinima() }}
+                inputProps={{
+                  min: getFechaMinima(),
+                }}
+                onKeyDown={(e) => e.preventDefault()}
                 required
                 fullWidth
                 error={!!errors.fecha}
@@ -813,6 +820,7 @@ const Calendar = () => {
                   setErrors({ ...errors, hora: "" });
                 }}
                 InputLabelProps={{ shrink: true }}
+                onKeyDown={(e) => e.preventDefault()}
                 required
                 fullWidth
                 error={!!errors.hora}
@@ -890,6 +898,7 @@ const Calendar = () => {
 
             <FormControl
               fullWidth
+              required
               error={!!errors.estado}
               sx={{
                 "& .MuiOutlinedInput-root": {
@@ -915,7 +924,7 @@ const Calendar = () => {
             >
               <InputLabel>Estado</InputLabel>
               <Select
-                value={formData.estado}
+                value={formData.estado || ""}
                 label="Estado"
                 onChange={(e) => {
                   setFormData({ ...formData, estado: e.target.value });
@@ -924,8 +933,8 @@ const Calendar = () => {
               >
                 <MenuItem value="Pendiente">Pendiente</MenuItem>
                 <MenuItem value="Confirmada">Confirmada</MenuItem>
-                <MenuItem value="Completada">Completada</MenuItem>
-                <MenuItem value="Cancelada">Cancelada</MenuItem>
+                {editMode && <MenuItem value="Completada">Completada</MenuItem>}
+                {editMode && <MenuItem value="Cancelada">Cancelada</MenuItem>}
               </Select>
               {errors.estado && (
                 <FormHelperText>{errors.estado}</FormHelperText>

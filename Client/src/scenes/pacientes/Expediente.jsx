@@ -687,7 +687,8 @@ const Expediente = () => {
                     fullWidth
                     variant="outlined"
                     type="text"
-                    label="Presión Arterial"
+                    label="Presión Arterial (Este campo es obligatorio para guardar el expediente)"
+                    required
                     onBlur={handleBlur}
                     onChange={(e) => {
                       let value = e.target.value;
@@ -766,7 +767,8 @@ const Expediente = () => {
                     fullWidth
                     variant="outlined"
                     type="text"
-                    label="Descripción"
+                    label="Descripción(Este campo es obligatorio para guardar el expediente)"
+                    required
                     onBlur={handleBlur}
                     onKeyPress={preventNumbers}
                     onChange={(e) => handleUpperCaseChange(e, handleChange)}
@@ -2392,8 +2394,11 @@ const editSchema = yup.object().shape({
         sistolica > diastolica
       );
     })
-    .nullable(),
-  motivo_consulta: yup.string().max(50, "Máximo 50 caracteres").nullable(),
+    .required("La presión arterial es obligatoria"),
+  motivo_consulta: yup
+    .string()
+    .max(50, "Máximo 50 caracteres")
+    .required("El motivo de consulta es obligatorio"),
   duracion_padecimiento: yup
     .string()
     .max(30, "Máximo 30 caracteres")
