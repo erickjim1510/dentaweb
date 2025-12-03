@@ -194,7 +194,7 @@ const EditarPaciente = () => {
                 fullWidth
                 variant="outlined"
                 select
-                label="Sexo"
+                label="Sexo *"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.id_sexo}
@@ -214,7 +214,7 @@ const EditarPaciente = () => {
                 fullWidth
                 variant="outlined"
                 type="text"
-                label="Primer Nombre"
+                label="Primer Nombre *"
                 onBlur={handleBlur}
                 onKeyPress={preventNumbers}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
@@ -246,7 +246,7 @@ const EditarPaciente = () => {
                 fullWidth
                 variant="outlined"
                 type="text"
-                label="Apellido Paterno"
+                label="Apellido Paterno *"
                 onKeyPress={preventNumbers}
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
@@ -262,7 +262,7 @@ const EditarPaciente = () => {
                 fullWidth
                 variant="outlined"
                 type="text"
-                label="Apellido Materno"
+                label="Apellido Materno *"
                 onKeyPress={preventNumbers}
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
@@ -278,7 +278,7 @@ const EditarPaciente = () => {
                 fullWidth
                 variant="outlined"
                 type="date"
-                label="Fecha de Nacimiento"
+                label="Fecha de Nacimiento *"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 InputLabelProps={{ shrink: true }}
@@ -309,7 +309,7 @@ const EditarPaciente = () => {
                 fullWidth
                 variant="outlined"
                 type="text"
-                label="Dirección"
+                label="Dirección *"
                 onBlur={handleBlur}
                 onChange={(e) => handleUpperCaseChange(e, handleChange)}
                 value={values.direccion}
@@ -340,7 +340,7 @@ const EditarPaciente = () => {
                 fullWidth
                 variant="outlined"
                 type="text"
-                label="Teléfono"
+                label="Teléfono *"
                 onBlur={handleBlur}
                 onChange={(e) => handleNumberChange(e, handleChange)}
                 value={values.telefono}
@@ -355,7 +355,7 @@ const EditarPaciente = () => {
                 fullWidth
                 variant="outlined"
                 type="email"
-                label="Email"
+                label="Email *"
                 onBlur={handleBlur}
                 onChange={handleChange}
                 value={values.email}
@@ -417,7 +417,8 @@ const editSchema = yup.object().shape({
   apellido_materno: yup
     .string()
     .max(30, "Máximo 30 caracteres")
-    .matches(/^[A-Z\s]*$/, "Solo se permiten letras mayúsculas"),
+    .matches(/^[A-Z\s]+$/, "Solo se permiten letras mayúsculas")
+    .required("El apellido materno es obligatorio"),
   fecha_nacimiento: yup
     .date()
     .min(fechaMinima, "La edad no puede ser mayor a 100 años")
@@ -444,7 +445,8 @@ const editSchema = yup.object().shape({
     .string()
     .max(30, "Máximo 30 caracteres")
     .matches(emailRegExp, "Formato de email inválido")
-    .email("Email inválido"),
+    .email("Email inválido")
+    .required("El email es obligatorio"),
 });
 
 export default EditarPaciente;
