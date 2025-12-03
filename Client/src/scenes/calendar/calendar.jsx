@@ -95,6 +95,7 @@ const Calendar = () => {
     motivo: yup
       .string()
       .max(50, "El motivo no puede exceder 50 caracteres")
+      .required("El motivo de consulta es obligatorio")
       .matches(
         /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s]*$/,
         "El motivo solo puede contener letras y numeros "
@@ -107,7 +108,7 @@ const Calendar = () => {
       const response = await api.get("/usuarios");
       if (response.data.success) {
         const doctoresFiltrados = response.data.data.filter(
-          (usuario) => usuario.id_rol === 2 || usuario.nombre_rol === "Doctor"
+          (usuario) => usuario.id_rol === 3 || usuario.nombre_rol === "Doctor"
         );
         setDoctores(doctoresFiltrados);
       }
@@ -854,6 +855,7 @@ const Calendar = () => {
 
             <TextField
               label="Motivo de la consulta"
+              required
               value={formData.motivo}
               onChange={(e) => {
                 const value = e.target.value;
