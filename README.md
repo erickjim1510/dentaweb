@@ -1,10 +1,12 @@
 # dentaweb
+
 Proyecto de Integracion y Despliegue Continuos
 
 Trabajaremos con el proyecto “Denta Web”, un proyecto dedicado a los consultorios dentales, este tiene un manejo técnico para el administrador y recepcionista, con este la persona asignada de manejarlo puede dar de alta pacientes, doctores, demas usuarios y un gestor de citas para los pacientes, con el proposito de automatizar los procesos administrativos que se llevan en un consultorio dental.Creemos que con este proyecto lograremos desarrollar una versión funcional a lo largo del semestre y podremos aplicar los conceptos de CI/CD.
 
-
+//comit inicial
 //COMO INSTALARLO Y EJECUTARLO
+
 ### Para correr (windows):
 
 ##### Backend:
